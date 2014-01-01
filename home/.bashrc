@@ -1,6 +1,17 @@
+function show_user_id()
+{
+  local uid="$(stat -c %u $1 2> /dev/null)"
+  if [ -z "$uid" ]; then
+    # consider BSD
+    uid="$(stat -f %u $1 2> /dev/null)"
+  fi
+
+  echo $uid
+}
+
 function import_setting()
 {
-  [ -f $1 ] && . $1
+  [ -f $1 ] && [ "$(show_user_id $1)" = "$UID" ] && . $1
 }
 
 # If not running interactively, don't do anything
