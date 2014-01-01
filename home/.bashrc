@@ -25,6 +25,10 @@ for f in ~/.bash.d/* ; do
   import_setting $f
 done
 
+# homeshick
+import_setting "$HOME/.homesick/repos/homeshick/homeshick.sh"
+import_setting "$HOME/.homesick/repos/homeshick/completions/homeshick-completion.bash"
+
 # Boxen
 import_setting /opt/boxen/env.sh
 
