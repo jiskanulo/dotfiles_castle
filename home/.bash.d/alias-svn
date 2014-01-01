@@ -1,0 +1,2 @@
+alias svndf='svn diff | less'
+alias svnqd='svn status | grep "? " | awk "{print($2)}" | xargs rm'

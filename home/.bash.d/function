@@ -1,0 +1,11 @@
+# tmuxでセッションがあればアタッチする
+# ref. http://qiita.com/items/0cd28a955205c79ec7e3
+if [[ -z "$TMUX" && -n "$PS1" ]]; then
+  function tmux() {
+    if [[ $# == 0 ]] && tmux has-session 2>/dev/null; then
+      command tmux attach-session
+    else
+      command tmux "$@"
+    fi
+  }
+fi

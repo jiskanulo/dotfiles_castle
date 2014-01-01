@@ -1,0 +1,1 @@
+export GIT_MERGE_AUTOEDIT=no
