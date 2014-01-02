@@ -1,0 +1,46 @@
+[include]
+	path = ~/.gitconfig.local
+[color]
+	ui = auto
+[alias]
+	b = branch
+	can = commit --amend --no-edit
+	ci = commit --verbose
+	co = checkout
+	cm = checkout master
+	cp = cherry-pick
+	d = diff --patience
+	ds = diff --staged --patience
+	grc = grep --count
+	grl = grep --files-with-matches
+	l = log --graph --pretty='format:%C(yellow)%h%Cblue%d%Creset %s %C(black bold)%an, %ar%Creset'
+	m = merge
+	st = status --short --branch
+	sd = svn dcommit --rmdir --interactive
+	sf = svn fetch
+	sr = svn rebase
+[core]
+	whitespace = trailing-space,space-before-tab
+	excludesfile = /opt/boxen/config/git/gitignore
+	pager = less -r
+	quotepath = false
+	precomposeunicode = true
+[pager]
+	diff = diff-highlight | less
+	log = diff-highlight | less
+	show = diff-highlight | less
+	status = true
+[push]
+	default = tracking
+[branch]
+	autosetuprebase = always
+[merge]
+	ff = false
+[pull]
+	rebase = true
+
+[credential]
+helper = /opt/boxen/bin/boxen-git-credential
+
+[hub]
+protocol = https
