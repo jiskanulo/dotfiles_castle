@@ -1,2 +1,4 @@
 export LESS='-R'
 export PATH="$HOME/bin:$PATH:./bin"
+
+PS1='\u:\w\$ '
