@@ -4,10 +4,12 @@
 	ui = auto
 [alias]
 	b = branch
+	bd = branch -d
 	can = commit --amend --no-edit
 	ci = commit --verbose
 	co = checkout
 	cm = checkout master
+	cb = checkout -b
 	cp = cherry-pick
 	d = diff --patience
 	ds = diff --staged --patience
