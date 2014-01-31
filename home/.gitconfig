@@ -8,6 +8,8 @@
 	can = commit --amend --no-edit
 	ci = commit --verbose
 	co = checkout
+	coo = checkout --ours
+	cot = checkout --theirs
 	cm = checkout master
 	cb = checkout -b
 	cp = cherry-pick
