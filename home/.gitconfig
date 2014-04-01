@@ -25,7 +25,7 @@
 	sr = svn rebase
 [core]
 	whitespace = trailing-space,space-before-tab
-	excludesfile = /opt/boxen/config/git/gitignore
+	excludesfile = ~/.gitignore.global
 	pager = less -r
 	quotepath = false
 	precomposeunicode = true
