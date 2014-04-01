@@ -1,0 +1,9 @@
+# cdd
+# refs http://blog.m4i.jp/entry/2012/01/26/064329
+
+cd() {
+  builtin cd "$@"
+  local ret=$?
+  ((ret)) || _cdd_chpwd
+  return $ret
+}
