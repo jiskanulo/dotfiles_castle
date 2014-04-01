@@ -32,7 +32,15 @@ import_setting "$HOME/.homesick/repos/homeshick/completions/homeshick-completion
 # Boxen
 import_setting /opt/boxen/env.sh
 
-# If brew is not installed, skip after step
+if [ -z "$BOXEN_HOME" ]; then
+  # Homebrew
+  export PATH="/usr/local/bin:$PATH"
+
+  # rbenv
+  if which rbenv > /dev/null; then eval "$(rbenv init -)"; fi
+fi
+
+# If Homebrew is not installed, skip after step
 [ -z "$(which brew)" ] && return
 
 # bash-completion
