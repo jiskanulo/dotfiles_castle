@@ -5,8 +5,8 @@ tap homebrew/binary
 tap homebrew/completions
 tap homebrew/dupes
 tap homebrew/versions
-tap phinze/homebrew-cask
 tap josegonzalez/php
+tap phinze/cask
 
 # packages
 install bash-completion
