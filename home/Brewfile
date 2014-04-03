@@ -51,12 +51,14 @@ cleanup
 # for cask
 install brew-cask
 
+cask update
+
 # packages from cask
 cask install appcleaner
+cask install filezilla
 cask install google-chrome
 cask install google-japanese-ime
 cask install iterm2
-cask install filezilla
 cask install mou
 cask install refresh-finder
 cask install the-unarchiver
