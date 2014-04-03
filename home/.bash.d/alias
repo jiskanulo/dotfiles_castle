@@ -26,8 +26,5 @@ alias la='ls -AFhG'
 alias lla='ls -lFAhG'
 alias l='ls -CFG'
 
-## nkf
-alias nkfswo='nkf -s -x -Lw --overwrite'
-
 ## other
 alias unic='sort | uniq -c'
