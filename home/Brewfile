@@ -1,12 +1,12 @@
 update
 
 # add repositories
-tap homebrew/binary      || true
-tap homebrew/completions || true
-tap homebrew/dupes       || true
-tap homebrew/versions    || true
-tap phinze/homebrew-cask || true
-tap josegonzalez/php     || true
+tap homebrew/binary
+tap homebrew/completions
+tap homebrew/dupes
+tap homebrew/versions
+tap phinze/homebrew-cask
+tap josegonzalez/php
 
 # packages
 install bash-completion
