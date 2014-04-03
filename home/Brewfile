@@ -5,6 +5,7 @@ tap homebrew/binary
 tap homebrew/completions
 tap homebrew/dupes
 tap homebrew/versions
+tap jiska/cask
 tap josegonzalez/php
 tap phinze/cask
 
@@ -56,6 +57,7 @@ cask update
 # packages from cask
 cask install appcleaner
 cask install filezilla
+cask install firealpaca
 cask install google-chrome
 cask install google-japanese-ime
 cask install iterm2
