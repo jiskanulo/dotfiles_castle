@@ -45,6 +45,7 @@ install tig
 install tmux
 install vagrant-completion
 install wget
+install zsh
 install "http://toolbelt.treasuredata.com/brew/td-agent.rb"
 
 cleanup
@@ -55,6 +56,7 @@ install brew-cask
 cask update
 
 # packages from cask
+cask install airdisplay
 cask install appcleaner
 cask install filezilla
 cask install firealpaca
