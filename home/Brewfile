@@ -10,8 +10,11 @@ tap josegonzalez/php
 tap phinze/cask
 
 # packages
+install autojump
 install bash-completion
+install composer
 install coreutils
+install docker
 install findutils
 install git
 install git-now
