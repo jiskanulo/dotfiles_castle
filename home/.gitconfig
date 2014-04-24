@@ -10,6 +10,7 @@
 	co = checkout
 	coo = checkout --ours
 	cot = checkout --theirs
+	co- = checkout -
 	cm = checkout master
 	cb = checkout -b
 	cp = cherry-pick
