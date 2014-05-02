@@ -4,9 +4,9 @@ update
 tap homebrew/binary
 tap homebrew/completions
 tap homebrew/dupes
+tap homebrew/php
 tap homebrew/versions
 tap jiska/cask
-tap josegonzalez/php
 tap phinze/cask
 
 # packages
