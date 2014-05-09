@@ -50,6 +50,6 @@ import_setting $(brew --prefix)/etc/bash_completion
 import_setting $(brew --prefix php-version)/php-version.sh
 
 # Homebrew
-for f in ~/.bash.d/brew/* ; do
+for f in ~/.bash.d/homebrew/* ; do
   import_setting $f
 done
