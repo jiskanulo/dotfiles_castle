@@ -1,0 +1,4 @@
+alias find='gfind'
+alias readlink='greadlink'
+alias tar='gtar'
+alias stat='gstat'
