@@ -1,0 +1,4 @@
+typeset -U path cdpath fpath manpath
+
+setopt list_packed
+setopt nolistbeep
