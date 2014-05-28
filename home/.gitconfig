@@ -36,7 +36,7 @@
 	show = diff-highlight | less
 	status = true
 [push]
-	default = tracking
+	default = simple
 [branch]
 	autosetuprebase = always
 [merge]
