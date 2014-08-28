@@ -20,7 +20,7 @@
 	grl = grep --files-with-matches
 	l = log --graph --pretty='format:%C(yellow)%h%Cblue%d%Creset %s %C(black bold)%an, %ar%Creset'
 	m = merge
-	n = now --all -stat
+	n = now --all --stat
 	st = status --short --branch
 	sd = svn dcommit --rmdir --interactive
 	sf = svn fetch
