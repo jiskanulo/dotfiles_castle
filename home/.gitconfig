@@ -25,6 +25,8 @@
 	sd = svn dcommit --rmdir --interactive
 	sf = svn fetch
 	sr = svn rebase
+	plum = pull upstream master
+	plom = pull origin master
 [core]
 	whitespace = trailing-space,space-before-tab
 	excludesfile = ~/.gitignore.global
