@@ -16,17 +16,19 @@
 	cp = cherry-pick
 	d = diff --patience
 	ds = diff --staged --patience
+	g = grep
+	gi = grep -I
 	grc = grep --count
 	grl = grep --files-with-matches
 	l = log --graph --pretty='format:%C(yellow)%h%Cblue%d%Creset %s %C(black bold)%an, %ar%Creset'
 	m = merge
 	n = now --all --stat
-	st = status --short --branch
 	sd = svn dcommit --rmdir --interactive
 	sf = svn fetch
 	sr = svn rebase
-	plum = pull upstream master
+	st = status --short --branch
 	plom = pull origin master
+	plum = pull upstream master
 [core]
 	whitespace = trailing-space,space-before-tab
 	excludesfile = ~/.gitignore.global
