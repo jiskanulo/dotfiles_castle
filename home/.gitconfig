@@ -30,11 +30,13 @@
 	plom = pull origin master
 	plum = pull upstream master
 [core]
-	whitespace = trailing-space,space-before-tab
 	excludesfile = ~/.gitignore.global
+	fscache = true
 	pager = less -r
-	quotepath = false
 	precomposeunicode = true
+	preloadindex = true
+	quotepath = false
+	whitespace = trailing-space,space-before-tab
 [pager]
 	diff = diff-highlight | less
 	log = diff-highlight | less
