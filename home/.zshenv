@@ -1,13 +1,8 @@
-export EDITOR=vim
-export LANG=en_US.UTF-8
-export PATH=$HOME/bin:/usr/local/bin:$PATH
+#
+# Defines environment variables.
+#
 
-if [[ "$OSTYPE" == darwin* ]]; then
-  export BROWSER='open'
-fi
-
-if [ -x "`which go`" ]; then
-  export GOPATH=$HOME/go
-  export GOROOT=`go env GOROOT`
-  export PATH=$PATH:$GOROOT/bin:$GOPATH/bin
+# Ensure that a non-login, non-interactive shell has a defined environment.
+if [[ "$SHLVL" -eq 1 && ! -o LOGIN && -s "${ZDOTDIR:-$HOME}/.zprofile" ]]; then
+  source "${ZDOTDIR:-$HOME}/.zprofile"
 fi
