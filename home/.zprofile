@@ -47,7 +47,7 @@ path=(
 
 # golang
 if [ -x "`which go`" ]; then
-  export GOPATH=$HOME/go
+  export GOPATH=$HOME/Workspace/go
   path=(
     $path
     $GOPATH/bin
