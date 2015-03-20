@@ -8,7 +8,7 @@ if [[ -s "${ZDOTDIR:-$HOME}/.zprezto/init.zsh" ]]; then
 fi
 
 # homeshick
-if [[ -s "$HOME/.homesick/repos/homeshick/homeshick.sh" ]]; then
+if [[ -f "$HOME/.homesick/repos/homeshick/homeshick.sh" ]]; then
   source "$HOME/.homesick/repos/homeshick/homeshick.sh"
 
   fpath=("$HOME/.homesick/repos/homeshick/completions" $fpath)
