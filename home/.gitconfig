@@ -38,9 +38,6 @@
 	quotepath = false
 	whitespace = trailing-space,space-before-tab
 [pager]
-	diff = diff-highlight | less
-	log = diff-highlight | less
-	show = diff-highlight | less
 	status = true
 [push]
 	default = simple
