@@ -17,11 +17,9 @@ if [[ -f "$HOME/.homesick/repos/homeshick/homeshick.sh" ]]; then
 fi
 
 # load my own configures
-source "$HOME/.zsh.d/env-git" 2> /dev/null
 source "$HOME/.zsh.d/env-zsh" 2> /dev/null
 
 if [ $commands[brew] ]; then
-  source "$HOME/.zsh.d/homebrew/env-git" 2> /dev/null
   source "$HOME/.zsh.d/homebrew/function-peco" 2> /dev/null
 
   # autojump
