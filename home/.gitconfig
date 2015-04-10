@@ -41,15 +41,12 @@
 	status = true
 [push]
 	default = simple
-[branch]
-	autosetuprebase = always
 [merge]
 	ff = false
 [pull]
 	rebase = true
 [fetch]
 	prune = true
-[credential]
 [hub]
 	protocol = https
 [ghq]
