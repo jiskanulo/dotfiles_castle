@@ -25,14 +25,3 @@ if [ $commands[brew] ]; then
   # autojump
   [[ -s $(brew --prefix)/etc/profile.d/autojump.sh ]] && . $(brew --prefix)/etc/profile.d/autojump.sh
 fi
-
-# cdd
-if [[ -f "$HOME/Workspace/ghq/github.com/m4i/cdd/cdd" ]]; then
-  autoload -Uz compinit
-  compinit
-  source "$HOME/Workspace/ghq/github.com/m4i/cdd/cdd"
-
-  chpwd() {
-    _cdd_chpwd
-  }
-fi
