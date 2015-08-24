@@ -1,0 +1,22 @@
+"*":
+  "exception-reporting":
+    userId: "ac002398-0aa2-e767-9b2e-816d95874d9d"
+  welcome:
+    showOnStartup: false
+  core:
+    themes: [
+      "atom-dark-ui"
+      "one-dark-syntax"
+    ]
+    projectHome: "/Users/jiska/Workspace"
+    audioBeep: false
+  editor:
+    invisibles: {}
+    fontSize: 17
+    lineHeight: 1.4
+    showIndentGuide: true
+    showInvisibles: true
+    fontFamily: "RictyDiminished-Regular"
+  "tree-view":
+    hideIgnoredNames: true
+    hideVcsIgnoredFiles: true
