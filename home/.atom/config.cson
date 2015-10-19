@@ -12,7 +12,7 @@
     audioBeep: false
   editor:
     invisibles: {}
-    fontSize: 17
+    fontSize: 19
     lineHeight: 1.4
     showIndentGuide: true
     showInvisibles: true
