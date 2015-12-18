@@ -54,3 +54,5 @@
 [diff "xlsx"]
 	binary = true
 	textconv = $GOPATH/bin/git-xlsx-textconv
+[diff "exif"]
+	textconv = exiftool
