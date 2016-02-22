@@ -1,22 +1,24 @@
 "*":
-  "exception-reporting":
-    userId: "ac002398-0aa2-e767-9b2e-816d95874d9d"
-  welcome:
-    showOnStartup: false
   core:
+    audioBeep: false
+    excludeVcsIgnoredPaths: false
+    projectHome: "/Users/jiska/Workspace"
     themes: [
       "atom-dark-ui"
       "one-dark-syntax"
     ]
-    projectHome: "/Users/jiska/Workspace"
-    audioBeep: false
   editor:
-    invisibles: {}
+    fontFamily: "RictyDiminished-Regular"
     fontSize: 19
+    invisibles: {}
     lineHeight: 1.4
     showIndentGuide: true
     showInvisibles: true
-    fontFamily: "RictyDiminished-Regular"
+    tabLength: 4
+  "exception-reporting":
+    userId: "ac002398-0aa2-e767-9b2e-816d95874d9d"
   "tree-view":
     hideIgnoredNames: true
     hideVcsIgnoredFiles: true
+  welcome:
+    showOnStartup: false
