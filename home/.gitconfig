@@ -49,8 +49,6 @@
 	prune = true
 [hub]
 	protocol = https
-[ghq]
-	root = /Users/jiska/Workspace/ghq
 [diff "xlsx"]
 	binary = true
 	textconv = $GOPATH/bin/git-xlsx-textconv
