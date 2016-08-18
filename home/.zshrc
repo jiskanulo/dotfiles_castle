@@ -19,9 +19,13 @@ fi
 # load my own configures
 source "$HOME/.zsh.d/env-zsh" 2> /dev/null
 
-if [ $commands[brew] ]; then
-  source "$HOME/.zsh.d/homebrew/function-peco" 2> /dev/null
+# peco
+if [ $commands[peco] ]; then
+  source "$HOME/.zsh.d/function/peco" 2> /dev/null
+fi
 
+# Homebew
+if [ $commands[brew] ]; then
   # autojump
   [[ -s $(brew --prefix)/etc/profile.d/autojump.sh ]] && . $(brew --prefix)/etc/profile.d/autojump.sh
 fi
