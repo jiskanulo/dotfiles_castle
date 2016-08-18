@@ -8,8 +8,8 @@
       "one-dark-syntax"
     ]
   editor:
-    fontFamily: "RictyDiminished-Regular"
-    fontSize: 19
+    fontFamily: "SourceHanCodeJP-Regular"
+    fontSize: 15
     invisibles: {}
     lineHeight: 1.4
     showIndentGuide: true
