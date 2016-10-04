@@ -41,7 +41,7 @@ typeset -gU cdpath fpath mailpath path
 # Set the list of directories that Zsh searches for programs.
 path=(
   /usr/local/{bin,sbin}
-  $HOME/bin
+  $HOME/bin(N-/)
   $HOME/.config/composer/vendor/bin(N-/)
   $path
 )
@@ -51,7 +51,7 @@ if [ $commands[go] ]; then
   export GOPATH=$HOME/Workspace/go
   path=(
     $path
-    $GOPATH/bin
+    $GOPATH/bin(N-/)
   )
 fi
 
