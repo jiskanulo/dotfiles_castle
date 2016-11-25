@@ -1,23 +1,7 @@
 # original: https://lowreal.net/2015/10/27/1
 function cdd() {
-	if [[ $1 == "" ]]; then
-		local selected_dir=$(lsof -c zsh -w -Ffn0 | perl -anal -e '/cwd/ and print((split /\0.?/)[1])' | sort | uniq | peco)
-		if [ -n "$selected_dir" ]; then
-			cd ${selected_dir}
-		fi
-	else
-		local pid
-		if [[ $(uname) == "Darwin" ]]; then
-			pid=$(command ps -E -o 'pid,command' | WINDOW=$1 perl -anal -e '/STY=$ENV{STY} / and /WINDOW=$ENV{WINDOW} / and /^ *([0-9]+) +[^ ]*zsh/ and print $1')
-		else
-			pid=$(command ps e -o 'pid,command' | WINDOW=$1 perl -anal -e '/STY=$ENV{STY} / and /WINDOW=$ENV{WINDOW} / and /^ *([0-9]+) +[^ ]*zsh/ and print $1')
-		fi
-
-		if [[ $pid == "" ]]; then
-			echo "window not found"
-		else
-			local dir=$(lsof -p $pid -w -Ffn0 | perl -anal -e '/cwd/ and print((split /\0.?/)[1])')
-			cd $dir
-		fi
+	local selected_dir=$(lsof -c zsh -w -Ffn0 | perl -anal -e '/cwd/ and print((split /\0.?/)[1])' | sort | uniq | peco)
+	if [ -n "$selected_dir" ]; then
+		cd ${selected_dir}
 	fi
 }
