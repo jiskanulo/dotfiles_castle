@@ -29,19 +29,20 @@ zstyle ':prezto:*:*' color 'yes'
 #  'prompt'
 
 zstyle ':prezto:load' pmodule \
-  'environment' \
+  'completion' \
+  'directory' \
   'editor' \
+  'environment' \
   'git' \
   'gnu-utility' \
-  'node' \
-  'ruby' \
-  'tmux' \
   'history' \
-  'directory' \
+  'node' \
+  'prompt' \
+  'ruby' \
   'spectrum' \
-  'utility' \
-  'completion' \
-  'prompt'
+  'syntax-highlighting' \
+  'tmux' \
+  'utility'
 
 #
 # Editor
