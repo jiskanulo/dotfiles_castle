@@ -3,6 +3,7 @@
     audioBeep: false
     excludeVcsIgnoredPaths: false
     projectHome: "/Users/jiska/Workspace"
+    telemetryConsent: "no"
     themes: [
       "atom-dark-ui"
       "one-dark-syntax"
