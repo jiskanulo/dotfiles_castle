@@ -1,26 +1,2 @@
-# default option
-## cp, mv, rm
-alias cp='cp -i'
-alias mv='mv -i'
-alias rm='rm -i'
-
-## df, du
-alias df='df -h'
-alias du='du -hs'
-
-## other
-alias free='free -m'
-alias grep='grep -i'
-alias rspec='rspec -c'
-
-# alias command
-## ls
-alias ls='ls -FG'
-alias l1='ls -1'
-alias ll='ls -lFhG'
-alias la='ls -AFhG'
-alias lla='ls -lFAhG'
-alias l='ls -CFG'
-
-## other
+alias g='git'
 alias unic='sort | uniq -c'

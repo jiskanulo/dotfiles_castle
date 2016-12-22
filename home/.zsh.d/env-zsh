@@ -2,3 +2,33 @@ typeset -U path cdpath fpath manpath
 
 setopt list_packed
 setopt nolistbeep
+
+## directories
+setopt AUTO_CD
+setopt AUTO_PUSHD
+setopt PUSHD_IGNORE_DUPS
+setopt PUSHD_SILENT
+setopt PUSHD_TO_HOME
+setopt CDABLE_VARS
+setopt AUTO_NAME_DIRS
+setopt MULTIOS
+setopt EXTENDED_GLOB
+unsetopt CLOBBER
+
+## histories
+HISTFILE="${ZDOTDIR:-$HOME}/.zhistory"
+HISTSIZE=1000000
+SAVEHIST=1000000
+
+setopt BANG_HIST
+setopt EXTENDED_HISTORY
+setopt INC_APPEND_HISTORY
+setopt SHARE_HISTORY
+setopt HIST_EXPIRE_DUPS_FIRST
+setopt HIST_IGNORE_DUPS
+setopt HIST_IGNORE_ALL_DUPS
+setopt HIST_FIND_NO_DUPS
+setopt HIST_IGNORE_SPACE
+setopt HIST_SAVE_NO_DUPS
+setopt HIST_VERIFY
+setopt HIST_BEEP

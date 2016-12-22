@@ -30,16 +30,11 @@ zstyle ':prezto:*:*' color 'yes'
 
 zstyle ':prezto:load' pmodule \
   'completion' \
-  'directory' \
-  'editor' \
   'environment' \
-  'git' \
   'gnu-utility' \
-  'history' \
   'node' \
   'prompt' \
   'ruby' \
-  'spectrum' \
   'syntax-highlighting' \
   'tmux' \
   'utility'
