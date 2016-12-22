@@ -1,6 +1,9 @@
 "*":
   core:
     audioBeep: false
+    disabledPackages: [
+      "whitespace"
+    ]
     excludeVcsIgnoredPaths: false
     projectHome: "/Users/jiska/Workspace"
     telemetryConsent: "no"
