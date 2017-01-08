@@ -39,6 +39,9 @@
     tabLength: 4
   "exception-reporting":
     userId: "ac002398-0aa2-e767-9b2e-816d95874d9d"
+  "platformio-ide-terminal":
+    toggles:
+      autoClose: true
   "tree-view":
     hideIgnoredNames: true
     hideVcsIgnoredFiles: true
