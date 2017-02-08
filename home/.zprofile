@@ -48,7 +48,7 @@ path=(
 
 # golang
 if [ $commands[go] ]; then
-  export GOPATH=$HOME/Workspace/go
+  export GOPATH=$HOME/go
   path=(
     $path
     $GOPATH/bin(N-/)
