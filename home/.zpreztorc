@@ -29,7 +29,6 @@ zstyle ':prezto:*:*' color 'yes'
 #  'prompt'
 
 zstyle ':prezto:load' pmodule \
-  'completion' \
   'environment' \
   'gnu-utility' \
   'node' \
