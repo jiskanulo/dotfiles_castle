@@ -1,0 +1,6 @@
+function d() {
+    local dir=$(find ./ -maxdepth 1 -type d | peco)
+    if [ -n "$dir" ]; then
+        cd ${dir}
+    fi
+}

@@ -24,6 +24,7 @@ source "$HOME/.zsh.d/env-zsh" 2> /dev/null
 # peco
 if [ $commands[peco] ]; then
   source "$HOME/.zsh.d/function/cdd" 2> /dev/null
+  source "$HOME/.zsh.d/function/d" 2> /dev/null
   source "$HOME/.zsh.d/function/peco-select-history" 2> /dev/null
 fi
 
