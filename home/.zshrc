@@ -33,3 +33,8 @@ if [ $commands[brew] ]; then
   # autojump
   [[ -s $(brew --prefix)/etc/profile.d/autojump.sh ]] && . $(brew --prefix)/etc/profile.d/autojump.sh
 fi
+
+# Profile zsh
+if (which zprof > /dev/null) ;then
+  zprof | less
+fi
