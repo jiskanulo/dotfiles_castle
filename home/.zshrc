@@ -12,8 +12,6 @@ if [[ -f "$HOME/.homesick/repos/homeshick/homeshick.sh" ]]; then
   source "$HOME/.homesick/repos/homeshick/homeshick.sh"
 
   fpath=($fpath "$HOME/.homesick/repos/homeshick/completions")
-  autoload -U compinit
-  compinit -u
 fi
 
 # load my own configures

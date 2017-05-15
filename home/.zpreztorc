@@ -30,6 +30,8 @@ zstyle ':prezto:*:*' color 'yes'
 
 zstyle ':prezto:load' pmodule \
   'environment' \
+  'helper' \
+  'spectrum' \
   'gnu-utility' \
   'node' \
   'prompt' \

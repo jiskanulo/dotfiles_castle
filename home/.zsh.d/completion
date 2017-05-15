@@ -1,7 +1,6 @@
 fpath=(/usr/local/share/zsh-completions $fpath)
 
-autoload -Uz compinit && compinit -i
-compinit -u
+autoload -Uz compinit && compinit -i -u
 
 #
 # Options
