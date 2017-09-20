@@ -1,0 +1,7 @@
+function cdw() {
+    local dir=$(ghq list --full-path | peco)
+    if [ -n "$dir" ]; then
+        cd ${dir}
+    fi
+}
+
