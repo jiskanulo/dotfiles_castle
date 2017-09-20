@@ -16,6 +16,7 @@ fi
 
 # load my own configures
 source "$HOME/.zsh.d/alias" 2> /dev/null
+source "$HOME/.zsh.d/bindkey" 2> /dev/null
 source "$HOME/.zsh.d/completion" 2> /dev/null
 source "$HOME/.zsh.d/env-zsh" 2> /dev/null
 
