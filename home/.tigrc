@@ -1,2 +1,21 @@
-bind main    R !git rebase -i %(commit)
-bind diff    R !git rebase -i %(commit)
+## general setting
+set diff-options       = -m --first-parent
+set editor-line-number = yes
+set ignore-case        = true
+set ignore-space       = at-eol
+set line-graphics      = utf-8
+set refresh-mode       = auto
+set tab-size           = 4
+
+## view setting
+set blame-view  = date:default author:email-user id:yes,color line-number:yes,interval=1 text
+set blob-view   = line-number:yes,interval=1 text
+set diff-view   = line-number:yes,interval=1 text:yes,commit-title-overflow=no
+set log-view    = line-number:yes,interval=1 text
+set main-view   = id date author:email-user commit-title:graph=yes,refs=yes
+set pager-view  = line-number:yes,interval=1 text
+set stage-view  = line-number:yes,interval=1 text
+
+## custom keybind
+bind diff R !git rebase -i %(commit)
+bind main R !git rebase -i %(commit)
