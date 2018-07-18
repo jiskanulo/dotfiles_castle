@@ -6,14 +6,15 @@
 	b = branch
 	bd = branch -d
 	can = commit --amend --no-edit
+	cb = checkout -b
+	cd = checkout develop
 	ci = commit --verbose
+	cm = checkout master
 	co = checkout
+	co- = checkout -
 	coo = checkout --ours
 	cot = checkout --theirs
-	co- = checkout -
-	cm = checkout master
-	cb = checkout -b
-	cp = cherry-pick
+	cp = cherry-pick -x
 	d = diff --patience
 	ds = diff --staged --patience
 	g = grep
@@ -23,12 +24,11 @@
 	l = log --graph --pretty='format:%C(yellow)%h%Cblue%d%Creset %s %C(black bold)%an, %ar%Creset'
 	m = merge
 	n = now --all --stat
+	p = pull
 	sd = svn dcommit --rmdir --interactive
 	sf = svn fetch
 	sr = svn rebase
 	st = status --short --branch
-	plom = pull origin master
-	plum = pull upstream master
 [core]
 	excludesfile = ~/.gitignore.global
 	fscache = true
