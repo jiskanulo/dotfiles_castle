@@ -37,6 +37,7 @@
 	preloadindex = true
 	quotepath = false
 	whitespace = trailing-space,space-before-tab
+	commentChar = ";"
 [pager]
 	status = true
 [push]
@@ -60,5 +61,3 @@
 [mergetool "sourcetree"]
 	cmd = /Applications/SourceTree.app/Contents/Resources/opendiff-w.sh \"$LOCAL\" \"$REMOTE\" -ancestor \"$BASE\" -merge \"$MERGED\"
 	trustExitCode = true
-[http "https://gopkg.in"]
-	followRedirects = true
