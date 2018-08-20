@@ -3,6 +3,9 @@ typeset -U path cdpath fpath manpath
 setopt list_packed
 setopt nolistbeep
 
+## commands
+unsetopt correct
+
 ## directories
 setopt AUTO_CD
 setopt AUTO_PUSHD
