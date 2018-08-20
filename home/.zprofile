@@ -43,6 +43,7 @@ path=(
   /usr/local/{bin,sbin}
   $HOME/bin(N-/)
   $HOME/.config/composer/vendor/bin(N-/)
+  $HOME/.anyenv/bin(N-/)
   $path
 )
 

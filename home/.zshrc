@@ -22,6 +22,11 @@ source "$HOME/.zsh.d/env-rails" 2> /dev/null
 source "$HOME/.zsh.d/env-zsh" 2> /dev/null
 source "$HOME/.zsh.d/stty" 2> /dev/null
 
+# anyenv
+if [ $commands[anyenv] ]; then
+  eval "$(anyenv init -)"
+fi
+
 # peco
 if [ $commands[peco] ]; then
   source "$HOME/.zsh.d/function/cdd" 2> /dev/null
