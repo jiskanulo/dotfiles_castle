@@ -17,6 +17,7 @@
 	cp = cherry-pick -x
 	d = diff --patience
 	ds = diff --staged --patience
+	f = fetch
 	g = grep
 	gi = grep -I
 	grc = grep --count
@@ -25,9 +26,6 @@
 	m = merge
 	n = now --all --stat
 	p = pull
-	sd = svn dcommit --rmdir --interactive
-	sf = svn fetch
-	sr = svn rebase
 	st = status --short --branch
 [core]
 	excludesfile = ~/.gitignore.global
