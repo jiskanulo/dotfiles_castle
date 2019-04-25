@@ -42,7 +42,7 @@ typeset -gU cdpath fpath mailpath path
 path=(
   /usr/local/{bin,sbin}
   $HOME/bin(N-/)
-  $HOME/.config/composer/vendor/bin(N-/)
+  $HOME/.composer/vendor/bin(N-/)
   $HOME/.anyenv/bin(N-/)
   $path
 )
