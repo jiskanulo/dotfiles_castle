@@ -26,6 +26,11 @@ if [ $commands[anyenv] ]; then
   eval "$(anyenv init -)"
 fi
 
+# direnv
+if [ $commands[direnv] ]; then
+  eval "$(direnv hook zsh)"
+fi
+
 # peco
 if [ $commands[peco] ]; then
   source "$HOME/.zsh.d/function/cdd" 2> /dev/null
