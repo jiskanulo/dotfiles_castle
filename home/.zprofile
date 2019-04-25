@@ -42,10 +42,24 @@ typeset -gU cdpath fpath mailpath path
 path=(
   /usr/local/{bin,sbin}
   $HOME/bin(N-/)
-  $HOME/.composer/vendor/bin(N-/)
-  $HOME/.anyenv/bin(N-/)
   $path
 )
+
+# anyenv
+if [ $commands[anyenv] ]; then
+  path=(
+    $HOME/.anyenv/bin(N-/)
+    $path
+  )
+fi
+
+# composer
+if [ $commands[composer] ]; then
+  path=(
+    $HOME/.composer/vendor/bin(N-/)
+    $path
+  )
+fi
 
 # golang
 if [ $commands[go] ]; then
