@@ -24,7 +24,7 @@ source "$HOME/.zsh.d/stty" 2> /dev/null
 
 # anyenv
 if [ $commands[anyenv] ]; then
-  eval "$(anyenv init -)"
+  eval "$(anyenv init - --no-rehash)"
 fi
 
 # direnv
