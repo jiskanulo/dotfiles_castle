@@ -45,14 +45,6 @@ path=(
   $path
 )
 
-# anyenv
-if [ $commands[anyenv] ]; then
-  path=(
-    $HOME/.anyenv/bin(N-/)
-    $path
-  )
-fi
-
 # composer
 if [ $commands[composer] ]; then
   path=(
