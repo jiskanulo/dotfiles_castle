@@ -2,16 +2,11 @@
 # Executes commands at the start of an interactive session.
 #
 
-# Source Prezto.
-if [[ -s "${ZDOTDIR:-$HOME}/.zprezto/init.zsh" ]]; then
-  source "${ZDOTDIR:-$HOME}/.zprezto/init.zsh"
-fi
-
-# homeshick
-if [[ -f "$HOME/.homesick/repos/homeshick/homeshick.sh" ]]; then
-  source "$HOME/.homesick/repos/homeshick/homeshick.sh"
-
-  fpath=($fpath "$HOME/.homesick/repos/homeshick/completions")
+# zplug
+if [[ -d "/usr/local/opt/zplug" ]]; then
+  export ZPLUG_HOME=/usr/local/opt/zplug
+  source $ZPLUG_HOME/init.zsh
+  source "$HOME/.zsh.d/zplug" 2> /dev/null
 fi
 
 # load my own configures
@@ -21,6 +16,13 @@ source "$HOME/.zsh.d/completion" 2> /dev/null
 source "$HOME/.zsh.d/env-zsh" 2> /dev/null
 source "$HOME/.zsh.d/env" 2> /dev/null
 source "$HOME/.zsh.d/stty" 2> /dev/null
+
+# homeshick
+if [[ -f "$HOME/.homesick/repos/homeshick/homeshick.sh" ]]; then
+  source "$HOME/.homesick/repos/homeshick/homeshick.sh"
+
+  fpath=($fpath "$HOME/.homesick/repos/homeshick/completions")
+fi
 
 # anyenv
 if [ $commands[anyenv] ]; then
