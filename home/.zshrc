@@ -20,8 +20,8 @@ source "$HOME/.zsh.d/stty" 2> /dev/null
 # homeshick
 if [[ -f "$HOME/.homesick/repos/homeshick/homeshick.sh" ]]; then
   source "$HOME/.homesick/repos/homeshick/homeshick.sh"
-
   fpath=($fpath "$HOME/.homesick/repos/homeshick/completions")
+  autoload -Uz compinit && compinit -i -u
 fi
 
 # anyenv
