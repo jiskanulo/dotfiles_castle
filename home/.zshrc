@@ -6,16 +6,16 @@
 if [[ -d "/usr/local/opt/zplug" ]]; then
   export ZPLUG_HOME=/usr/local/opt/zplug
   source $ZPLUG_HOME/init.zsh
-  source "$HOME/.zsh.d/zplug" 2> /dev/null
+  source "$HOME/.config/zsh/zplug" 2> /dev/null
 fi
 
 # load my own configures
-source "$HOME/.zsh.d/alias" 2> /dev/null
-source "$HOME/.zsh.d/bindkey" 2> /dev/null
-source "$HOME/.zsh.d/completion" 2> /dev/null
-source "$HOME/.zsh.d/env-zsh" 2> /dev/null
-source "$HOME/.zsh.d/env" 2> /dev/null
-source "$HOME/.zsh.d/stty" 2> /dev/null
+source "$HOME/.config/zsh/alias" 2> /dev/null
+source "$HOME/.config/zsh/bindkey" 2> /dev/null
+source "$HOME/.config/zsh/completion" 2> /dev/null
+source "$HOME/.config/zsh/env-zsh" 2> /dev/null
+source "$HOME/.config/zsh/env" 2> /dev/null
+source "$HOME/.config/zsh/stty" 2> /dev/null
 
 # homeshick
 if [[ -f "$HOME/.homesick/repos/homeshick/homeshick.sh" ]]; then
@@ -36,11 +36,11 @@ fi
 
 # peco
 if [ $commands[peco] ]; then
-  source "$HOME/.zsh.d/function/cdd" 2> /dev/null
-  source "$HOME/.zsh.d/function/d" 2> /dev/null
-  source "$HOME/.zsh.d/function/peco-select-history" 2> /dev/null
+  source "$HOME/.config/zsh/function/cdd" 2> /dev/null
+  source "$HOME/.config/zsh/function/d" 2> /dev/null
+  source "$HOME/.config/zsh/function/peco-select-history" 2> /dev/null
   if [ $commands[ghq] ]; then
-    source "$HOME/.zsh.d/function/cdw" 2> /dev/null
+    source "$HOME/.config/zsh/function/cdw" 2> /dev/null
   fi
 fi
 
