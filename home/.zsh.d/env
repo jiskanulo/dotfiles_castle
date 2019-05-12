@@ -1,1 +1,2 @@
+export LESSOPEN="|/usr/local/bin/lesspipe.sh %s" LESS_ADVANCED_PREPROCESSOR=1
 export PKG_CONFIG_PATH=/usr/local/opt/openssl/lib/pkgconfig
