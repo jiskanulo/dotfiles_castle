@@ -1,5 +1,0 @@
-alias find='gfind'
-alias readlink='greadlink'
-alias tac='gtac'
-alias tar='gtar'
-alias stat='gstat'
