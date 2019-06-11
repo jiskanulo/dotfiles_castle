@@ -42,6 +42,8 @@ typeset -gU cdpath fpath mailpath path
 path=(
   /usr/local/{bin,sbin}
   /usr/local/opt/coreutils/libexec/gnubin(N-/)
+  /usr/local/opt/gnu-sed/libexec/gnubin(N-/)
+  /usr/local/opt/findutils/libexec/gnubin(N-/)
   $HOME/bin(N-/)
   $path
 )
