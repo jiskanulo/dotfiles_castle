@@ -1,7 +1,6 @@
 function cdw() {
-    local dir=$(ghq list --full-path | peco)
-    if [ -n "$dir" ]; then
-        cd ${dir}
+    local repository=$(ghq list | peco)
+    if [ -n "$repository" ]; then
+        ghq look ${repository}
     fi
 }
-
