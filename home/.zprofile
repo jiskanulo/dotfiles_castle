@@ -44,6 +44,7 @@ path=(
   /usr/local/opt/coreutils/libexec/gnubin(N-/)
   /usr/local/opt/gnu-sed/libexec/gnubin(N-/)
   /usr/local/opt/findutils/libexec/gnubin(N-/)
+  /usr/local/opt/mysql-client/bin(N-/)
   $HOME/bin(N-/)
   $path
 )
