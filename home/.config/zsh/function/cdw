@@ -1,6 +1,6 @@
 function cdw() {
     local repository=$(ghq list | peco)
     if [ -n "$repository" ]; then
-        ghq look ${repository}
+        cd $(ghq root)/${repository}
     fi
 }
