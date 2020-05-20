@@ -21,7 +21,6 @@ source "$HOME/.config/zsh/stty" 2> /dev/null
 if [[ -f "$HOME/.homesick/repos/homeshick/homeshick.sh" ]]; then
   source "$HOME/.homesick/repos/homeshick/homeshick.sh"
   fpath=($fpath "$HOME/.homesick/repos/homeshick/completions")
-  autoload -Uz compinit && compinit -i -u
 fi
 
 # anyenv
@@ -49,6 +48,8 @@ if [ $commands[brew] ]; then
   # autojump
   [[ -s $(brew --prefix)/etc/profile.d/autojump.sh ]] && . $(brew --prefix)/etc/profile.d/autojump.sh
 fi
+
+autoload -Uz compinit && compinit -i -u
 
 # Profile zsh
 if (which zprof > /dev/null) ;then
