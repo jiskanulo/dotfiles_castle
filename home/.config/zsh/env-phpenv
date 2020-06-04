@@ -1,0 +1,2 @@
+export PKG_CONFIG_PATH="/usr/local/opt/openssl/lib/pkgconfig:/usr/local/opt/krb5/lib/pkgconfig:/usr/local/opt/libxml2/lib/pkgconfig:/usr/local/opt/libedit/lib/pkgconfig:/usr/local/opt/icu4c/lib/pkgconfig:$PKG_CONFIG_PATH"
+export PHP_BUILD_CONFIGURE_OPTS="--with-bz2=/usr/local/opt/bzip2 --with-iconv=/usr/local/opt/libiconv" 

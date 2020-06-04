@@ -14,7 +14,7 @@ source "$HOME/.config/zsh/alias" 2> /dev/null
 source "$HOME/.config/zsh/bindkey" 2> /dev/null
 source "$HOME/.config/zsh/completion" 2> /dev/null
 source "$HOME/.config/zsh/env-zsh" 2> /dev/null
-source "$HOME/.config/zsh/env" 2> /dev/null
+source "$HOME/.config/zsh/env-phpenv" 2> /dev/null
 source "$HOME/.config/zsh/stty" 2> /dev/null
 
 # homeshick
