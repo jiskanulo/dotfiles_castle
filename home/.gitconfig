@@ -9,7 +9,7 @@
 	cb = checkout -b
 	cd = checkout develop
 	ci = commit --verbose
-	cm = checkout master
+	cm = !git checkout main 2> /dev/null || git checkout master
 	co = checkout
 	co- = checkout -
 	coo = checkout --ours
@@ -25,7 +25,7 @@
 	l = log --graph --pretty='format:%C(yellow)%h%Cblue%d%Creset %s %C(black bold)%an, %ar%Creset'
 	m = merge
 	n = now --all --stat
-	p = pull
+	p = !git stash --include-untracked && git pull && git stash pop
 	st = status --short --branch
 [core]
 	excludesfile = ~/.gitignore.global
