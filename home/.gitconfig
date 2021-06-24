@@ -28,7 +28,6 @@
 	p = !git stash --include-untracked && git pull && git stash pop
 	st = status --short --branch
 [core]
-	excludesfile = ~/.gitignore.global
 	fscache = true
 	pager = less -r
 	precomposeunicode = true
