@@ -40,11 +40,11 @@ typeset -gU cdpath fpath mailpath path
 
 # Set the list of directories that Zsh searches for programs.
 path=(
-  /usr/local/{bin,sbin}
-  /usr/local/opt/coreutils/libexec/gnubin(N-/)
-  /usr/local/opt/gnu-sed/libexec/gnubin(N-/)
-  /usr/local/opt/findutils/libexec/gnubin(N-/)
-  /usr/local/opt/mysql-client/bin(N-/)
+  /{usr/local,opt/homebrew}/{bin,sbin}(N-/)
+  /{usr/local,opt/homebrew}/opt/coreutils/libexec/gnubin(N-/)
+  /{usr/local,opt/homebrew}/opt/gnu-sed/libexec/gnubin(N-/)
+  /{usr/local,opt/homebrew}/opt/findutils/libexec/gnubin(N-/)
+  /{usr/local,opt/homebrew}/opt/mysql-client/bin(N-/)
   $HOME/bin(N-/)
   $path
 )
