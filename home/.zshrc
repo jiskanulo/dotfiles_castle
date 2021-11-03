@@ -45,11 +45,8 @@ if [ $commands[peco] ]; then
   fi
 fi
 
-# Homebew
-if [ $commands[brew] ]; then
-  # autojump
-  [[ -s $(brew --prefix)/etc/profile.d/autojump.sh ]] && . $(brew --prefix)/etc/profile.d/autojump.sh
-fi
+# autojump
+[[ -s $(brew --prefix)/etc/profile.d/autojump.sh ]] && source $(brew --prefix)/etc/profile.d/autojump.sh
 
 autoload -Uz compinit && compinit -i -u
 
