@@ -20,9 +20,9 @@ source "$HOME/.config/zsh/env-phpenv" 2> /dev/null
 source "$HOME/.config/zsh/stty" 2> /dev/null
 
 # homeshick
-if [[ -f "$HOME/.homesick/repos/homeshick/homeshick.sh" ]]; then
-  source "$HOME/.homesick/repos/homeshick/homeshick.sh"
-  fpath=($fpath "$HOME/.homesick/repos/homeshick/completions")
+export HOMESHICK_DIR=$(brew --prefix)/opt/homeshick
+if [[ -f "$HOMESHICK_DIR/homeshick.sh" ]]; then
+  source "$HOMESHICK_DIR/homeshick.sh"
 fi
 
 # anyenv
