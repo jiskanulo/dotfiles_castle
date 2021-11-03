@@ -3,19 +3,12 @@
 #
 
 # zplug
-## intel mac
-if [[ -d "/usr/local/opt/zplug" ]]; then
-  export ZPLUG_HOME=/usr/local/opt/zplug
-fi
-
-## m1 mac
-if [[ -d "/opt/homebrew/opt/zplug" ]]; then
-  export ZPLUG_HOME=/opt/homebrew/opt/zplug
-fi
-
-if [[ -f $ZPLUG_HOME/init.zsh ]]; then
-  source $ZPLUG_HOME/init.zsh
-  source "$HOME/.config/zsh/zplug" 2> /dev/null
+if [[ -d "$(brew --prefix)/opt/zplug" ]]; then
+  export ZPLUG_HOME=$(brew --prefix)/opt/zplug
+  if [[ -f $ZPLUG_HOME/init.zsh ]]; then
+    source $ZPLUG_HOME/init.zsh
+    source "$HOME/.config/zsh/zplug" 2> /dev/null
+  fi
 fi
 
 # load my own configures
