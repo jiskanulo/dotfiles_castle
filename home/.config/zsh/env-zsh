@@ -19,7 +19,7 @@ setopt PUSHD_TO_HOME
 unsetopt CLOBBER
 
 ## histories
-HISTFILE="~/Documents/dotfiles/zhistory"
+HISTFILE=${HOME}/Documents/dotfiles/zhistory
 HISTSIZE=1000000
 SAVEHIST=1000000
 
