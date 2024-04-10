@@ -45,6 +45,7 @@ path=(
   /{usr/local,opt/homebrew}/opt/gnu-sed/libexec/gnubin(N-/)
   /{usr/local,opt/homebrew}/opt/findutils/libexec/gnubin(N-/)
   /{usr/local,opt/homebrew}/opt/mysql-client/bin(N-/)
+  $HOME/Library/Application\ Support/JetBrains/Toolbox/scripts(N-/)
   $HOME/bin(N-/)
   $path
 )
