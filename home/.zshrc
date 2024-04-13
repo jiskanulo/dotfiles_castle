@@ -45,9 +45,6 @@ if [ $commands[peco] ]; then
   fi
 fi
 
-# autojump
-[[ -s $(brew --prefix)/etc/profile.d/autojump.sh ]] && source $(brew --prefix)/etc/profile.d/autojump.sh
-
 autoload -Uz compinit && compinit -i -u
 
 # Profile zsh
