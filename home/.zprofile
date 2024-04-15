@@ -50,6 +50,11 @@ path=(
   $path
 )
 
+fpath=(
+  /opt/homebrew/share/zsh/site-functions(N-)
+  $fpath
+)
+
 # composer
 if [ $commands[composer] ]; then
   path=(
