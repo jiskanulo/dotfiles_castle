@@ -35,11 +35,12 @@ if [ $commands[direnv] ]; then
   eval "$(direnv hook zsh)"
 fi
 
-# peco
-if [ $commands[peco] ]; then
+# fzf
+if [ $commands[fzf] ]; then
+  eval "$(fzf --zsh)"
+  source "$HOME/.config/zsh/function/fzf-select-history" 2> /dev/null
   source "$HOME/.config/zsh/function/cdd" 2> /dev/null
   source "$HOME/.config/zsh/function/d" 2> /dev/null
-  source "$HOME/.config/zsh/function/peco-select-history" 2> /dev/null
   if [ $commands[ghq] ]; then
     source "$HOME/.config/zsh/function/cdw" 2> /dev/null
   fi

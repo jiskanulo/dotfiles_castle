@@ -1,6 +1,6 @@
 # original: https://lowreal.net/2015/10/27/1
 function cdd() {
-	local selected_dir=$(lsof -c zsh -w -Ffn0 | perl -anal -e '/cwd/ and print((split /\0.?/)[1])' | sort | uniq | peco)
+	local selected_dir=$(lsof -c zsh -w -Ffn0 | perl -anal -e '/cwd/ and print((split /\0.?/)[1])' | sort | uniq | fzf)
 	if [ -n "$selected_dir" ]; then
 		cd ${selected_dir}
 	fi

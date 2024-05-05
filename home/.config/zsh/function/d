@@ -1,5 +1,5 @@
 function d() {
-    local dir=$(find ./ -maxdepth 1 -type d | peco)
+    local dir=$(find ./ -maxdepth 1 -type d | fzf)
     if [ -n "$dir" ]; then
         cd ${dir}
     fi
