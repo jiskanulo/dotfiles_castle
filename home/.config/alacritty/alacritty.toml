@@ -362,6 +362,10 @@ mouse = "Middle"
 history = 10000
 multiplier = 3
 
+[shell]
+program = "/opt/homebrew/bin/zsh"
+args = ["-l", "-c", "tmux attach || tmux"]
+
 [selection]
 save_to_clipboard = false
 semantic_escape_chars = ",│`|:\"' ()[]{}<>"
