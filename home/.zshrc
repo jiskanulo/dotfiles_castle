@@ -25,9 +25,9 @@ if [[ -f "$HOMESHICK_DIR/homeshick.sh" ]]; then
   source "$HOMESHICK_DIR/homeshick.sh"
 fi
 
-# anyenv
-if [ $commands[anyenv] ]; then
-  eval "$(anyenv init - --no-rehash)"
+# rbenv
+if [ $commands[rbenv] ]; then
+  eval "$(rbenv init --no-rehash - zsh)"
 fi
 
 # direnv
