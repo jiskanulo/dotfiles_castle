@@ -25,6 +25,11 @@ if [[ -f "$HOMESHICK_DIR/homeshick.sh" ]]; then
   source "$HOMESHICK_DIR/homeshick.sh"
 fi
 
+# mise
+if [ $commands[mise] ]; then
+  eval "$(mise activate zsh)"
+fi
+
 # rbenv
 if [ $commands[rbenv] ]; then
   eval "$(rbenv init --no-rehash - zsh)"
