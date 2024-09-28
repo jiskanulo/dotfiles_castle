@@ -30,11 +30,6 @@ if [ $commands[mise] ]; then
   eval "$(mise activate zsh)"
 fi
 
-# rbenv
-if [ $commands[rbenv] ]; then
-  eval "$(rbenv init --no-rehash - zsh)"
-fi
-
 # direnv
 if [ $commands[direnv] ]; then
   eval "$(direnv hook zsh)"
