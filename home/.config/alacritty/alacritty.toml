@@ -51,6 +51,7 @@ render_timer = false
 TERM = "xterm-256color"
 
 [font]
+normal = { family = "Hackgen", style = "Regular" }
 size = 20.0
 
 [font.glyph_offset]
@@ -365,7 +366,7 @@ mouse = "Middle"
 history = 10000
 multiplier = 3
 
-[shell]
+[terminal.shell]
 program = "/opt/homebrew/bin/zsh"
 args = ["-l", "-c", "tmux attach || tmux"]
 
@@ -386,3 +387,5 @@ lines = 85
 [window.padding]
 x = 20
 y = 20
+
+[terminal]
