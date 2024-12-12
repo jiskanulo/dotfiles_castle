@@ -4,29 +4,26 @@
 	ui = auto
 [alias]
 	b = branch
-	bd = branch -d
-	can = commit --amend --no-edit
-	cb = checkout -b
-	cd = checkout develop
+	bd = !git branch -d $(git branch --format='%(refname:short)' --no-column | fzf)
+	bD = !git branch -D $(git branch --format='%(refname:short)' --no-column | fzf)
+	can = commit --amend --no-edit --no-verify
 	ci = commit --verbose
-	cm = !git checkout main 2> /dev/null || git checkout master
-	co = checkout
-	co- = checkout -
-	coo = checkout --ours
-	cot = checkout --theirs
 	cp = cherry-pick -x
 	d = diff --patience
 	ds = diff --staged --patience
 	f = fetch
 	g = grep
 	gi = grep -I
-	grc = grep --count
-	grl = grep --files-with-matches
 	l = log --graph --pretty='format:%C(yellow)%h%Cblue%d%Creset %s %C(black bold)%an, %ar%Creset'
-	m = merge
 	n = now --all --stat
 	p = !git stash --include-untracked && git pull && git stash pop
+	r = restore
+	sw- = switch -
+	sc = switch -c
+	sd = switch develop
+	sm = !git switch main 2> /dev/null || git switch master
 	st = status --short --branch
+	sw = !git switch $(git branch --format='%(refname:short)' --no-column | fzf)
 [core]
 	fscache = true
 	pager = less -r
