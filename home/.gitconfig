@@ -18,12 +18,12 @@
 	n = now --all --stat
 	p = !git stash --include-untracked && git pull && git stash pop
 	r = restore
-	sw- = switch -
 	sc = switch -c
 	sd = switch develop
 	sm = !git switch main 2> /dev/null || git switch master
 	st = status --short --branch
 	sw = !git switch $(git branch --format='%(refname:short)' --no-column | fzf)
+	sw- = switch -
 [core]
 	fscache = true
 	pager = less -r
