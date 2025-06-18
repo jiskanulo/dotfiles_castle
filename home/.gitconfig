@@ -5,7 +5,6 @@
 [alias]
 	b = branch
 	bd = !git branch -d $(git branch --format='%(refname:short)' --no-column | fzf)
-	bD = !git branch -D $(git branch --format='%(refname:short)' --no-column | fzf)
 	can = commit --amend --no-edit --no-verify
 	ci = commit --verbose
 	cp = cherry-pick -x
@@ -15,7 +14,7 @@
 	g = grep
 	gi = grep -I
 	l = log --graph --pretty='format:%C(yellow)%h%Cblue%d%Creset %s %C(black bold)%an, %ar%Creset'
-	n = now --all --stat
+	n = "!git add --all . && git commit --no-verify --message \"WIP: $(date --iso-8601='seconds')\""
 	p = !git stash --include-untracked && git pull && git stash pop
 	r = restore
 	sc = switch -c
