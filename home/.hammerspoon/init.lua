@@ -23,3 +23,7 @@ toggleApp({"cmd", "shift"}, "6", "org.alacritty")
 -- ❯ lsappinfo info -only bundleid 'Obsidian'
 -- "CFBundleIdentifier"="md.obsidian"
 toggleApp({"cmd", "shift"}, "7", "md.obsidian")
+
+-- ❯ lsappinfo info -only bundleid 'Claude'
+-- "CFBundleIdentifier"="com.anthropic.claudefordesktop"
+toggleApp({"cmd", "shift"}, "9", "com.anthropic.claudefordesktop")
