@@ -9,6 +9,7 @@ pager:
 # Aliases allow you to create nicknames for gh commands
 aliases:
     co: '!id="$(gh pr list -L100 | fzf | cut -f1)"; [ -n "$id" ] && gh pr checkout "$id"'
+    get-issue: '!id="$(gh issue list -L100 | fzf | cut -f1)"; [ -n "$id" ] && mkdir -p docs/issues && gh issue view "$id" > docs/issues/"$id".md'
 # The path to a unix socket through which send HTTP connections. If blank, HTTP traffic will be handled by net/http.DefaultTransport.
 http_unix_socket:
 # What web browser gh should use when opening URLs. If blank, will refer to environment.
