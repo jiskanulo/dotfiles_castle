@@ -46,6 +46,9 @@ if [ $commands[fzf] ]; then
   fi
 fi
 
+# kiro
+[[ "$TERM_PROGRAM" == "kiro" ]] && . "$(kiro --locate-shell-integration-path zsh)"
+
 autoload -Uz compinit && compinit -i -u
 
 # Profile zsh
