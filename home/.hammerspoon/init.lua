@@ -16,9 +16,9 @@ function toggleApp(mods, key, bundleID)
   end)
 end
 
--- ❯ lsappinfo info -only bundleid 'Alacritty'
--- "CFBundleIdentifier"="org.alacritty"
-toggleApp({"cmd", "shift"}, "6", "org.alacritty")
+-- ❯ lsappinfo info -only bundleid Ghostty
+-- "CFBundleIdentifier"="com.mitchellh.ghostty"
+toggleApp({"cmd", "shift"}, "6", "com.mitchellh.ghostty")
 
 -- ❯ lsappinfo info -only bundleid 'Obsidian'
 -- "CFBundleIdentifier"="md.obsidian"
