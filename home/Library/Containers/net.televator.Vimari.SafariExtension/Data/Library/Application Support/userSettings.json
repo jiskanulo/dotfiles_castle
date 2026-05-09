@@ -19,13 +19,13 @@
       "scrollDownHalfPage": "d",
       "goToPageTop": "g g",
       "goToPageBottom": "shift+g",
-      "goToFirstInput": "g i",
+      "goToFirstInput": "",
       "goBack": "shift+h",
       "goForward": "shift+l",
-      "reload": "r",
+      "reload": "",
       "tabForward": "shift+k",
       "tabBack": "shift+j",
-      "closeTab": "x",
+      "closeTab": "",
       "openTab": "t"
   }
 }
