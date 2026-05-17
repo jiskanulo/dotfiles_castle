@@ -1,101 +1,21 @@
-以後すべての対話・コード編集・プロジェクト操作において、
-Claude Code の FileTool と内部解析を最大限活用し、
-コンテキスト使用量を最少に抑えるため、以下のルールに従ってください。
+# Basic Guidelines
 
----
+- Proactively ask questions when something is unclear
+- Always use AskUserQuestion to get answers when asking questions
+- **When presenting multiple options, provide recommendation level and reasoning for each**
+  - Recommendation level is a 5-point scale
+  - Not required when there is a single clear answer
 
-## 🟥 1. 出力ルール（最重要）
+# Plan Mode
 
-- **コードは変更箇所（diff または必要部分）だけを出力**
-- **既存ファイルの全文再掲は禁止**
-- **説明は最大 150 文字**
-- **再掲・長文・前回内容の引用を行わない**
-- **markdown 形式の余計な装飾は使用しない**
+- Make the plan extremely concise. Sacrifice grammar for the sake of concision.
+- At the end of each plan, give me a list of unresolved questions to answer, if any.
 
----
+# Communication Style
 
-## 🟥 2. FileTool（ファイル参照）利用の最適化
-
-Claude Code の特性に合わせて以下を徹底する：
-
-- **ファイルパス指定 → 必要部分だけを自動抽出**
-  LLM 内に全文展開せず、該当行だけを用いて回答する。
-
-- **プロジェクト全体のスキャンは内部で処理し、要点のみ返す**
-  → 大規模コードベースでもコンテキスト増加を最小にする。
-
-- **ユーザーがコードを貼り付けても、可能なら FileTool 経由で該当部分だけ再解析**
-  不要な長文展開を避ける。
-
-- **コード生成時だけ全文を出力してよい**
-  それ以外は絶対に diff / 抜粋に限定する。
-
----
-
-## 🟥 3. 入力解釈（最小限）
-
-- ユーザーの命令は **そのまま短く解釈** 
-  余計な補完や推測、長文の確認は禁止。
-
-- 曖昧な場合は **作業を進めずに質問を返す** 
-  質問はと回答の選択肢は AskUserQuestion を使う。
-  質問には5段階の推奨度と理由を書いて提示する。
-
----
-
-## 🟥 4. 出力フォーマット（Claude Code に最適化）
-
-常に次の形式に従う：
-
-```
-### 問題点
-- 箇条書き（最大3つ）
-
-### 修正（diff または該当部分）
-```diff
-...
-```
-
-### コメント（150字以内）
-- 要点だけ
-```
-
-- diff が適切でない場合のみ抜粋コードに切り替える。
-- 「説明だけで良い」タスクなら問題点とコメントだけ返す。
-
----
-
-## 🟥 5. 不必要な処理の禁止（省エネの肝）
-
-- 長い背景説明
-- 前の返答の引用
-- 仕様書レベルの文章生成
-- 自己説明や冗長な流れ語り 
-- 無関係な最適化提案
-- 「他のやり方」などの余計な分岐提案
-- コードの全文引用
-
----
-
-## 🟥 6. Claude Code 操作時の原則
-
-- **ユーザーが “この関数” と言ったら該当範囲のみ抽出**
-- **ユーザーが “このファイル” と言ったら必要部分だけ抽出**
-- **ユーザーが “このディレクトリ” と言ったら要点の一覧だけ返す**
-- **リファクタリング提案も差分ベースでする**
-
-FileTool の特性を使い、
-**巨大プロジェクトでも LLM コンテキストを潰さない構造**で回答する。
-
----
-
-## 🟥 7. 会話の原則（省エネ優先）
-
-- 常に **最短で修正が完了する回答** を優先
-- 冗長ゼロ
-- 再掲ゼロ 
-- 必要箇所のみ 
-- 出力は最小限
-- 判断は簡潔
-
----
+- Do not use unnecessary praise or flattery such as "Great question", "Well organized", "Excellent perspective", etc.
+- **Minimize output tokens. Prioritize information density over politeness**
+  - No preambles, hedging, or filler ("Upon investigation", "It appears that", "I believe")
+  - Use polite form but drop excessive honorifics and softeners
+  - Lead with conclusion, then evidence. Never open with background
+  - If one sentence suffices, stop at one sentence. Prefer bullet lists over prose
