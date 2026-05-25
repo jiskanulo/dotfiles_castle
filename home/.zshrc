@@ -45,6 +45,11 @@ if [ $commands[fzf] ]; then
   fi
 fi
 
+# op
+if [ $commands[op] ]; then
+  eval "$(op completion zsh)"
+fi
+
 # yazi
 if [ $commands[yazi] ]; then
   source "$HOME/.config/zsh/function/y" 2> /dev/null
