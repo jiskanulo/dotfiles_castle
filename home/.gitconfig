@@ -10,6 +10,7 @@
 	cp = cherry-pick -x
 	d = diff --patience
 	ds = diff --staged --patience
+	exclude-untracked = !git ls-files --others --exclude-standard >> \"$(git rev-parse --git-dir)/info/exclude\"
 	f = fetch
 	g = grep
 	gi = grep -I
