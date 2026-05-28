@@ -16,7 +16,7 @@
 	gi = grep -I
 	l = log --graph --pretty='format:%C(yellow)%h%Cblue%d%Creset %s %C(black bold)%an, %ar%Creset'
 	n = "!git add --all . && git commit --no-verify --message \"WIP: $(date --iso-8601='seconds')\""
-	p = !git stash --include-untracked && git pull && git stash pop
+	p = "!f() { git fetch origin && b=$(git symbolic-ref refs/remotes/origin/HEAD 2>/dev/null | sed \"s@^refs/remotes/origin/@@\") && [ -n \"$b\" ] || { echo \"origin/HEAD not set\"; exit 1; }; stashed=0; git stash --include-untracked | grep -q \"Saved working directory\" && stashed=1; git pull origin \"$b\" && { [ \"$stashed\" = \"1\" ] && git stash pop || true; }; }; f"
 	r = restore
 	sc = switch -c
 	sd = switch develop
