@@ -44,17 +44,6 @@
 	prune = true
 [hub]
 	protocol = https
-[diff "xlsx"]
-	binary = true
-	textconv = $GOPATH/bin/git-xlsx-textconv
-[diff "exif"]
-	textconv = exiftool
-[difftool "sourcetree"]
-	cmd = opendiff \"$LOCAL\" \"$REMOTE\"
-	path = 
-[mergetool "sourcetree"]
-	cmd = /Applications/SourceTree.app/Contents/Resources/opendiff-w.sh \"$LOCAL\" \"$REMOTE\" -ancestor \"$BASE\" -merge \"$MERGED\"
-	trustExitCode = true
 [credential]
 	helper = osxkeychain
 [gpg]
