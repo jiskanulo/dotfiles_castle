@@ -19,8 +19,7 @@
 	p = "!f() { git fetch origin && b=$(git symbolic-ref refs/remotes/origin/HEAD 2>/dev/null | sed \"s@^refs/remotes/origin/@@\") && [ -n \"$b\" ] || { echo \"origin/HEAD not set\"; exit 1; }; stashed=0; git stash --include-untracked | grep -q \"Saved working directory\" && stashed=1; git pull origin \"$b\" && { [ \"$stashed\" = \"1\" ] && git stash pop || true; }; }; f"
 	r = restore
 	sc = switch -c
-	sd = switch develop
-	sm = !git switch main 2> /dev/null || git switch master
+	sd = "!f() { b=$(git symbolic-ref refs/remotes/origin/HEAD 2>/dev/null | sed 's@^refs/remotes/origin/@@'); [ -n \"$b\" ] && git switch \"$b\" || git switch main 2>/dev/null || git switch master; }; f"
 	st = status --short --branch
 	sw = !git switch $(git branch --format='%(refname:short)' --no-column | fzf)
 	sw- = switch -
