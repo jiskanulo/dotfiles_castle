@@ -6,6 +6,15 @@
   - Recommendation level is a 5-point scale
   - Not required when there is a single clear answer
 
+# Delegation & Model Selection
+
+- Route work to subagents by role to keep expensive reasoning in the main
+  session. Criteria, delegation map, and the report contract:
+  @references/role-based-model-selection.md
+- Agents: `code-explore` (read-only investigation, sonnet), `implementer`
+  (well-specified edits, sonnet), `heavy-implementer` (multi-file / debugging,
+  opus), `test-runner` (run + summarize tests, haiku).
+
 # Plan Mode
 
 - Make the plan extremely concise. Sacrifice grammar for the sake of concision.
