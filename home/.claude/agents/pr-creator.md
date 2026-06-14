@@ -30,9 +30,10 @@ Confirm only your own commits are present (branch was cut from latest `main`).
 
 ### 2. Run Pre-PR Checks
 
-Run the project's own verification commands — infer them from the repo
-(`package.json` scripts, `Makefile`, `Cargo.toml`, CI config) rather than
-assuming a tool. Typically:
+Run the project's own verification commands — infer them from the repo's
+build/config files (e.g. `package.json`, `Cargo.toml`, `pyproject.toml`,
+`go.mod`, `Makefile` / `justfile`, or CI config) rather than assuming a specific
+stack or tool. Typically:
 
 - [ ] Tests pass
 - [ ] Type check passes (if a typed language)

@@ -91,8 +91,9 @@ For each feature or task group, create an Issue with:
 ````
 
 Use the project's actual verification commands in the acceptance criteria
-(infer them from the repo — `package.json` scripts, Makefile, CI config — rather
-than assuming a specific package manager or tool).
+(infer them from the repo's build/config files — e.g. `package.json`,
+`Cargo.toml`, `pyproject.toml`, `go.mod`, `Makefile` / `justfile`, or CI config
+— rather than assuming a specific stack, package manager, or tool).
 
 ```bash
 gh issue create \
