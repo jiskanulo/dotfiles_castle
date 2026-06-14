@@ -20,7 +20,10 @@ multi-file changes, cross-cutting refactors, and debugging from symptoms.
   existing conventions and the design system / architecture rules.
 - Add or update tests that lock in the new behavior and guard the bug you fixed.
 - Verify before reporting: run typecheck / lint / unit tests (and build where
-  relevant). Resolve regressions you introduced.
+  relevant). Resolve regressions you introduced. Invoke each tool the way the
+  repo documents it (its docs / `package.json` scripts / CI), wrapper or prefix
+  included; don't assume a specific version manager or container — if CI runs
+  `mise exec -- cargo test` or `docker compose exec app pnpm test`, use that.
 - Stage and commit only if explicitly asked; otherwise leave the working tree
   for the caller.
 

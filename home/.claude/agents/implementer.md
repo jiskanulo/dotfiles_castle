@@ -16,7 +16,10 @@ cleanly, following the existing code's conventions.
   import conventions.
 - Make the change, then add or update the tests that cover it.
 - Verify before reporting: run the project's typecheck / lint / unit tests as
-  applicable. Fix what you broke.
+  applicable. Fix what you broke. Invoke each tool the way the repo documents it
+  (its docs / `package.json` scripts / CI), wrapper or prefix included; don't
+  assume a specific version manager or container — if CI runs
+  `mise exec -- cargo test` or `docker compose exec app pnpm test`, use that.
 - If the spec turns out to be ambiguous or the change balloons across many
   files / needs debugging, stop and report that back rather than guessing — the
   caller may want heavy-implementer or to redesign.
