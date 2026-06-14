@@ -15,11 +15,13 @@ cleanly, following the existing code's conventions.
   before editing. Match the surrounding style: naming, comment density, idioms,
   import conventions.
 - Make the change, then add or update the tests that cover it.
-- Verify before reporting: run the project's typecheck / lint / unit tests as
-  applicable. Fix what you broke. Invoke each tool the way the repo documents it
-  (its docs / `package.json` scripts / CI), wrapper or prefix included; don't
-  assume a specific version manager or container — if CI runs
-  `mise exec -- cargo test` or `docker compose exec app pnpm test`, use that.
+- Verify before reporting: run the stack's standard checks for what you touched
+  — format / lint / type-check / tests / build, whichever the project actually
+  has. Fix what you broke. Invoke each tool the way the repo documents it (its
+  docs / build config / CI), wrapper or prefix included; don't assume a specific
+  stack, version manager, or container — e.g. `cargo test`,
+  `mise exec -- go test ./...`, or `docker compose exec app pnpm test`, depending
+  on the repo.
 - If the spec turns out to be ambiguous or the change balloons across many
   files / needs debugging, stop and report that back rather than guessing — the
   caller may want heavy-implementer or to redesign.

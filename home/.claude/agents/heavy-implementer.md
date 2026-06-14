@@ -19,11 +19,13 @@ multi-file changes, cross-cutting refactors, and debugging from symptoms.
 - Implement coherently across all affected files; keep changes consistent with
   existing conventions and the design system / architecture rules.
 - Add or update tests that lock in the new behavior and guard the bug you fixed.
-- Verify before reporting: run typecheck / lint / unit tests (and build where
-  relevant). Resolve regressions you introduced. Invoke each tool the way the
-  repo documents it (its docs / `package.json` scripts / CI), wrapper or prefix
-  included; don't assume a specific version manager or container — if CI runs
-  `mise exec -- cargo test` or `docker compose exec app pnpm test`, use that.
+- Verify before reporting: run the stack's standard checks — format / lint /
+  type-check / tests, plus build where relevant — whichever the project actually
+  has. Resolve regressions you introduced. Invoke each tool the way the repo
+  documents it (its docs / build config / CI), wrapper or prefix included; don't
+  assume a specific stack, version manager, or container — e.g. `cargo test`,
+  `mise exec -- go test ./...`, or `docker compose exec app pnpm test`, depending
+  on the repo.
 - Stage and commit only if explicitly asked; otherwise leave the working tree
   for the caller.
 
