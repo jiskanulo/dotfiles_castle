@@ -2,8 +2,8 @@
 # macOS desktop notification for Claude Code hooks (portable, no hardcoded paths).
 #
 # Invoked from ~/.claude/settings.json hooks, e.g.:
-#   "Stop":         [{ "hooks": [{ "type": "command", "command": "\"$HOME/.claude/hooks/notify.sh\" Stop" }] }]
-#   "Notification": [{ "hooks": [{ "type": "command", "command": "\"$HOME/.claude/hooks/notify.sh\" Notification" }] }]
+#   "Stop":         [{ "hooks": [{ "type": "command", "command": "~/.claude/hooks/notify.sh Stop" }] }]
+#   "Notification": [{ "hooks": [{ "type": "command", "command": "~/.claude/hooks/notify.sh Notification" }] }]
 #
 # Reads the hook payload JSON on stdin and uses its `.message` field when present
 # (Notification supplies one; Stop does not, so a sensible default is used).

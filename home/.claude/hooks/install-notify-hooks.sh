@@ -10,8 +10,9 @@
 set -euo pipefail
 
 settings="${CLAUDE_SETTINGS:-$HOME/.claude/settings.json}"
-cmd_stop='"$HOME/.claude/hooks/notify.sh" Stop'
-cmd_notif='"$HOME/.claude/hooks/notify.sh" Notification'
+# Unquoted ~ so the shell tilde-expands it at hook run time (path has no spaces).
+cmd_stop='~/.claude/hooks/notify.sh Stop'
+cmd_notif='~/.claude/hooks/notify.sh Notification'
 
 command -v jq >/dev/null 2>&1 || { echo "jq is required" >&2; exit 1; }
 
