@@ -1,9 +1,13 @@
 #!/bin/bash
 input=$(cat)
-model=$(echo "$input" | jq -r '.model.display_name')
-dir=$(echo "$input" | jq -r '.workspace.current_dir')
-dir_name=$(basename "$dir")
-branch=$(git --git-dir="$dir/.git" --work-tree="$dir" branch --show-current 2>/dev/null)
+model=$(echo "$input" | jq -r '.model.display_name // empty')
+dir=$(echo "$input" | jq -r '.workspace.current_dir // empty')
+dir_name=""
+branch=""
+if [ -n "$dir" ]; then
+  dir_name=$(basename "$dir")
+  branch=$(git -C "$dir" branch --show-current 2>/dev/null)
+fi
 
 # Token usage
 used_pct=$(echo "$input" | jq -r '.context_window.used_percentage // empty')
@@ -25,9 +29,9 @@ fmt_reset() {
   h=$(((diff % 86400) / 3600))
   m=$(((diff % 3600) / 60))
   if [ "$d" -gt 0 ]; then
-    printf '%dd%dh' "$d" "$h"
+    printf '%dd %dh' "$d" "$h"
   elif [ "$h" -gt 0 ]; then
-    printf '%dh%dm' "$h" "$m"
+    printf '%dh %dm' "$h" "$m"
   else
     printf '%dm' "$m"
   fi
@@ -42,10 +46,11 @@ model_id=$(echo "$input" | jq -r '.model.id')
 
 # Pricing per 1M tokens (approximate)
 case "$model_id" in
-  *opus*)       input_price=15; output_price=75 ;;
-  *sonnet*)     input_price=3;  output_price=15 ;;
-  *haiku*)      input_price=0.8; output_price=4 ;;
-  *)            input_price=3;  output_price=15 ;;
+  *fable*)  input_price=10; output_price=50;;
+  *opus*)   input_price=5;  output_price=25;;
+  *sonnet*) input_price=3;  output_price=15;;
+  *haiku*)  input_price=1;  output_price=5;;
+  *)        input_price=3;  output_price=15;;
 esac
 
 cost=$(echo "$total_input $total_output $input_price $output_price" | awk '{printf "%.3f", ($1 * $3 + $2 * $4) / 1000000}')
@@ -61,16 +66,16 @@ fi
 
 if [ -n "$used_pct" ]; then
   used_int=$(printf "%.0f" "$used_pct")
-  parts="$parts | ctx:${used_int}%"
+  parts="$parts | ctx: ${used_int}%"
 fi
 
 if [ -n "$session_pct" ]; then
   session_int=$(printf "%.0f" "$session_pct")
   session_left=$(fmt_reset "$session_reset")
   if [ -n "$session_left" ]; then
-    parts="$parts | session:${session_int}% (${session_left})"
+    parts="$parts | session: ${session_int}% (${session_left})"
   else
-    parts="$parts | session:${session_int}%"
+    parts="$parts | session: ${session_int}%"
   fi
 fi
 
@@ -78,9 +83,9 @@ if [ -n "$weekly_pct" ]; then
   weekly_int=$(printf "%.0f" "$weekly_pct")
   weekly_left=$(fmt_reset "$weekly_reset")
   if [ -n "$weekly_left" ]; then
-    parts="$parts | week:${weekly_int}% (${weekly_left})"
+    parts="$parts | week: ${weekly_int}% (${weekly_left})"
   else
-    parts="$parts | week:${weekly_int}%"
+    parts="$parts | week: ${weekly_int}%"
   fi
 fi
 
