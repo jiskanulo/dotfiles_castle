@@ -15,6 +15,14 @@
   (well-specified edits, sonnet), `heavy-implementer` (multi-file / debugging,
   opus), `test-runner` (run + summarize tests, haiku).
 
+# GitHub CLI (gh)
+
+- **Prefer native `gh` subcommands over `gh api`** whenever an equivalent exists.
+  `gh api` is the fallback for things the CLI can't yet do, not the default.
+  - Sub-issues: `gh issue create --parent <n>` / `gh issue edit <n> --add-sub-issue` — not `gh api`.
+  - Dependencies: `gh issue edit <n> --add-blocked-by/--add-blocking` (and `--remove-*`), `gh issue create --blocked-by/--blocking` — not `gh api .../dependencies`.
+  - Inspect with `gh issue view <n> --json blockedBy,blocking,subIssues`.
+
 # Plan Mode
 
 - Make the plan extremely concise. Sacrifice grammar for the sake of concision.
