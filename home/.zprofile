@@ -52,6 +52,7 @@ path=(
 )
 
 fpath=(
+  $HOME/.config/zsh/completions(N-/)
   /opt/homebrew/share/zsh/site-functions(N-)
   $fpath
 )

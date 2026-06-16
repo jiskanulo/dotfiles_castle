@@ -1,0 +1,67 @@
+#compdef ollama
+#
+# Zsh completion for ollama. ollama ships no completion of its own (its cobra
+# `completion` command is disabled), so the subcommand list is introspected
+# from `ollama help` at completion time — that way it tracks whatever version
+# of ollama happens to be installed instead of a hardcoded table.
+
+# Subcommands + their one-line descriptions, scraped live from `ollama help`.
+_ollama_subcommands() {
+  local -a subcmds
+  subcmds=(${(f)"$(
+    ollama help 2>/dev/null | awk '
+      /^Available Commands:/ { grab = 1; next }
+      /^Flags:/              { grab = 0 }
+      grab && NF >= 2        { printf "%s:%s\n", $1, substr($0, index($0, $2)) }
+    '
+  )"})
+  _describe -t subcommands 'ollama subcommand' subcmds
+}
+
+# Names of installed models (first column of `ollama list`, header dropped).
+_ollama_installed_models() {
+  local -a names
+  names=(${(f)"$(ollama list 2>/dev/null | sed '1d' | awk '{print $1}')"})
+  _describe -t models 'model' names
+}
+
+# Names of models currently loaded (first column of `ollama ps`).
+_ollama_loaded_models() {
+  local -a names
+  names=(${(f)"$(ollama ps 2>/dev/null | sed '1d' | awk '{print $1}')"})
+  _describe -t models 'loaded model' names
+}
+
+_ollama() {
+  local -a global_opts
+  global_opts=(
+    '(- *)'{-h,--help}'[show help]'
+    '(- *)'{-v,--version}'[show version]'
+    '--nowordwrap[disable automatic word wrapping]'
+    '--verbose[show response timings]'
+  )
+
+  # First word after `ollama`: a global option or the subcommand itself.
+  if (( CURRENT == 2 )); then
+    _arguments -s $global_opts '1:command:_ollama_subcommands'
+    return
+  fi
+
+  # Otherwise dispatch on whichever subcommand was chosen.
+  case ${words[2]} in
+    run|show|rm|push) _ollama_installed_models ;;
+    cp)               _ollama_installed_models ;;
+    stop)             _ollama_loaded_models ;;
+    pull)             _message 'remote model reference (e.g. llama3.2:latest)' ;;
+    create)
+      _arguments -s \
+        {-f,--file}'[path to a Modelfile]:modelfile:_files' \
+        {-q,--quantize}'[quantize the model]:level:(q4_0 q4_1 q5_0 q5_1 q8_0)' \
+        '1:new model name:'
+      ;;
+    help) _ollama_subcommands ;;
+    *)    _default ;;
+  esac
+}
+
+_ollama "$@"
