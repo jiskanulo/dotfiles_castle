@@ -71,6 +71,10 @@ files, or tools exist. The examples below (Rust/cargo, JS/pnpm) are illustrative
 
   Commands run sequentially, so there's no cache-lock contention.
   (`$REPO` = the primary working directory.)
+- **Claim each issue when you start it.** As you begin a track (create its
+  branch/worktree), assign the issue to yourself so the in-progress owner is
+  visible: `gh issue edit <n> --add-assignee @me`. Do this for every issue you
+  start — sequential or parallel — before implementing.
 
 ## Step 3 — Implement + verify (per worktree)
 
