@@ -42,8 +42,10 @@ typeset -gU cdpath fpath mailpath path
 path=(
   /{usr/local,opt/homebrew}/{bin,sbin}(N-/)
   /{usr/local,opt/homebrew}/opt/coreutils/libexec/gnubin(N-/)
-  /{usr/local,opt/homebrew}/opt/gnu-sed/libexec/gnubin(N-/)
+  /{usr/local,opt/homebrew}/opt/ffmpeg-full/bin(N-/)
+  /{usr/local,opt/homebrew}/opt/ffmpeg/bin(N-/)
   /{usr/local,opt/homebrew}/opt/findutils/libexec/gnubin(N-/)
+  /{usr/local,opt/homebrew}/opt/gnu-sed/libexec/gnubin(N-/)
   /{usr/local,opt/homebrew}/opt/mysql-client/bin(N-/)
   $HOME/Library/Application\ Support/JetBrains/Toolbox/scripts(N-/)
   $HOME/bin(N-/)
