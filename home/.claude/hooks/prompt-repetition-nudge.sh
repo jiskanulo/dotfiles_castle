@@ -28,10 +28,13 @@ def ngrams(s): return {s[i:i+N] for i in range(len(s)-N+1)} if len(s) >= N else 
 def jaccard(a, b): return (len(a & b) / len(a | b)) if a and b else 0.0
 
 def read_lines(p):
+    # errors="replace": a single corrupt (non-UTF-8) line must never raise and
+    # brick the hook. Without this a bad line makes every later run crash on read
+    # (before the append), silently freezing the log forever.
     try:
-        with open(p, encoding="utf-8") as f:
+        with open(p, encoding="utf-8", errors="replace") as f:
             return [ln.rstrip("\n") for ln in f if ln.strip()]
-    except FileNotFoundError:
+    except OSError:
         return []
 
 try:
