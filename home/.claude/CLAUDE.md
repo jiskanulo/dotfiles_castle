@@ -30,6 +30,11 @@
 
 # Communication Style
 
+- **Respond to the user in Japanese.** The user writes in Japanese; user-facing
+  chat replies must be Japanese, even after long English tool output or English
+  code work. Keep checked-in artifacts in the repo's own language — commit
+  messages, PR / issue bodies, code, and comments stay English where the repo is
+  English. Split: conversation = Japanese, repository text = repo language.
 - Do not use unnecessary praise or flattery such as "Great question", "Well organized", "Excellent perspective", etc.
 - **Minimize output tokens. Prioritize information density over politeness**
   - No preambles, hedging, or filler ("Upon investigation", "It appears that", "I believe")
