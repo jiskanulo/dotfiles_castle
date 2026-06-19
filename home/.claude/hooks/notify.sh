@@ -7,15 +7,18 @@
 #
 # Reads the hook payload JSON on stdin and uses its `.message` field when present
 # (Notification supplies one; Stop does not, so a sensible default is used).
-# The payload's `.cwd` basename is shown as the notification subtitle so you can
-# tell which session/working directory a notification came from at a glance.
+# The working directory (from `.cwd`) is shown as the notification subtitle so you
+# can tell which session it came from at a glance.
+#
+# The title carries a per-event emoji label so Stop vs Notification are instantly
+# distinguishable (banner color/icon can't be set via osascript): Stop is a green
+# check, Notification an hourglass. CLAUDE_NOTIFY_TITLE overrides the label.
 #
 # Overridable via env: CLAUDE_NOTIFY_TITLE, CLAUDE_NOTIFY_SOUND
 # (sound names come from /System/Library/Sounds, e.g. Glass, Ping, Hero, Submarine).
 # No-ops silently on non-macOS hosts so the same dotfiles are safe everywhere.
 
 event="${1:-}"
-title="${CLAUDE_NOTIFY_TITLE:-Claude Code}"
 # `-` (no colon) so an explicitly empty CLAUDE_NOTIFY_SOUND stays empty (silent),
 # while an unset value still falls back to the default.
 sound="${CLAUDE_NOTIFY_SOUND-Glass}"
@@ -28,30 +31,31 @@ if [ -n "$payload" ] && command -v jq >/dev/null 2>&1; then
   cwd="$(printf '%s' "$payload" | jq -r '.cwd // empty' 2>/dev/null)"
 fi
 
-# Append the working directory to the title so you can tell which session a
+# Show the working directory as the subtitle so you can tell which session a
 # notification came from at a glance. Normally "parent/leaf"; collapses to just
 # "leaf" for top-level dirs (/Users) and when parent == leaf (/foo/foo), and
 # shows "/" at the filesystem root.
+subtitle=""
 if [ -n "$cwd" ]; then
   leaf="$(basename "$cwd")"
   parentpath="$(dirname "$cwd")"
   parent="$(basename "$parentpath")"
   if [ "$cwd" = "/" ]; then
-    where="/"
+    subtitle="/"
   elif [ "$parentpath" = "/" ] || [ "$parent" = "$leaf" ]; then
-    where="$leaf"
+    subtitle="$leaf"
   else
-    where="$parent/$leaf"
+    subtitle="$parent/$leaf"
   fi
-  title="$title - $where"
 fi
-subtitle=""
 
+# Per-event title label (emoji for at-a-glance distinction) and default message.
 case "$event" in
-  Stop)         msg="${msg:-Task completed}" ;;
-  Notification) msg="${msg:-Waiting for your input}" ;;
-  *)            msg="${msg:-Claude Code}" ;;
+  Stop)         label="✅ Claude · done";    msg="${msg:-Task completed}" ;;
+  Notification) label="⏳ Claude · waiting"; msg="${msg:-Waiting for your input}" ;;
+  *)            label="Claude Code";          msg="${msg:-Claude Code}" ;;
 esac
+title="${CLAUDE_NOTIFY_TITLE:-$label}"
 
 # osascript is macOS-only; do nothing elsewhere.
 command -v osascript >/dev/null 2>&1 || exit 0
