@@ -16,7 +16,9 @@
 
 event="${1:-}"
 title="${CLAUDE_NOTIFY_TITLE:-Claude Code}"
-sound="${CLAUDE_NOTIFY_SOUND:-Glass}"
+# `-` (no colon) so an explicitly empty CLAUDE_NOTIFY_SOUND stays empty (silent),
+# while an unset value still falls back to the default.
+sound="${CLAUDE_NOTIFY_SOUND-Glass}"
 
 payload="$(cat 2>/dev/null)"
 msg=""
@@ -54,10 +56,19 @@ esac
 # osascript is macOS-only; do nothing elsewhere.
 command -v osascript >/dev/null 2>&1 || exit 0
 
-osascript \
-  -e 'on run argv' \
-  -e 'display notification (item 1 of argv) with title (item 2 of argv) subtitle (item 3 of argv) sound name (item 4 of argv)' \
-  -e 'end run' \
-  "$msg" "$title" "$subtitle" "$sound" >/dev/null 2>&1
+# An empty CLAUDE_NOTIFY_SOUND yields a silent banner (no `sound name` clause).
+if [ -n "$sound" ]; then
+  osascript \
+    -e 'on run argv' \
+    -e 'display notification (item 1 of argv) with title (item 2 of argv) subtitle (item 3 of argv) sound name (item 4 of argv)' \
+    -e 'end run' \
+    "$msg" "$title" "$subtitle" "$sound" >/dev/null 2>&1
+else
+  osascript \
+    -e 'on run argv' \
+    -e 'display notification (item 1 of argv) with title (item 2 of argv) subtitle (item 3 of argv)' \
+    -e 'end run' \
+    "$msg" "$title" "$subtitle" >/dev/null 2>&1
+fi
 
 exit 0

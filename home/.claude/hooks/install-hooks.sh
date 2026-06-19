@@ -5,10 +5,14 @@
 # new macOS host after `homeshick link`:
 #   ~/.claude/hooks/install-hooks.sh
 #
-# Registered hooks (event -> script):
-#   Stop             -> notify.sh                  (desktop notification on finish)
-#   Notification     -> notify.sh                  (desktop notification on input wait)
+# Registered hooks (event -> script [sound]):
+#   Stop             -> notify.sh    silent        (desktop notification on finish)
+#   Notification     -> notify.sh    Ping          (desktop notification on input wait)
 #   UserPromptSubmit -> prompt-repetition-nudge.sh (suggest a skill/alias on repeats)
+#
+# Per-event sounds are overridable via env when running this script:
+#   CLAUDE_STOP_SOUND=Glass CLAUDE_NOTIFICATION_SOUND=Hero ~/.claude/hooks/install-hooks.sh
+# An empty value (the Stop default) yields a silent banner.
 #
 # Safe to re-run: for each event it drops any existing hook pointing at the same
 # script (matched by basename) before re-adding, and leaves the rest of
@@ -29,6 +33,17 @@ hooks=(
 # notify.sh takes the event as an argument; other scripts read everything from stdin.
 arg_for() { case "$1" in notify.sh) printf ' %s' "$2" ;; *) printf '' ;; esac; }
 
+# Per-event CLAUDE_NOTIFY_SOUND prefix for notify.sh hooks. An explicitly empty
+# value yields a silent banner (notify.sh drops the `sound name` clause when
+# CLAUDE_NOTIFY_SOUND is set-but-empty). Non-notify events get no prefix.
+sound_for() {
+  case "$1" in
+    Stop)         printf 'CLAUDE_NOTIFY_SOUND=%s ' "${CLAUDE_STOP_SOUND-}" ;;
+    Notification) printf 'CLAUDE_NOTIFY_SOUND=%s ' "${CLAUDE_NOTIFICATION_SOUND-Ping}" ;;
+    *)            printf '' ;;
+  esac
+}
+
 command -v jq >/dev/null 2>&1 || { echo "jq is required" >&2; exit 1; }
 
 mkdir -p "$(dirname "$settings")"
@@ -37,7 +52,7 @@ mkdir -p "$(dirname "$settings")"
 for entry in "${hooks[@]}"; do
   event="${entry%% *}"
   script="${entry##* }"
-  cmd="~/.claude/hooks/${script}$(arg_for "$script" "$event")"
+  cmd="$(sound_for "$event")~/.claude/hooks/${script}$(arg_for "$script" "$event")"
 
   tmp="$(mktemp)"
   jq \
