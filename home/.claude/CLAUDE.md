@@ -23,6 +23,13 @@
   - Dependencies: `gh issue edit <n> --add-blocked-by/--add-blocking` (and `--remove-*`), `gh issue create --blocked-by/--blocking` — not `gh api .../dependencies`.
   - Inspect with `gh issue view <n> --json blockedBy,blocking,subIssues`.
 
+# Harness Tuning
+
+- After completing a **feature** (a coherent unit of work spanning several PRs —
+  not after every individual PR, and not for trivial one-offs), proactively run
+  `/suggest-harness` to capture any new rules / automation / memory worth
+  configuring. Present its proposals; apply only what I approve.
+
 # Plan Mode
 
 - Make the plan extremely concise. Sacrifice grammar for the sake of concision.
