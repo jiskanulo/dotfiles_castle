@@ -9,13 +9,19 @@ allowed-tools: Read, Grep, Glob, Bash
 **Role**: Analyze the recent conversation history and propose how to configure
 the harness so Claude works better for this user / project. **Not limited to
 appending to CLAUDE.md** — route each signal to the configuration mechanism that
-actually fits its nature.
+actually fits its nature. Proposals are not only **additions**: also propose
+**removing** dead/redundant config and **reconciling** entries that contradict
+each other or current reality. The goal is a harness that stays lean, not one
+that only grows.
 
 **Important**:
 - Output **proposals** (where + what to change), not a summary or a completion
   report.
 - This command **proposes only**. Any file write / setting change happens later,
   after the user approves.
+- Before proposing, **read the existing harness** so add / remove / reconcile
+  decisions are grounded in what is already configured (see "Read current
+  state").
 
 `$ARGUMENTS`: optional focus (`rules` / `automation` / `permissions` / `memory`
 / `workflow` / `all`; defaults to `all`).
@@ -46,7 +52,19 @@ Guidance:
 - One signal can span mechanisms (e.g. "always test" → the policy goes in
   CLAUDE.md, the enforcement in a hook). Propose both when so.
 
-## Detection triggers
+## Read current state
+
+Before scanning for new signals, **read the harness that already exists** so you
+can detect redundancy / contradiction / staleness and avoid re-proposing what's
+configured. Read what's relevant to the focus and the conversation:
+
+- Project `./CLAUDE.md` and `.claude/` (settings.json, skills, subagents).
+- User `~/.claude/CLAUDE.md`, `~/.claude/settings.json`, and `references/*`.
+- Memory: `MEMORY.md` index + the individual memory files it points to.
+
+Keep this in context while applying both trigger sets below.
+
+## Detection triggers — additions
 
 Scan the recent conversation for these, then route each via the table above:
 
@@ -64,6 +82,27 @@ Scan the recent conversation for these, then route each via the table above:
 7. **A repeated multi-step procedure** → a skill/command; **a repeated
    delegation** → a subagent
 
+## Detection triggers — cleanup (remove / reconcile)
+
+Compare the existing harness (from "Read current state") against this session's
+reality. Propose subtractions and fixes, not just additions:
+
+8. **Contradiction** — an existing rule/memory conflicts with another existing
+   entry, or with how the user actually had Claude work this session. → propose
+   `Edit (reconcile)`: which entries clash, and the single corrected wording.
+9. **Stale / falsified** — an entry references a file, flag, command, path, or
+   agent that no longer exists, or a decision the conversation has overturned.
+   → propose `Remove`, or `Edit` to the new reality. Verify existence (Grep /
+   Glob / Read) before claiming something is gone.
+10. **Redundant / dead** — the same guidance appears in multiple places, or a
+    rule so vague/generic it never changes behavior (dead text). → propose
+    `Remove` the duplicate (name which copy to keep) or consolidation.
+
+Be conservative on cleanup: only propose removing/rewriting when the evidence is
+concrete (a contradiction observed this session, a path you confirmed missing).
+Do **not** remove an entry merely because it didn't come up this session —
+absence of use is not evidence it's wrong.
+
 ## Output format
 
 **Required**: start with "Analyzed the conversation history." Do not write a
@@ -75,10 +114,15 @@ When triggers fire, for each proposal:
 Analyzed the conversation history. Proposed harness-configuration changes:
 
 ### Proposal N: [one-line title]
-- **What**: [concretely what to configure / the draft text to add]
+- **Type**: Add | Remove | Reconcile
+- **What**: [Add → the draft text to add. Remove → the exact entry to delete +
+  why it's dead/stale (quote it). Reconcile → the clashing entries + the single
+  corrected wording that replaces them]
 - **Where**: [CLAUDE.md (project|user) / settings.json hook / permissions /
   memory (type) / skill / subagent / /config]
-- **Why**: [which trigger, repeat count, or other evidence]
+- **Why**: [which trigger, repeat count, or other evidence; for Remove/Reconcile,
+  the concrete proof — contradiction observed, path confirmed missing, duplicate
+  location]
 - **How to apply**: [which file, how. Hooks / permissions / settings via the
   `update-config` / `fewer-permission-prompts` skills; CLAUDE.md / memory edited
   directly; skill / subagent as a new file]
@@ -105,11 +149,15 @@ Analyzed the conversation history. No harness-configuration changes to propose.
 - Technically accurate, clearly configurable items.
 - Patterns newly established or repeatedly confirmed this session.
 - Automation that would reliably cut rework or prompts.
+- **Removal / reconciliation** of existing entries that are contradictory,
+  stale, falsified, or duplicated — with concrete evidence.
 
 ### Don't propose (✗)
 - One-off judgments or single-case handling.
-- Anything already in CLAUDE.md / settings / memory.
+- Re-adding anything already in CLAUDE.md / settings / memory.
 - Vague / unclear instructions, or a single experiment.
+- Removing an entry only because it was unused this session (absence of use ≠
+  wrong); cleanup needs concrete proof, not a hunch.
 
 ## After running
 
