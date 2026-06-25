@@ -1,5 +1,5 @@
 ---
-description: Analyze the recent conversation and propose harness-configuration changes that make Claude work better — not limited to CLAUDE.md, but routed to the best mechanism (hooks / permissions / memory / skill / subagent, …). Proposes only; never auto-applies.
+description: Analyze the recent conversation and propose harness-configuration changes that make Claude work better — not limited to CLAUDE.md, but routed to the best mechanism (rules / hooks / permissions / memory / skill / subagent, …). Proposes only; never auto-applies.
 argument-hint: "[optional focus: rules | automation | permissions | memory | workflow | all (default)]"
 allowed-tools: Read, Grep, Glob, Bash
 ---
@@ -35,20 +35,27 @@ needs hooks.
 
 | Nature of the signal | Where it belongs | Example |
 |---|---|---|
-| A durable rule / convention / assumption / coding preference Claude should always follow | **CLAUDE.md** (project `./CLAUDE.md` or user `~/.claude/CLAUDE.md`) | "Use the existing finder, not the ORM default" |
-| A behavior that must happen **automatically every time** ("from now on, when X, do Y") | **settings.json hooks** (PreToolUse / PostToolUse / Stop, …); configure via the `update-config` skill | "Always run the formatter after an edit", "lint before commit" |
+| A durable, **always-relevant** rule / convention / assumption / coding preference Claude should follow project-wide | **CLAUDE.md** (project `./CLAUDE.md` or user `~/.claude/CLAUDE.md`) | "Use the existing finder, not the ORM default" |
+| A constraint that applies **only to specific files / directories**, or a cross-cutting convention that recurs in particular paths | **path-scoped Rule** (`paths:` field) — not CLAUDE.md | "migrations are append-only", "in `api/` always validate with the shared schema" |
+| A behavior that must happen **automatically every time** ("from now on, when X, do Y"), or an **absolute prohibition** that must be enforced ("never do X") | **settings.json hooks** (PreToolUse deny / PostToolUse / Stop, …); configure via the `update-config` skill. Org-wide guardrails → **Managed Settings** | "Always run the formatter after an edit", "block force-push to main" |
 | The **same permission prompt** recurring | **permissions allowlist** (settings.json); use the `fewer-permission-prompts` skill | "Approving `gh issue …` every time" |
 | A **non-obvious fact / history / preference** that's background knowledge, not an instruction | **memory** (user / feedback / project / reference) | "This person's role", "why an option was rejected" |
 | A repeated **multi-step workflow** | a **skill / slash command** | "Every time: branch → verify → PR → merge" |
-| A repeated **delegation pattern** | a **subagent** definition | "Investigate with a read-only agent, implement with another" |
+| A repeated **delegation pattern**, or a **side task that would clutter main context** with intermediate results (deep search, log/dep analysis) — even one-off | a **subagent** definition | "Investigate with a read-only agent, implement with another"; "isolate a noisy dependency audit" |
 | Theme / model / statusline / output style | **`/config` family** | Changing the output style |
 
 Guidance:
 - **Project-specific** → that repo's `./CLAUDE.md` / `.claude/`. **User-universal**
   (across all projects) → `~/.claude/` (user CLAUDE.md / settings / memory).
   Putting it at the wrong scope pollutes other projects.
-- Writing an automatic behavior into CLAUDE.md does **not** make it run (Claude's
-  memory doesn't guarantee behavior) — propose hooks for those.
+- **Keep CLAUDE.md lean** — it loads every session, so it should hold only
+  always-relevant facts. Route procedures to a **skill**, path/file-specific
+  constraints to a **path-scoped Rule**, and automation/prohibitions to **hooks**.
+  When a CLAUDE.md grows unwieldy, split per-area rules into a subdirectory
+  `CLAUDE.md` (loads on-demand) rather than piling everything into the root file.
+- Writing an automatic behavior into CLAUDE.md does **not** make it run, and a
+  text "never do X" is **not** enforced (it bends under pressure / injection) —
+  propose hooks (PreToolUse deny) for those, Managed Settings for org-wide bans.
 - One signal can span mechanisms (e.g. "always test" → the policy goes in
   CLAUDE.md, the enforcement in a hook). Propose both when so.
 
@@ -69,7 +76,13 @@ Keep this in context while applying both trigger sets below.
 Scan the recent conversation for these, then route each via the table above:
 
 1. **Project-specific rules** — "use X not Y", "in this project we…", or a
-   correction toward a project-specific way after standard code. → CLAUDE.md
+   correction toward a project-specific way after standard code. → CLAUDE.md if
+   always-relevant; if it only applies to **certain files/dirs**, a path-scoped
+   Rule (next item)
+1b. **Path/file-specific constraints** — a rule scoped to certain files or
+   directories ("migrations are append-only", "in `api/` always validate…"). →
+   a **path-scoped Rule** (`paths:`), not the root CLAUDE.md, so it doesn't load
+   during unrelated work
 2. **Repeated correction of the same kind** (≥ 2 times, or the same pattern
    across files). → a hook/skill if mechanical, CLAUDE.md if it needs judgment
 3. **Patterns that must stay in sync** — "keep these two aligned", "match the web
@@ -118,8 +131,8 @@ Analyzed the conversation history. Proposed harness-configuration changes:
 - **What**: [Add → the draft text to add. Remove → the exact entry to delete +
   why it's dead/stale (quote it). Reconcile → the clashing entries + the single
   corrected wording that replaces them]
-- **Where**: [CLAUDE.md (project|user) / settings.json hook / permissions /
-  memory (type) / skill / subagent / /config]
+- **Where**: [CLAUDE.md (project|user) / path-scoped Rule / settings.json hook /
+  permissions / memory (type) / skill / subagent / /config]
 - **Why**: [which trigger, repeat count, or other evidence; for Remove/Reconcile,
   the concrete proof — contradiction observed, path confirmed missing, duplicate
   location]
@@ -166,6 +179,6 @@ Analyzed the conversation history. No harness-configuration changes to propose.
    - hooks / permissions / settings → the `update-config` (or
      `fewer-permission-prompts`) skill
    - CLAUDE.md / memory → edit directly
-   - skill / subagent → create a new file
+   - skill / subagent / path-scoped Rule → create a new file
 3. Project-scoped changes go in the same PR as the code change and get reviewed.
    User-scoped changes (`~/.claude`) follow the dotfiles workflow.
