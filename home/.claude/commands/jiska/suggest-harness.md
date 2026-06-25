@@ -168,6 +168,19 @@ When nothing qualifies:
 Analyzed the conversation history. No harness-configuration changes to propose.
 ```
 
+**Standing pointer** (append to either output above, on its own line): this
+command analyzes one conversation, so it only flags a permission via trigger 5
+when that prompt recurred *this session*. For ongoing, frequency-based pruning
+across all transcripts, point the user to the `/fewer-permission-prompts` skill:
+
+```markdown
+> Tip: to prune recurring permission prompts across your whole transcript
+> history (not just this conversation), run `/fewer-permission-prompts`.
+```
+
+Show this pointer once, as a final line — do not invoke the skill yourself
+(it auto-applies an allowlist; this command proposes only).
+
 **Do not**:
 - Write in a completion-report voice ("configured X") — this is a proposal, not
   an action.
