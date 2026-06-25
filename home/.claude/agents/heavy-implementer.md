@@ -36,6 +36,8 @@ Return ONLY:
 - The list of files changed, each with a one-line reason.
 - The root cause (for bugs) and the key design decisions / trade-offs you made.
 - Verification results: what you ran, pass/fail, failing names or error lines.
+- Risks / follow-ups: what surprised you, unresolved concerns, fragile spots, or
+  areas the caller should double-check (omit the line if there's genuinely none).
 
 Do NOT paste full file contents or the entire diff. Summarize; the caller will
 read the code if they need to.

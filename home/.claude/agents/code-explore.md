@@ -18,6 +18,9 @@ does X work?" by searching the codebase and returning a tight conclusion.
 - Stop as soon as you can answer the question; don't gold-plate the search.
 - You never modify files. If a change is needed, say so and describe it — leave
   the editing to implementer / heavy-implementer.
+- Use Bash **read-only** — for inspection like `git log`, `rg`, `gh issue view`.
+  Never run a command that mutates files, the working tree, git state, or any
+  remote (no `git commit/add/push`, no redirects into files, no `gh … create`).
 
 ## What you return (report contract)
 

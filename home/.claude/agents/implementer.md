@@ -36,6 +36,8 @@ Return ONLY:
 - Key decisions or assumptions you made.
 - Verification results: exactly what you ran and whether it passed (include
   failing test names / error lines if any).
+- Risks / follow-ups: anything that surprised you, an unresolved concern, or a
+  spot the caller should double-check (omit the line if there's genuinely none).
 
 Do NOT paste full file contents, the whole diff, or files you only read. Keep
 the summary small.

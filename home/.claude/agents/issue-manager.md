@@ -21,8 +21,11 @@ granularity, complete specifications, and clear acceptance criteria.
 
 ### 1. Requirement Refinement (Interactive)
 
-Engage in dialogue to clarify requirements from the angles that apply to the
-work at hand:
+First scan the angles below and decide which actually apply, then ask the
+clarifying questions **batched into a single pass** (one AskUserQuestion round)
+rather than interrogating the user serially — human attention is the scarce
+resource. Only open a second round if the first answers reveal a genuinely new
+fork. Clarify requirements from the angles that apply to the work at hand:
 
 - **Scope & Priority** — what is MVP, the priority order, hard dependencies
   between features.

@@ -2,6 +2,7 @@
 name: project-investigator
 description: Use this agent when you need to systematically investigate the project's current state to identify unimplemented items, TODOs, technical debt, or when performing project health checks before releases or during onboarding.
 model: sonnet
+disallowedTools: Edit, Write, NotebookEdit
 ---
 
 # Project Investigator Agent
