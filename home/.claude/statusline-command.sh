@@ -1,28 +1,61 @@
 #!/bin/bash
 input=$(cat)
-model=$(echo "$input" | jq -r '.model.display_name // empty')
-dir=$(echo "$input" | jq -r '.workspace.current_dir // empty')
+
+# Require jq; degrade gracefully if missing.
+if ! command -v jq >/dev/null 2>&1; then
+  printf 'jq not found'
+  exit 0
+fi
+
+# Extract every field in a single jq pass. Spawning jq once per field is the
+# dominant cost on a status line that re-renders constantly. Fields are joined
+# with US (\037) rather than tab: read merges consecutive whitespace delimiters,
+# which would collapse empty fields and shift every later value.
+IFS=$'\037' read -r model effort dir used_pct \
+  session_pct weekly_pct session_reset weekly_reset \
+  total_input total_output model_id < <(
+  jq -r '
+    [ .model.display_name,
+      .effort.level,
+      .workspace.current_dir,
+      .context_window.used_percentage,
+      .rate_limits.five_hour.used_percentage,
+      .rate_limits.seven_day.used_percentage,
+      .rate_limits.five_hour.resets_at,
+      .rate_limits.seven_day.resets_at,
+      .context_window.total_input_tokens,
+      .context_window.total_output_tokens,
+      .model.id
+    ] | map(. // "" | tostring) | join("\u001f")
+  ' <<<"$input"
+)
+
 dir_name=""
 branch=""
 if [ -n "$dir" ]; then
-  dir_name=$(basename "$dir")
-  branch=$(git -C "$dir" branch --show-current 2>/dev/null)
+  dir_name="${dir##*/}"
+  branch=$(git -C "$dir" symbolic-ref --short -q HEAD 2>/dev/null)
 fi
 
-# Token usage
-used_pct=$(echo "$input" | jq -r '.context_window.used_percentage // empty')
+# Round a numeric value to an integer; print nothing for empty/non-numeric input.
+# Rejects empty, any non-[0-9.] char, and strings with more than one dot.
+round() {
+  case "$1" in
+    '' | *[!0-9.]* | *.*.* ) return ;;
+  esac
+  printf '%.0f' "$1"
+}
 
-# Rate limits: 5-hour window (current session) and 7-day window (weekly)
-session_pct=$(echo "$input" | jq -r '.rate_limits.five_hour.used_percentage // empty')
-weekly_pct=$(echo "$input" | jq -r '.rate_limits.seven_day.used_percentage // empty')
-session_reset=$(echo "$input" | jq -r '.rate_limits.five_hour.resets_at // empty')
-weekly_reset=$(echo "$input" | jq -r '.rate_limits.seven_day.resets_at // empty')
+# Current epoch seconds, captured once so fmt_reset doesn't fork date per call.
+now=$(date +%s)
 
-# Format seconds-until-reset as a compact "Nd Nh", "Nh Nm", or "Nm" string
+# Format seconds-until-reset as a compact "Nd Nh", "Nh Nm", or "Nm" string.
+# Expects an epoch-seconds integer; ignores anything non-numeric.
 fmt_reset() {
-  local target="$1" now diff d h m
-  [ -z "$target" ] && return
-  now=$(date +%s)
+  local target="$1" diff d h m
+  case "$target" in
+    '' | *[!0-9]* ) return ;;
+  esac
   diff=$((target - now))
   [ "$diff" -le 0 ] && { printf 'now'; return; }
   d=$((diff / 86400))
@@ -37,14 +70,7 @@ fmt_reset() {
   fi
 }
 
-# Cost estimate (approximate): claude-opus-4 ~$15/$75 per M tokens input/output
-# Use display_name to decide pricing tier
-total_input=$(echo "$input" | jq -r '.context_window.total_input_tokens // 0')
-total_output=$(echo "$input" | jq -r '.context_window.total_output_tokens // 0')
-
-model_id=$(echo "$input" | jq -r '.model.id')
-
-# Pricing per 1M tokens (approximate)
+# Cost estimate (approximate). Pricing per 1M tokens by tier.
 case "$model_id" in
   *fable*)  input_price=10; output_price=50;;
   *opus*)   input_price=5;  output_price=25;;
@@ -53,10 +79,16 @@ case "$model_id" in
   *)        input_price=3;  output_price=15;;
 esac
 
-cost=$(echo "$total_input $total_output $input_price $output_price" | awk '{printf "%.3f", ($1 * $3 + $2 * $4) / 1000000}')
+cost=$(awk -v i="${total_input:-0}" -v o="${total_output:-0}" \
+  -v ip="$input_price" -v op="$output_price" \
+  'BEGIN { printf "%.3f", (i * ip + o * op) / 1000000 }')
 
 # Build status line
 parts="$model"
+
+if [ -n "$effort" ]; then
+  parts="$parts [$effort]"
+fi
 
 if [ -n "$branch" ]; then
   parts="$parts | $dir_name ($branch)"
@@ -64,13 +96,13 @@ else
   parts="$parts | $dir_name"
 fi
 
-if [ -n "$used_pct" ]; then
-  used_int=$(printf "%.0f" "$used_pct")
+used_int=$(round "$used_pct")
+if [ -n "$used_int" ]; then
   parts="$parts | ctx: ${used_int}%"
 fi
 
-if [ -n "$session_pct" ]; then
-  session_int=$(printf "%.0f" "$session_pct")
+session_int=$(round "$session_pct")
+if [ -n "$session_int" ]; then
   session_left=$(fmt_reset "$session_reset")
   if [ -n "$session_left" ]; then
     parts="$parts | session: ${session_int}% (${session_left})"
@@ -79,8 +111,8 @@ if [ -n "$session_pct" ]; then
   fi
 fi
 
-if [ -n "$weekly_pct" ]; then
-  weekly_int=$(printf "%.0f" "$weekly_pct")
+weekly_int=$(round "$weekly_pct")
+if [ -n "$weekly_int" ]; then
   weekly_left=$(fmt_reset "$weekly_reset")
   if [ -n "$weekly_left" ]; then
     parts="$parts | week: ${weekly_int}% (${weekly_left})"
