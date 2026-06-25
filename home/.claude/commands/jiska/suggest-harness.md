@@ -1,7 +1,7 @@
 ---
-description: Analyze the recent conversation and propose harness-configuration changes that make Claude work better — not limited to CLAUDE.md, but routed to the best mechanism (rules / hooks / permissions / memory / skill / subagent, …). Proposes only; never auto-applies.
-argument-hint: "[optional focus: rules | automation | permissions | memory | workflow | all (default)]"
-allowed-tools: Read, Grep, Glob, Bash
+description: Analyze the recent conversation (or a best-practices article URL) and propose harness-configuration changes that make Claude work better — not limited to CLAUDE.md, but routed to the best mechanism (rules / hooks / permissions / memory / skill / subagent, …). Proposes only; never auto-applies.
+argument-hint: "[focus: rules | automation | permissions | memory | workflow | all (default)] OR a best-practices article URL to map onto the existing harness"
+allowed-tools: Read, Grep, Glob, Bash, WebFetch
 ---
 
 # Harness Tuning — Proposal Command
@@ -23,8 +23,26 @@ that only grows.
   decisions are grounded in what is already configured (see "Read current
   state").
 
-`$ARGUMENTS`: optional focus (`rules` / `automation` / `permissions` / `memory`
-/ `workflow` / `all`; defaults to `all`).
+`$ARGUMENTS`: either a **focus** (`rules` / `automation` / `permissions` /
+`memory` / `workflow` / `all`; defaults to `all`) **or a URL**. Treat the
+argument as a URL when it looks like one (`http(s)://…`); otherwise as a focus.
+
+## Two input modes
+
+- **Conversation mode** (default — no URL given): the signals come from the
+  recent conversation history. Apply the detection triggers below to it.
+- **Article mode** (a URL is given): WebFetch the URL and extract the
+  best-practices **principles** it states. Treat each principle as a candidate
+  signal — then route, compare against the existing harness, and propose exactly
+  as in conversation mode. Specifics:
+  - Map each principle to the mechanism the Routing table assigns it; one
+    article usually spans several mechanisms.
+  - **Honestly mark non-applicable principles** — guidance aimed at a different
+    surface (org/SaaS/Slack-style deployment, a feature this setup lacks) gets a
+    one-line "non-applicable, why" note, not a forced proposal.
+  - Cross-check every proposal against what's **already configured** (see "Read
+    current state") so you propose only the genuine gap, not what the harness
+    already does.
 
 ## Routing — pick the right mechanism (the core of this command)
 
@@ -118,7 +136,8 @@ absence of use is not evidence it's wrong.
 
 ## Output format
 
-**Required**: start with "Analyzed the conversation history." Do not write a
+**Required**: start with "Analyzed the conversation history." (conversation
+mode) or "Analyzed <article title / URL>." (article mode). Do not write a
 completion report or a summary.
 
 When triggers fire, for each proposal:
