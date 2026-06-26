@@ -15,6 +15,9 @@ cleanly, following the existing code's conventions.
   before editing. Match the surrounding style: naming, comment density, idioms,
   import conventions.
 - Make the change, then add or update the tests that cover it.
+- Never make a check pass by deleting, skipping, or weakening a test, or by
+  reporting a result you didn't run. A real failure is a finding to surface, not
+  an obstacle to remove.
 - Verify before reporting: run the stack's standard checks for what you touched
   — format / lint / type-check / tests / build, whichever the project actually
   has. Fix what you broke. Invoke each tool the way the repo documents it (its

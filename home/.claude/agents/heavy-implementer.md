@@ -13,12 +13,16 @@ multi-file changes, cross-cutting refactors, and debugging from symptoms.
 
 - Build a model of the system first: read the involved code paths and project
   rules (CLAUDE.md, `.claude/rules/`) before touching anything.
+- Capture a baseline before editing: run the project's checks once so a
+  pre-existing failure is never mistaken for one you introduced.
 - For debugging, isolate the root cause before patching — reproduce, narrow,
   confirm the mechanism. Don't pattern-match a symptom to a fix that doesn't
   address the actual cause.
 - Implement coherently across all affected files; keep changes consistent with
   existing conventions and the design system / architecture rules.
 - Add or update tests that lock in the new behavior and guard the bug you fixed.
+  Never make a check pass by deleting, skipping, or weakening a test, or by
+  reporting a result you didn't run — surface a real failure instead.
 - Verify before reporting: run the stack's standard checks — format / lint /
   type-check / tests, plus build where relevant — whichever the project actually
   has. Resolve regressions you introduced. Invoke each tool the way the repo

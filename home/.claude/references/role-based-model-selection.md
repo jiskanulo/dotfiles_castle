@@ -63,3 +63,10 @@ Subagents must return **only**:
 They must **not** paste full file contents, large diffs, or the bodies of files
 they merely read. The whole point is to keep the main context small — a summary
 that re-dumps everything defeats it.
+
+## Verification discipline (applies to every agent)
+
+Verification is a gate, not a formality. No agent may make a check pass by
+deleting, skipping, or weakening a test, loosening an assertion, or reporting a
+result it did not actually run. A genuine failure is a finding to report, not an
+obstacle to remove — stop and surface it to the caller.

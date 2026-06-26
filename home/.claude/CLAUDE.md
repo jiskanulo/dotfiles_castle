@@ -30,9 +30,31 @@
   `/suggest-harness` to capture any new rules / automation / memory worth
   configuring. Present its proposals; apply only what I approve.
 
+# Task Execution
+
+- Full operational loop (prepare → atomic units → externalize state → verify):
+  @references/task-execution.md
+- **Prepare before editing.** Restate the goal + done-criteria in one line, then
+  gather the context you need up front (read the code paths and rules) so you
+  don't discover constraints mid-edit. For non-trivial work, run a baseline
+  check (build / test) first — a pre-existing red must never be mistaken for one
+  you caused.
+- **Keep work atomic.** Scope each unit small; finish and verify one before
+  starting the next. Don't try to do too much in a single pass.
+- **Externalize progress on long tasks.** Long turns get compacted, and in-flight
+  state can be lost in the summary. For multi-step work, keep state outside the
+  conversation: maintain a TodoWrite list, and for genuinely long runs a
+  scratchpad progress file (done / next / open questions). Auto-memory is for
+  durable facts — not in-flight task state.
+- **Never fake "done."** Don't delete, skip, or weaken tests to make a check
+  pass, and don't report done without actually running verification. A real
+  failure is a finding to surface, not an obstacle to remove.
+
 # Plan Mode
 
 - Make the plan extremely concise. Sacrifice grammar for the sake of concision.
+- Break the plan into small, atomic units with explicit done-criteria; don't
+  bundle unrelated work into one step.
 - At the end of each plan, give me a list of unresolved questions to answer, if any.
 
 # Communication Style
