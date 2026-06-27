@@ -30,6 +30,14 @@
   `/suggest-harness` to capture any new rules / automation / memory worth
   configuring. Present its proposals; apply only what I approve.
 
+# Git Commits
+
+- One commit = one *kind* of change (feat / fix / refactor / chore / docs /
+  test). Never mix categories — full rules at `@references/git-workflow.md`.
+- Use `/jiska:commit` to split working-tree changes into atomic commits with
+  user-approved plan before any `git add`. Manual `git commit` still allowed
+  but must follow the same granularity.
+
 # Task Execution
 
 - Full operational loop (prepare → atomic units → externalize state → verify):
