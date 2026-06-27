@@ -1,4 +1,5 @@
 ---
+name: jiska:land-pr
 description: Open a PR for the current branch and land it (push → gh pr create → merge commit → delete branch → sync default). The issue-less counterpart to tackle-issues, for when you already have a committed branch.
 argument-hint: "[optional: PR title — defaults to the branch's latest commit subject]"
 allowed-tools: Bash

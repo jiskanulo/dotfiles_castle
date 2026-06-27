@@ -1,4 +1,5 @@
 ---
+name: jiska:commit
 description: Split the current working-tree changes into atomic commits, one per kind of change (feat / fix / refactor / chore / …). Shows the proposed split and asks for approval before touching the index.
 argument-hint: "[optional: hint about intended grouping, e.g. 'keep zsh and tmux separate']"
 allowed-tools: Bash

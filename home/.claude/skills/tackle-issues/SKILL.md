@@ -1,4 +1,5 @@
 ---
+name: jiska:tackle-issues
 description: Pick minor, actionable open issues and implement them end-to-end (branch → verify → PR → auto-merge). Parallelize independent issues with git worktrees.
 argument-hint: "[optional: issue numbers to target, e.g. 247 238 — default: auto-pick minor ones]"
 allowed-tools: Read, Grep, Glob, Bash, Edit, Write
