@@ -19,12 +19,14 @@ files, or tools exist. The examples below (Rust/cargo, JS/pnpm) are illustrative
 
 ## Conventions to follow
 
+- User-global commit rules at `@references/git-workflow.md` always apply
+  (one-intent-per-commit, `git add -p`, footer format).
 - Read the project's workflow rules before starting — at minimum
-  `.claude/rules/git-workflow.md` if present (branch-from-main, individual
-  `git add`, commit granularity/format, `Closes #N`). Also read **any other
-  convention docs the repo ships** (e.g. under `.claude/rules/`, or a
-  `CONTRIBUTING.md` / `CLAUDE.md`): coding standards, framework patterns, etc.,
-  and honor them. Do not assume a doc exists — check first.
+  `.claude/rules/git-workflow.md` if present (branch-from-main, `Closes #N`,
+  project-specific naming). Also read **any other convention docs the repo
+  ships** (e.g. under `.claude/rules/`, or a `CONTRIBUTING.md` / `CLAUDE.md`):
+  coding standards, framework patterns, etc., and honor them. Do not assume a
+  doc exists — check first.
 - **Use the repo's own way of running commands.** How tools are invoked is an
   environment concern that varies per project — a version manager (mise / asdf /
   anyenv), `direnv`/`nix`, a container (`docker compose exec …`), or just
@@ -56,7 +58,7 @@ files, or tools exist. The examples below (Rust/cargo, JS/pnpm) are illustrative
   REPO=$(git rev-parse --show-toplevel); SLUG=$(basename "$REPO")
   WT=/tmp/wt-$SLUG-<n>
   git checkout main && git pull
-  git worktree add -b <branch> "$WT" main      # <branch> per git-workflow.md naming
+  git worktree add -b <branch> "$WT" main      # <branch> per project's .claude/rules/git-workflow.md if present
   # If a fresh checkout needs toolchain activation, do the project's equivalent
   # in "$WT" (e.g. `mise trust`, `direnv allow`, entering a devcontainer). Skip
   # if the repo needs none.
@@ -98,7 +100,7 @@ For each track:
 
 ```bash
 git add <files...>                 # individual files, never -A/.
-git commit -m "<type>: ... (Issue #<n>)"   # footer per git-workflow.md
+git commit -m "<type>: ... (Issue #<n>)"   # footer per @references/git-workflow.md
 git push -u origin <branch>
 gh pr create --title "..." --body "... Closes #<n> ..."
 ```

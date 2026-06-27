@@ -20,6 +20,8 @@ Scope argument (`$ARGUMENTS`): `security`, `maintainability`, `ux`, or `all`
 
 ## Conventions to follow
 
+- User-global rules at `@references/git-workflow.md` always apply for any
+  commits this skill produces.
 - Read whatever project rules exist first — e.g. `.claude/rules/git-workflow.md`
   (especially any **Sub-Issue Linking** section), plus any coding-standards /
   framework-pattern / `CLAUDE.md` / `CONTRIBUTING.md` docs the repo ships. Don't
