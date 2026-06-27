@@ -38,9 +38,12 @@ transcript="$(printf '%s' "$payload" | jq -r '.transcript_path // empty')"
 verify_re='(^|[^a-z])(test|spec|pytest|jest|vitest|mocha|rspec|phpunit|ctest|go +test|cargo +(test|build|check|clippy)|tsc|typecheck|type-check|lint|eslint|biome|ruff|mypy|flake8|build|gradle|mvn|make( |$)|just( |$)|npm +(run +)?(test|build|lint|typecheck)|pnpm +(run +)?(test|build|lint|typecheck|check)|yarn +(test|build|lint|typecheck)|bun +(test|run)|dotnet +(test|build))'
 
 # Walk the transcript in order, emitting one line per tool_use:
-#   EDIT   — an Edit/Write/MultiEdit/NotebookEdit call
+#   EDIT   — an Edit/Write/MultiEdit/NotebookEdit call against a code file
 #   VERIFY — a Bash call whose command matches verify_re
-#   OTHER  — anything else
+#   OTHER  — anything else (incl. docs/config-only edits: .md/.json/.toml/.yml)
+# Docs/config-only edits are filtered out so a markdown/JSON tweak does not
+# wedge the next Stop until you fake a verify command. The moment a real code
+# file is edited, the gate re-engages.
 # Then: did a VERIFY occur at or after the LAST EDIT?
 result="$(
   jq -rs --arg re "$verify_re" '
@@ -48,7 +51,9 @@ result="$(
       | (.message.content // empty)
       | if type=="array" then .[] else empty end
       | select(type=="object" and .type=="tool_use")
-      | if (.name // "") | test("^(Edit|Write|MultiEdit|NotebookEdit)$") then "EDIT"
+      | if ((.name // "") | test("^(Edit|Write|MultiEdit|NotebookEdit)$")) then
+          (if (.name // "") == "NotebookEdit" then (.input.notebook_path // "") else (.input.file_path // "") end) as $fp
+          | (if ($fp | test("\\.(md|json|toml|ya?ml)$"; "i")) then "OTHER" else "EDIT" end)
         elif (.name // "") == "Bash"
              and ((.input.command // "") | ascii_downcase | test($re)) then "VERIFY"
         else "OTHER" end
