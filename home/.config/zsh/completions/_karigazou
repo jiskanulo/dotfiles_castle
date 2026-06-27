@@ -1,0 +1,115 @@
+#compdef karigazou
+
+autoload -U is-at-least
+
+_karigazou() {
+    typeset -A opt_args
+    typeset -a _arguments_options
+    local ret=1
+
+    if is-at-least 5.2; then
+        _arguments_options=(-s -S -C)
+    else
+        _arguments_options=(-s -C)
+    fi
+
+    local context curcontext="$curcontext" state line
+    _arguments "${_arguments_options[@]}" : \
+'-W+[Image width in pixels (max 4000 for svg, 2000 for png/jpg)]:WIDTH:_default' \
+'--width=[Image width in pixels (max 4000 for svg, 2000 for png/jpg)]:WIDTH:_default' \
+'-H+[Image height in pixels. Default\: same as --width (square)]:HEIGHT:_default' \
+'--height=[Image height in pixels. Default\: same as --width (square)]:HEIGHT:_default' \
+'--format=[Output format]:FORMAT:(png svg jpg)' \
+'--bg=[Background color, 3- or 6-digit hex (e.g. \`fff\` or \`cccccc\`). Optional leading \`#\`. Default\: \`cccccc\`]:BG:_default' \
+'--fg=[Foreground (label) color, hex. Default\: auto-contrast from --bg]:FG:_default' \
+'--text=[Label text (printable ASCII, max 256 chars). Default\: "WxH"]:TEXT:_default' \
+'-o+[Output path. Default\: \`<W>x<H>.<ext>\` in the current directory. Use \`-\` to write to stdout (refused when stdout is a TTY)]:OUTPUT:_default' \
+'--output=[Output path. Default\: \`<W>x<H>.<ext>\` in the current directory. Use \`-\` to write to stdout (refused when stdout is a TTY)]:OUTPUT:_default' \
+'-f[Overwrite the output file if it already exists. Without this flag, writing to an existing file exits with status 3]' \
+'--force[Overwrite the output file if it already exists. Without this flag, writing to an existing file exits with status 3]' \
+'-h[Print help (see more with '\''--help'\'')]' \
+'--help[Print help (see more with '\''--help'\'')]' \
+'-V[Print version]' \
+'--version[Print version]' \
+":: :_karigazou_commands" \
+"*::: :->karigazou" \
+&& ret=0
+    case $state in
+    (karigazou)
+        words=($line[1] "${words[@]}")
+        (( CURRENT += 1 ))
+        curcontext="${curcontext%:*:*}:karigazou-command-$line[1]:"
+        case $line[1] in
+            (completions)
+_arguments "${_arguments_options[@]}" : \
+'-h[Print help (see more with '\''--help'\'')]' \
+'--help[Print help (see more with '\''--help'\'')]' \
+':shell -- Target shell:(bash elvish fish powershell zsh)' \
+&& ret=0
+;;
+(help)
+_arguments "${_arguments_options[@]}" : \
+":: :_karigazou__subcmd__help_commands" \
+"*::: :->help" \
+&& ret=0
+
+    case $state in
+    (help)
+        words=($line[1] "${words[@]}")
+        (( CURRENT += 1 ))
+        curcontext="${curcontext%:*:*}:karigazou-help-command-$line[1]:"
+        case $line[1] in
+            (completions)
+_arguments "${_arguments_options[@]}" : \
+&& ret=0
+;;
+(help)
+_arguments "${_arguments_options[@]}" : \
+&& ret=0
+;;
+        esac
+    ;;
+esac
+;;
+        esac
+    ;;
+esac
+}
+
+(( $+functions[_karigazou_commands] )) ||
+_karigazou_commands() {
+    local commands; commands=(
+'completions:Print a shell completion script to stdout.' \
+'help:Print this message or the help of the given subcommand(s)' \
+    )
+    _describe -t commands 'karigazou commands' commands "$@"
+}
+(( $+functions[_karigazou__subcmd__completions_commands] )) ||
+_karigazou__subcmd__completions_commands() {
+    local commands; commands=()
+    _describe -t commands 'karigazou completions commands' commands "$@"
+}
+(( $+functions[_karigazou__subcmd__help_commands] )) ||
+_karigazou__subcmd__help_commands() {
+    local commands; commands=(
+'completions:Print a shell completion script to stdout.' \
+'help:Print this message or the help of the given subcommand(s)' \
+    )
+    _describe -t commands 'karigazou help commands' commands "$@"
+}
+(( $+functions[_karigazou__subcmd__help__subcmd__completions_commands] )) ||
+_karigazou__subcmd__help__subcmd__completions_commands() {
+    local commands; commands=()
+    _describe -t commands 'karigazou help completions commands' commands "$@"
+}
+(( $+functions[_karigazou__subcmd__help__subcmd__help_commands] )) ||
+_karigazou__subcmd__help__subcmd__help_commands() {
+    local commands; commands=()
+    _describe -t commands 'karigazou help help commands' commands "$@"
+}
+
+if [ "$funcstack[1]" = "_karigazou" ]; then
+    _karigazou "$@"
+else
+    compdef _karigazou karigazou
+fi
