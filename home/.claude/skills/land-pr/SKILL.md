@@ -1,5 +1,5 @@
 ---
-name: jiska:land-pr
+name: jiska-land-pr
 description: Open a PR for the current branch and land it (push → gh pr create → merge commit → delete branch → sync default). The issue-less counterpart to tackle-issues, for when you already have a committed branch.
 argument-hint: "[optional: PR title — defaults to the branch's latest commit subject]"
 allowed-tools: Bash
@@ -32,6 +32,6 @@ it — the standard branch+PR workflow for this kind of repo.
 7. Report the PR URL and the merge result.
 
 ## Notes
-- Issue-less counterpart to `/jiska:tackle-issues` (which picks issues and runs
+- Issue-less counterpart to `/jiska-tackle-issues` (which picks issues and runs
   branch → verify → PR → merge). Use this when a committed branch already exists.
 - Don't run `rm` for cleanup; leave any temp artifacts in place.

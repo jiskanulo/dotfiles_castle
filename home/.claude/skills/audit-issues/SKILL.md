@@ -1,5 +1,5 @@
 ---
-name: jiska:audit-issues
+name: jiska-audit-issues
 description: Audit the codebase across security / maintainability / UX, then file GitHub Issues (independent issues separately; related ones under a parent epic with native sub-issues).
 argument-hint: "[optional scope: security | maintainability | ux | all (default)]"
 allowed-tools: Read, Grep, Glob, Bash, Edit, Write, Task

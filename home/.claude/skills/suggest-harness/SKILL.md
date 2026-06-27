@@ -1,5 +1,5 @@
 ---
-name: jiska:suggest-harness
+name: jiska-suggest-harness
 description: Analyze the recent conversation (or a best-practices article URL) and propose harness-configuration changes that make Claude work better — not limited to CLAUDE.md, but routed to the best mechanism (rules / hooks / permissions / memory / skill / subagent, …). Proposes only; never auto-applies.
 argument-hint: "[focus: rules | automation | permissions | memory | workflow | all (default)] OR a best-practices article URL to map onto the existing harness"
 allowed-tools: Read, Grep, Glob, Bash, WebFetch
