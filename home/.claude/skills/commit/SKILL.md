@@ -1,6 +1,6 @@
 ---
 name: jiska-commit
-description: This skill should be used when the user asks to "commit", "make a commit", "commit changes", "split commits", "atomic commit", or wants intent-separated commits from a dirty working tree. Splits working-tree changes into one-kind-per-commit groups (feat/fix/refactor/chore/...), shows the proposed split, and requires approval before touching the index.
+description: This skill should be used when the user asks to "commit", "make a commit", "commit changes", "split commits", "atomic commit", or wants intent-separated commits from a dirty working tree. Splits working-tree changes into one-kind-per-commit groups (feat/fix/refactor/chore/...), announces the proposed split, then commits without further confirmation.
 argument-hint: "[optional: hint about intended grouping, e.g. 'keep zsh and tmux separate']"
 allowed-tools: Bash
 ---
@@ -8,7 +8,9 @@ allowed-tools: Bash
 # Atomic Commit Split
 
 Split dirty working-tree changes into intent-separated commits. Each commit is
-one kind of change; the user approves the plan before any `git add` runs.
+one kind of change. The proposed split is announced before staging, then
+applied without further confirmation — roll back with `git reset --soft HEAD~N`
+if the classification was wrong.
 
 ## Preconditions
 
@@ -27,14 +29,18 @@ of these conventional-commit types:
 Add a scope when it helps (`feat(zsh):`, `chore(tmux):`). Classification rules
 live in `~/.claude/references/git-workflow.md` — read that file if it exists;
 do not duplicate its rules here. If a single hunk genuinely mixes two
-categories, **stop and ask** via AskUserQuestion rather than guessing.
+categories, pick the dominant one and call it out in the announcement
+(Step 2) so the user can roll back with `git reset --soft HEAD~N` if the
+call was wrong.
 
 Preferred ordering: `refactor`/`chore` → `fix` → `feat` (preparatory commits
 before the changes that depend on them). Explain any reordering in the plan.
 
-## Step 2 — Propose to the user (STOP here for approval)
+## Step 2 — Announce the plan
 
-Present each proposed commit as a numbered list:
+Print each proposed commit as a numbered list, then proceed straight to Step
+3 — no approval gate. The user sees the plan in chat and can interrupt or
+roll back if it's wrong.
 
 ```
 1. refactor(zsh): extract common path helpers
@@ -46,14 +52,12 @@ Present each proposed commit as a numbered list:
    Hunks: entire new file
 ```
 
-Then ask via AskUserQuestion: "このプランで進めますか？変更・再分割があれば教えてください。"
-
-Do **not** touch the index until the user approves. If the user asks to re-split
-or rename a commit, revise the plan and re-ask.
+If Step 1 picked a dominant category for a mixed hunk, note that here
+(e.g. "hunk in `foo.rs` mixes fix + refactor — classified as `fix`").
 
 ## Step 3 — Stage and commit one group at a time
 
-For each approved commit in order:
+For each commit in order:
 
 1. Stage with `git add -p <file>` by default. `git add <file>` is allowed
    **only** when every hunk in that file belongs to this commit's intent.
@@ -94,5 +98,4 @@ Report in Japanese; commit messages in English.
 - `git add -A` / `git add .` — **never**.
 - `--amend` — **never** (matches the standing safety protocol).
 - `--no-verify` — **never**.
-- If a hunk mixes categories: **stop and ask**, don't guess.
 - Commit message language: English. Conversation with user: Japanese.
