@@ -1,6 +1,6 @@
 ---
 name: jiska-suggest-harness
-description: Analyze the recent conversation (or a best-practices article URL) and propose harness-configuration changes that make Claude work better — not limited to CLAUDE.md, but routed to the best mechanism (rules / hooks / permissions / memory / skill / subagent, …). Proposes only; never auto-applies.
+description: This skill should be used when the user asks to "suggest harness", "tune the harness", "harness tuning", "what should I configure", "update CLAUDE.md from this conversation", or wants Claude-configuration proposals routed to the right mechanism. Analyzes the recent conversation OR a best-practices URL, routes each signal to CLAUDE.md / hooks / permissions / memory / skill / subagent / path-scoped Rule, proposes additions plus removals/reconciliations. Never auto-applies.
 argument-hint: "[focus: rules | automation | permissions | memory | workflow | all (default)] OR a best-practices article URL to map onto the existing harness"
 allowed-tools: Read, Grep, Glob, Bash, WebFetch
 ---

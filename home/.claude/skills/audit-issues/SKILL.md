@@ -1,6 +1,6 @@
 ---
 name: jiska-audit-issues
-description: Audit the codebase across security / maintainability / UX, then file GitHub Issues (independent issues separately; related ones under a parent epic with native sub-issues).
+description: This skill should be used when the user asks to "audit the codebase", "review code quality", "find security issues", "check maintainability", "file GitHub issues from review", or wants a three-axis (security/maintainability/UX) quality audit that ends in filed Issues. Reports findings first, asks for approval, then files independent topics as separate issues and related topics under a parent epic with native sub-issues.
 argument-hint: "[optional scope: security | maintainability | ux | all (default)]"
 allowed-tools: Read, Grep, Glob, Bash, Edit, Write, Task
 ---

@@ -1,6 +1,6 @@
 ---
 name: jiska-land-pr
-description: Open a PR for the current branch and land it (push → gh pr create → merge commit → delete branch → sync default). The issue-less counterpart to tackle-issues, for when you already have a committed branch.
+description: This skill should be used when the user asks to "open a PR", "land PR", "ship this branch", "land this branch", "create and merge PR", or wants to push the current feature branch and merge it via PR. Pushes the branch, opens a PR against the default branch, waits for any CI gate, merges with --merge (preserving intent-separated commits), deletes the branch, and syncs the default. Issue-less counterpart to tackle-issues.
 argument-hint: "[optional: PR title — defaults to the branch's latest commit subject]"
 allowed-tools: Bash
 ---
