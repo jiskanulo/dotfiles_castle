@@ -40,10 +40,11 @@ verify_re='(^|[^a-z])(test|spec|pytest|jest|vitest|mocha|rspec|phpunit|ctest|go 
 # Walk the transcript in order, emitting one line per tool_use:
 #   EDIT   — an Edit/Write/MultiEdit/NotebookEdit call against a code file
 #   VERIFY — a Bash call whose command matches verify_re
-#   OTHER  — anything else (incl. docs/config-only edits: .md/.json/.toml/.yml)
-# Docs/config-only edits are filtered out so a markdown/JSON tweak does not
-# wedge the next Stop until you fake a verify command. The moment a real code
-# file is edited, the gate re-engages.
+#   OTHER  — anything else (incl. docs/config-only edits: .md/.json/.toml/.yml,
+#            and scratchpad writes under /tmp/claude-* or /private/tmp/claude-*)
+# Docs/config-only edits and scratchpad writes are filtered out so a markdown
+# tweak or a temp file write does not wedge the next Stop until you fake a
+# verify command. The moment a real code file is edited, the gate re-engages.
 # Then: did a VERIFY occur at or after the LAST EDIT?
 result="$(
   jq -rs --arg re "$verify_re" '
@@ -53,7 +54,9 @@ result="$(
       | select(type=="object" and .type=="tool_use")
       | if ((.name // "") | test("^(Edit|Write|MultiEdit|NotebookEdit)$")) then
           (if (.name // "") == "NotebookEdit" then (.input.notebook_path // "") else (.input.file_path // "") end) as $fp
-          | (if ($fp | test("\\.(md|json|toml|ya?ml)$"; "i")) then "OTHER" else "EDIT" end)
+          | (if ($fp | test("\\.(md|json|toml|ya?ml)$"; "i"))
+                  or ($fp | test("^/(private/)?tmp/claude-"))
+             then "OTHER" else "EDIT" end)
         elif (.name // "") == "Bash"
              and ((.input.command // "") | ascii_downcase | test($re)) then "VERIFY"
         else "OTHER" end
