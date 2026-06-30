@@ -15,15 +15,17 @@ _karigazou() {
 
     local context curcontext="$curcontext" state line
     _arguments "${_arguments_options[@]}" : \
-'(--height --bg --fg --format --text --output --force)--completions=[Print a shell completion script to stdout, then exit]:SHELL:(bash elvish fish powershell zsh)' \
+'(--height --bg --fg --format --text --output --force -s --silent)--completions=[Print a shell completion script to stdout, then exit]:SHELL:(bash elvish fish powershell zsh)' \
 '--width=[Image width in pixels (max 4000 for svg, 2000 for png/jpg)]:WIDTH:_default' \
 '--height=[Image height in pixels. Default\: same as --width (square)]:HEIGHT:_default' \
-'--format=[Output format]:FORMAT:(png svg)' \
+'--format=[Output format]:FORMAT:(png svg jpg)' \
 '--bg=[Background color, 3- or 6-digit hex (e.g. \`fff\` or \`cccccc\`). Default\: \`cccccc\`]:BG:_default' \
 '--fg=[Foreground (label) color, hex. Default\: auto-contrast from --bg]:FG:_default' \
 '--text=[Label text (printable ASCII, max 256 chars). Default\: "WxH"]:TEXT:_default' \
 '--output=[Output path. Default\: \`<W>x<H>.<ext>\` in the current directory]:OUTPUT:_default' \
 '--force[Overwrite the output file if it already exists. Without this flag, writing to an existing file exits with status 3]' \
+'(--completions)-s[Suppress the "Wrote <path>" confirmation line printed on success]' \
+'(--completions)--silent[Suppress the "Wrote <path>" confirmation line printed on success]' \
 '-h[Print help (see more with '\''--help'\'')]' \
 '--help[Print help (see more with '\''--help'\'')]' \
 '-V[Print version]' \
