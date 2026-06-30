@@ -1,48 +1,51 @@
 ---
 name: audit-issues
-description: This skill should be used when the user asks to "audit the codebase", "review code quality", "find security issues", "check maintainability", "file GitHub issues from review", or wants a three-axis (security/maintainability/UX) quality audit that ends in filed Issues. Reports findings first, asks for approval, then files independent topics as separate issues and related topics under a parent epic with native sub-issues.
-argument-hint: "[optional scope: security | maintainability | ux | all (default)]"
-allowed-tools: Read, Grep, Glob, Bash, Edit, Write, Task
+description: This skill should be used when the user asks to "audit the codebase", "review code quality", "find security issues", "check maintainability", "file GitHub issues from review", or wants a three-axis (security/maintainability/UX) quality audit that ends in filed Issues. Reports findings first, asks for approval, then files independent topics as separate issues and related topics under a parent epic with native sub-issues. Optionally narrows to a single axis (security / maintainability / ux) when the user names one.
+allowed-tools: Read, Grep, Glob, Bash, Agent, AskUserQuestion
 ---
 
 # Quality Audit → Issue Filing
 
-Reproduce the standing review workflow: evaluate the current codebase across
-three axes, report findings concisely, and — **after the user approves** — file
-GitHub Issues with correct grouping.
+Evaluate the current codebase across three axes, report findings concisely,
+then file GitHub Issues with correct grouping after the user approves at
+the Step 3 gate.
 
-This command is project-agnostic: discover the repo's actual architecture,
+This skill is project-agnostic: discover the repo's actual architecture,
 stack, and conventions at run time. The concrete file names / APIs in the
 checklists below are **examples** — translate each into the equivalent for
 whatever language, framework, and layout this repo actually uses.
 
-Scope argument (`$ARGUMENTS`): `security`, `maintainability`, `ux`, or `all`
-(default when empty). When a single axis is given, only audit that axis.
+Scope: if the user names a single axis (`security`, `maintainability`, `ux`,
+case-insensitive), audit only that axis; otherwise audit all three.
 
 ## Conventions to follow
 
-- User-global rules at `@references/git-workflow.md` always apply for any
-  commits this skill produces.
-- Read whatever project rules exist first — e.g. `.claude/rules/git-workflow.md`
-  (especially any **Sub-Issue Linking** section), plus any coding-standards /
-  framework-pattern / `CLAUDE.md` / `CONTRIBUTING.md` docs the repo ships. Don't
-  assume a specific rule file exists; check, then honor what's there.
+- For sub-issue linking and `gh` usage, follow the `# GitHub CLI (gh)` block
+  in user-global `CLAUDE.md`: prefer native `gh issue create --parent <n>` and
+  `gh issue edit <n> --add-sub-issue`; `gh api` is fallback only.
+- Read whatever project rules exist first — coding-standards / framework-pattern
+  / `CLAUDE.md` / `CONTRIBUTING.md` docs the repo ships. Don't assume a specific
+  rule file exists; check, then honor what's there.
 - **Write issue bodies in the repo's language.** Match the language of the
   existing issues and any stated language policy (e.g. Japanese if the repo's
-  issues are Japanese; English otherwise). This command file and your reasoning
+  issues are Japanese; English otherwise). This skill body and your reasoning
   stay in English.
-- Reuse, don't duplicate: the `issue-manager` agent owns issue formatting and
-  the `project-investigator` agent owns generic health checks. This command is
-  the **quality-audit + grouped-filing** flow specifically.
+- Reuse, don't duplicate: delegate the actual issue filing (Step 4) to the
+  `issue-manager` agent, which owns issue formatting. This skill is the
+  **quality-audit + grouped-filing** flow specifically.
 
 ## Step 1 — Survey
 
-- Map the tree and file sizes. Discover the source dirs and extensions from what
-  the repo actually contains rather than assuming — e.g. list tracked files and
-  sort by size: `git ls-files | xargs wc -l 2>/dev/null | sort -rn | head -40`
-  (or a `find` scoped to the repo's real source directories / extensions).
-- List open issues (`gh issue list --state open`) to avoid duplicates.
+Delegate the survey to a `code-explore` subagent (per the role-based model
+selection rules in user-global CLAUDE.md). Pass these instructions:
+- Map the tree and file sizes. Discover the source dirs and extensions from
+  what the repo actually contains rather than assuming.
+- List open issues (`gh issue list --state open --limit 100`) to avoid duplicates.
 - Note recent commits for context (`git log --oneline -10`).
+- Return only conclusions (key paths, top large files, existing issue titles,
+  recent themes) — not raw command output.
+
+Keep only the conclusions in the main context.
 
 ## Step 2 — Evaluate (per requested scope)
 
@@ -74,7 +77,7 @@ doesn't apply to this stack).
 - **Privilege/secrets**: user-overridable binary/exec paths, secrets in logs or
   persisted settings.
 
-### Maintainability / extensibility (redundant or overly-technical code)
+### Maintainability
 
 - **Dead/unused modules** (e.g. leftovers from a migration or framework switch):
   fully-present but unreferenced code. Verify with a repo-wide grep for callers.
@@ -82,7 +85,7 @@ doesn't apply to this stack).
   oversized files, duplicated logic, premature abstraction, contract drift.
 - **Misleading naming** (e.g. names referencing an old framework/API the code no
   longer uses).
-- Suppressed-warning accumulation (`#[allow(dead_code)]`, `eslint-disable`,
+- **Suppressed-warning accumulation** (`#[allow(dead_code)]`, `eslint-disable`,
   `# type: ignore`, `//nolint`, …) without a documented reason.
 
 ### UX
@@ -104,8 +107,8 @@ no filler. For each finding give: file:line, the concrete risk/cost, a proposed
 fix, and a 5-point recommendation level. Group findings by axis.
 
 Then propose the **filing plan**: which findings become standalone issues vs.
-which cluster under a parent epic, with labels and priority. **Ask the user to
-approve before creating anything** (this command never auto-files).
+which cluster under a parent epic, with labels and priority. **Ask via
+`AskUserQuestion` before creating anything** (this skill never auto-files).
 
 ## Step 4 — File issues (only after approval)
 
@@ -113,26 +116,40 @@ Grouping rule:
 
 - **Independent topics → separate issues.**
 - **Related topics (same module/theme) → one parent epic + native sub-issues.**
-  Create the parent first, then children, then link them using the project's
-  established sub-issue method (e.g. `gh issue create --parent <n>` /
-  `gh issue edit --add-sub-issue`, or the GitHub `sub_issues` REST API with each
-  child's integer **database id** — see the repo's git-workflow Sub-Issue Linking
-  notes if present). Also keep a Markdown checklist in the parent body.
+  Create the parent first, then create children with `gh issue create
+  --parent <n>` (which links at creation time). Use `gh issue edit <n>
+  --add-sub-issue` only to attach pre-existing issues. Fall back to `gh api
+  .../sub_issues` only when the installed `gh` lacks these flags. Rely on
+  GitHub's native sub-issue panel for tracking — do not duplicate a Markdown
+  checklist of children in the parent body.
 
-Each issue body uses this shape (in the repo's language; Japanese headings shown
-as an example because that's common here):
+Delegate the filing itself to the `issue-manager` agent; have it return the
+created issue numbers and parent→sub links.
+
+Each issue body uses this shape (in the repo's language).
+
+English repos:
 
 ```
-## 背景 (Background)
-## 方針(要検討)   ← when the fix needs design discussion
-## 受け入れ条件     ← checkbox list, ending with the relevant green checks
-## 補足            ← priority + parent ref (e.g. 親: #NN)
+## Background
+## Approach (needs design)  ← only when the fix needs design discussion
+## Acceptance criteria   ← checkbox list with verification items
+## Notes                 ← priority + parent ref (e.g. parent: #NN)
+```
+
+Japanese repos (use these headings instead):
+
+```
+## 背景
+## 方針(要検討)     ← 修正方針に検討が必要なときだけ
+## 受け入れ条件     ← チェックボックスリスト、検証項目を含む
+## 補足            ← 優先度 + 親 ref (例: 親: #NN)
 ```
 
 Apply labels from **the repo's existing label set** (`gh label list`). Common
 ones: `security`, `enhancement`, `bug`, `documentation`, plus area labels the
 repo defines (e.g. `backend` / `frontend` / `ui` / `infrastructure`). Don't
-invent labels the repo doesn't have. End each body with the Claude Code footer.
+invent labels the repo doesn't have.
 
 After creation, print the issue numbers, the parent→sub links, and which to
 tackle first.

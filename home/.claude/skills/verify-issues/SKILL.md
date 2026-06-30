@@ -1,7 +1,7 @@
 ---
 name: verify-issues
-description: This skill should be used when the user asks to "verify issues", "stress-test issues", "harden GitHub issues", "double-check these tickets", "are these issues ready to implement", or wants to audit a set of existing GitHub Issues for implementation-readiness. Spawns a fresh-eyes audit agent across six lenses (underspecified/contradictions/hazards/overlooked/unverifiable/locked-in), tiers findings (Blocking/Design-flaw/Minor), then — after approval — reflects fixes back into the issue bodies. Counterpart to `audit-issues` which files new problems.
-argument-hint: "[issue numbers ('3 5 6') or 'epic:<N>' to scope to an epic's sub-issues; default: all open]"
+description: This skill should be used when the user asks to "verify issues", "stress-test issues", "harden GitHub issues", "double-check these tickets", "are these issues ready to implement", or wants to audit a set of existing GitHub Issues for implementation-readiness. Spawns a fresh-eyes audit agent across six lenses (underspecified/contradictions/hazards/overlooked/unverifiable/locked-in), tiers findings (Blocking/Design-flaw/Minor), then — after approval — reflects fixes back into the issue bodies. Counterpart to `audit-issues` which files new problems. Optionally narrows to specific issue numbers or an epic's sub-issues.
+allowed-tools: Read, Bash, Agent, AskUserQuestion, Write
 ---
 
 # Verify Issues (fresh-eyes audit → reflect)
@@ -17,19 +17,23 @@ Project-agnostic: the audit agent discovers the project's actual stack,
 URL/API shape, and conventions from the repo at run time rather than
 assuming.
 
-## Trigger
+## Inputs (orchestrator resolves these before Phase 1)
 
-User runs `/verify-issues`, or asks to verify / review / stress-test /
-double-check / harden one or more GitHub Issues, or wants to make sure
-an issue set has no gaps before implementation begins.
+Inspect the user's request for a target spec:
 
-## Inputs (`$ARGUMENTS`)
+- Empty (default) → run `gh issue list --state open --limit 13 --json number`
+  and take the issue numbers. The 13 cap lets the next paragraph's refusal
+  trigger without pulling 100 just to throw them away.
+- Numeric list (e.g. `3 5 6`) → use those numbers verbatim.
+- `epic:<N>` → run
+  `gh issue view <N> --json subIssues -q '.subIssues[].number'` and take
+  `<N>` plus every sub-issue number.
 
-- Empty (default) → every open issue in the current repo.
-- One or more numbers (`3 5 6`) → exactly those issues.
-- `epic:<N>` → issue `N` plus all of its sub-issues (`gh issue view <N> --json subIssues`).
+If the resolved set is empty, stop and tell the user. If the resolved set
+exceeds ~12 issues, surface and ask the user to narrow before continuing —
+the report budget does not scale past that point.
 
-If the resolved set is empty, stop and tell the user.
+Pass the **resolved list of numbers** into Phase 1's agent prompt.
 
 ## Conventions
 
@@ -46,16 +50,23 @@ If the resolved set is empty, stop and tell the user.
 
 ## Phase 1 — Verify (fresh-eyes audit)
 
-Spawn ONE subagent (`general-purpose` is the safe default; `code-explore`
-also works). The prompt MUST:
+Spawn ONE subagent — `code-explore` (read-only investigation, the default
+per role-based-model-selection in user-global CLAUDE.md). The audit is
+read-only by design; no escape hatch to a write-capable agent. The prompt
+MUST:
 
 - Tell the agent it has **no prior context** and treat the issues plus
   project docs as the only sources.
+- **Forbid state-mutating `gh` commands** in the prompt explicitly: no
+  `gh issue edit / create / comment / close / reopen`, no `gh pr ...`,
+  no label changes. The audit is read-only by spec.
 - Forbid it from validating the issues — it is looking for what the
   author missed, not confirming the work.
-- Hand it the exact `gh` commands it needs:
-  - `gh issue list --state open --json number,title,body --limit 100`
-  - For each target: `gh issue view <n> --json number,title,body,subIssues,blockedBy,blocking`
+- Pass the resolved list of issue numbers. The agent runs:
+  - `gh issue view <n> --json number,title,body,subIssues,blockedBy,blocking`
+    per target (note: `subIssues` / `blockedBy` / `blocking` may be empty on
+    repos without Issues v2 features — not a finding by itself), plus
+  - Read access to the project context files listed below.
 - Point it at the repo root and any standout context files (`CLAUDE.md`,
   `README.md`, `.mise.toml`, `Cargo.toml`, `package.json`, etc. —
   whatever the repo actually has).
@@ -78,11 +89,17 @@ also works). The prompt MUST:
     actually fail loudly. A green check that means nothing is worse
     than no check.
   - **Locked-in** — choices that become expensive to reverse once
-    shipped (URL scheme, error response shape, default values users
-    will rely on, cache semantics, public type names). Flag what
-    becomes a backward-compatibility burden if it ships wrong.
+    shipped: externally-visible names (public API, URL paths, env-var
+    keys), default values users will rely on, cache semantics, error
+    response shapes, public type names. Internal field/variable naming
+    is bikeshedding, not locked-in. Flag what becomes a backward-
+    compatibility burden if it ships wrong.
 
-- Demand a structured report under ~700 words in this exact shape:
+- Demand a structured report. Word budget = `max(350, 200 × len(targets))`
+  words — small enough that a 1-issue run does not get padded, large enough
+  that per-issue sections stay substantive as the target set grows. Shape
+  the report like this (omit subsections with nothing to report; do not
+  write "n/a" or "none"):
 
   ```
   ## Per-issue findings
@@ -94,7 +111,6 @@ also works). The prompt MUST:
   - Overlooked: ...
   - Unverifiable: ...
   - Locked-in: ...
-  (omit subsections with nothing to report; do NOT write "n/a" or "none")
 
   ## Cross-issue findings
   - ...
@@ -135,13 +151,19 @@ recommendation level rather than asking; reserve `AskUserQuestion` for
 real forks in the road.
 
 Then present reflection options via `AskUserQuestion` (single question,
-three or four options). Suggested defaults:
+three or four options). Each option carries a 5-point recommendation and
+names the destination for any notes:
 1. Update Blocking + Design-flaw issues; append Minor to the same issues.
-   *(Most thorough — recommended.)*
-2. Update Blocking only; record Design-flaw + Minor as "open items" notes.
-3. Append "to-investigate" notes only; decide nothing now.
-4. Redo verify with a different prompt / agent type (when the audit
-   looks shallow or off-target).
+   *(★★★★★ — most thorough, the standing default. Destination: the
+   affected issues themselves.)*
+2. Update Blocking issues only; record Design-flaw + Minor as "open items"
+   notes in the chat reply (not in the issues).
+   *(★★★☆☆ — when Design-flaw items still need user judgment.)*
+3. Append "to-investigate" notes to the chat reply only; decide nothing
+   now.
+   *(★★☆☆☆ — when even the Blocking findings need more evidence.)*
+4. Redo verify with a different prompt / agent type.
+   *(★☆☆☆☆ — only when the audit looks shallow or off-target.)*
 
 **STOP here until the user picks an option.**
 
@@ -164,15 +186,51 @@ applied unless the user objects.
 
 ## Phase 4 — Reflect into issues (only after Phase 3 is done)
 
-For each affected issue, write the **complete new body** to a file
-under the session scratchpad (the path the harness gives you, NOT
-`/tmp`):
+Let `<affected ids>` = the set of issues whose bodies will be edited:
+- **Option 1**: every issue that has at least one Blocking or Design-flaw
+  finding. Minor findings on those same issues are folded in. Minor
+  findings on issues with no Blocking/Design-flaw finding stay surfaced
+  in the chat reply only.
+- **Option 2**: every issue with at least one Blocking finding only.
+  Design-flaw and Minor findings stay in the chat reply.
+- **Options 3/4**: empty — skip Phase 4 entirely.
+
+Add the epic / overview issue to `<affected ids>` whenever canonical
+defaults need to land in its body (lines below), even if the epic itself
+has no findings.
+
+(The Phase 1 prompt already forbids state-mutating `gh` — this is just a
+reminder.)
+
+First, refetch each affected issue's current body to the scratchpad —
+the audit agent returned only summary findings, not full bodies, and
+the Phase 2/3 user decisions may have come hours apart from the audit.
+Create the subdir before redirecting; the harness gives you the flat
+scratchpad path and shell `>` does not auto-mkdir:
+
+```
+SCRATCHPAD="<scratchpad>"   # quote-friendly; covers paths with spaces
+mkdir -p "$SCRATCHPAD/verify-issues"
+set -euo pipefail
+for N in <affected ids>; do
+  gh issue view "$N" --json body -q .body \
+    > "$SCRATCHPAD/verify-issues/iss${N}.orig.md" \
+    || { echo "refetch failed for #$N"; exit 1; }
+done
+```
+
+Then, for each affected issue, write the **complete new body** to a
+file under the session scratchpad (the path the harness gives you, NOT
+`/tmp`), starting from `iss<N>.orig.md` and integrating the approved
+fixes:
 
 ```
 <scratchpad>/verify-issues/iss<N>.md
 ```
 
-Then update each issue in parallel:
+Then update each affected issue. Issue the `gh issue edit` calls as
+parallel Bash tool calls in a single message — latency only, no
+semantic difference vs. sequential:
 
 ```
 gh issue edit <N> -F <scratchpad>/verify-issues/iss<N>.md
@@ -189,11 +247,38 @@ Conventions for the new body:
   consistently with the original.
 - Where a decision applies to multiple issues, mention it in each, and
   ALSO add the canonical version to the epic / overview issue's
-  "Confirmed defaults" table (or the equivalent section).
+  "Confirmed defaults" table (or the equivalent section). If no epic /
+  overview issue exists, surface the canonical defaults in the chat reply
+  only — do not invent a parent issue.
 
-After all edits, spot-check at least one issue with
-`gh issue view <N> --json title,body` to confirm rendering, then
-report:
+After all edits, confirm body integrity on every updated issue. GitHub
+normalizes line endings and may strip trailing whitespace, so a byte-for-
+byte diff is too noisy. Run the check across all affected ids:
+
+```
+set -euo pipefail
+for N in <affected ids>; do
+  echo "=== #$N ==="
+  diff -B -w \
+    --label "github:#$N" --label "local:#$N" \
+    <(gh issue view "$N" --json body -q .body) \
+    <scratchpad>/verify-issues/iss"$N".md \
+    || true   # diff exits non-zero on differences; capture, do not abort
+done
+```
+
+(`-B` ignores blank-line diffs caused by GitHub's normalization; `-w`
+ignores whitespace). Empty diff = intact. If any issue shows diff lines,
+surface the offending hunks to the user with the issue number and STOP
+— do not silently retry or assume success.
+
+Once every diff is empty, spot-check structural render on the issue with
+the densest markup (tables / nested lists / fenced code) via `gh issue
+view <N>` (no `--json`, so the terminal renderer surfaces breakage). Look
+specifically for: broken table pipes, fenced code blocks not rendered as
+code, nested list nesting collapsed. If any of those appear, render-check
+every updated issue. If the full render-check turns up further breakage,
+list the issues + symptoms and STOP. Otherwise report:
 
 - Issue numbers updated, one line each describing the main change.
 - Any decisions still left open (with the issue they live in).
