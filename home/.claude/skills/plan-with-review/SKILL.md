@@ -1,5 +1,5 @@
 ---
-name: jiska-plan-with-review
+name: plan-with-review
 description: This skill should be used when the user asks to "考えを整理して", "計画を立てて", "やりたいことを相談", "ヒアリングして計画にして", "plan with review", or wants to gather multiple asks one at a time, group them, draft a solution, and have a fresh-context reviewer validate it (up to 3 rounds) before presenting the result. Intake is conversational — one ask per turn until the user signals "以上です" / "終わり" — and the skill stops after presenting; downstream actions (file as issue, delegate to another agent, etc.) are left to the user.
 argument-hint: "[optional: first ask or topic seed, e.g. 'CI高速化したい']"
 ---
@@ -251,7 +251,7 @@ finding to surface, not an obstacle to remove.
 
 - It does NOT file GitHub Issues, open PRs, edit code, or delegate to
   implementer agents. After presenting, the skill ends — the user picks
-  the next action (`/jiska-audit-issues`, `/jiska-tackle-issues`, manual
+  the next action (`/audit-issues`, `/tackle-issues`, manual
   delegation, hold, …).
 - It does NOT answer asks during Phase 1 intake. Intake and answering
   are separated on purpose so grouping is honest.

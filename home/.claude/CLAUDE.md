@@ -34,7 +34,7 @@
 
 - One commit = one *kind* of change (feat / fix / refactor / chore / docs /
   test). Never mix categories — full rules at `@references/git-workflow.md`.
-- Use `/jiska-commit` to split working-tree changes into atomic commits with
+- Use `/commit` to split working-tree changes into atomic commits with
   an announced plan (no approval gate — roll back with `git reset --soft HEAD~N`
   if needed). Manual `git commit` still allowed but must follow the same
   granularity.

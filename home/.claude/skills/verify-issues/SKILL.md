@@ -1,5 +1,5 @@
 ---
-name: jiska-verify-issues
+name: verify-issues
 description: This skill should be used when the user asks to "verify issues", "stress-test issues", "harden GitHub issues", "double-check these tickets", "are these issues ready to implement", or wants to audit a set of existing GitHub Issues for implementation-readiness. Spawns a fresh-eyes audit agent across six lenses (underspecified/contradictions/hazards/overlooked/unverifiable/locked-in), tiers findings (Blocking/Design-flaw/Minor), then — after approval — reflects fixes back into the issue bodies. Counterpart to `audit-issues` which files new problems.
 argument-hint: "[issue numbers ('3 5 6') or 'epic:<N>' to scope to an epic's sub-issues; default: all open]"
 ---

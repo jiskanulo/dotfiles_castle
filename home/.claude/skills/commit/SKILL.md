@@ -1,5 +1,5 @@
 ---
-name: jiska-commit
+name: commit
 description: This skill should be used when the user asks to "commit", "make a commit", "commit changes", "split commits", "atomic commit", or wants intent-separated commits from a dirty working tree. Splits working-tree changes into one-kind-per-commit groups (feat/fix/refactor/chore/...), announces the proposed split, then commits without further confirmation.
 argument-hint: "[optional: hint about intended grouping, e.g. 'keep zsh and tmux separate']"
 allowed-tools: Bash

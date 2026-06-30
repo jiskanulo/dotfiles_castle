@@ -1,5 +1,5 @@
 ---
-name: jiska-tackle-issues
+name: tackle-issues
 description: This skill should be used when the user asks to "tackle issues", "pick up open issues", "implement these issues", "knock out these tickets", "work through the issue backlog", or wants to implement small actionable GitHub Issues end-to-end. Selects minor actionable issues, parallelizes disjoint-file issues via git worktrees, implements + verifies + opens PRs, and auto-merges when checks are green.
 argument-hint: "[optional: issue numbers to target, e.g. 247 238 — default: auto-pick minor ones]"
 allowed-tools: Read, Grep, Glob, Bash, Edit, Write
