@@ -2,39 +2,39 @@
 name: commit
 description: This skill should be used when the user asks to "commit", "make a commit", "commit changes", "split commits", "atomic commit", or wants intent-separated commits from a dirty working tree. Splits working-tree changes into one-kind-per-commit groups (feat/fix/refactor/chore/...), announces the proposed split, then commits without further confirmation.
 argument-hint: "[optional: hint about intended grouping, e.g. 'keep zsh and tmux separate']"
-allowed-tools: Bash
+allowed-tools: Bash, Read, AskUserQuestion
 ---
 
 # Atomic Commit Split
 
 Split dirty working-tree changes into intent-separated commits. Each commit is
 one kind of change. The proposed split is announced before staging, then
-applied without further confirmation — roll back with `git reset --soft HEAD~N`
-if the classification was wrong.
+applied without further confirmation.
 
 ## Preconditions
 
 Run `git status`, `git diff`, and `git diff --staged`. If the tree is clean
 (nothing staged or unstaged), stop and say so. If there are already staged
-changes mixed with unstaged, warn the user before proceeding.
+changes, stop and use AskUserQuestion to ask the user how to handle them
+(options: unstage / abort) — do not silently fold them into commit #1.
 
 ## Step 1 — Classify hunks
 
-Read the full diff (`git diff HEAD`) and group every changed file/hunk into one
-of these conventional-commit types:
+Classification types, ordering, and escalation rules all live in
+`~/.claude/references/git-workflow.md` — read it before classifying. If that
+file does not exist, stop and ask the user how to classify.
 
-`refactor` / `chore` / `fix` / `feat` / `docs` / `test` / `style` / `perf` /
-`build` / `ci`
+For untracked files, run `git add -N <file>` first so the new content appears
+in `git diff HEAD` and can be patch-staged in Step 3.
 
-Add a scope when it helps (`feat(zsh):`, `chore(tmux):`). Classification rules
-live in `~/.claude/references/git-workflow.md` — read that file if it exists;
-do not duplicate its rules here. If a single hunk genuinely mixes two
-categories, pick the dominant one and call it out in the announcement
-(Step 2) so the user can roll back with `git reset --soft HEAD~N` if the
-call was wrong.
+Honor any grouping hint the user included in their request (e.g. "keep zsh
+and tmux separate") when forming groups.
 
-Preferred ordering: `refactor`/`chore` → `fix` → `feat` (preparatory commits
-before the changes that depend on them). Explain any reordering in the plan.
+Read the full diff (`git diff HEAD`) and classify every changed file/hunk.
+Add a scope when it helps (`feat(zsh):`, `chore(tmux):`). If a single hunk
+genuinely mixes two categories, follow the escalation rule in git-workflow.md
+(AskUserQuestion rather than guess). Apply the refactor→feat ordering rule
+from git-workflow.md, and explain any reordering in the plan.
 
 ## Step 2 — Announce the plan
 
@@ -52,8 +52,8 @@ roll back if it's wrong.
    Hunks: entire new file
 ```
 
-If Step 1 picked a dominant category for a mixed hunk, note that here
-(e.g. "hunk in `foo.rs` mixes fix + refactor — classified as `fix`").
+If Step 1 escalated a mixed hunk to the user, note the resolution here
+(e.g. "hunk in `foo.rs` mixes fix + refactor — user chose `fix`").
 
 ## Step 3 — Stage and commit one group at a time
 
@@ -63,21 +63,24 @@ For each commit in order:
    **only** when every hunk in that file belongs to this commit's intent.
    **Never use `git add -A` or `git add .`.**
 2. Verify staging: `git diff --staged` must contain **only** the intended hunks.
-   If anything extra crept in, unstage (`git restore --staged <file>`) and redo.
-3. Commit:
+   If anything extra crept in, unstage it with
+   `git restore --staged --patch <file>` (hunk-level) or
+   `git restore --staged <file>` (whole file) and redo.
+3. Commit. Compose the message per git-workflow.md §Message conventions
+   (including the Co-Authored-By trailer rules). Use this shell pattern:
    ```
    git commit -m "$(cat <<'EOF'
-   <type>(<scope>): <subject>
-
-   Co-Authored-By: Claude <model> <noreply@anthropic.com>
+   ...message per git-workflow.md...
    EOF
    )"
    ```
-   `<model>` = the actual model name (e.g. `claude-sonnet-4-6`).
    Never use `--amend` or `--no-verify`.
 
 4. After each commit: `git log --oneline -1` + `git show --stat HEAD` so the
-   result is visible before moving to the next group.
+   result is visible before moving to the next group. git-workflow.md mandates
+   a per-commit check; this skill intentionally defers that to the caller —
+   run build/test once after the full split lands, not between each commit,
+   to keep the split fast.
 
 ## Step 4 — Final report
 
@@ -88,14 +91,16 @@ SHA  type(scope): subject
 SHA  type(scope): subject
 …
 Total: N commits.
-To roll back all of them: git reset --soft HEAD~N
 ```
+
+Do not include a rollback procedure in the final report.
 
 Report in Japanese; commit messages in English.
 
 ## Constraints (always enforce)
 
 - `git add -A` / `git add .` — **never**.
+- `git commit -a` / `git commit --all` — **never** (defeats per-hunk staging).
 - `--amend` — **never** (matches the standing safety protocol).
 - `--no-verify` — **never**.
 - Commit message language: English. Conversation with user: Japanese.
