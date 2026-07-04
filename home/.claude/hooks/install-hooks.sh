@@ -9,6 +9,8 @@
 #   Stop             -> notify.sh    silent        (desktop notification on finish)
 #   Notification     -> notify.sh    Ping          (desktop notification on input wait)
 #   UserPromptSubmit -> prompt-repetition-nudge.sh (suggest a skill/alias on repeats)
+#   UserPromptSubmit / Notification / Stop / SessionStart / SessionEnd
+#                    -> tmux-status.sh             (pane status icon in tmux)
 #
 # Per-event sounds are overridable via env when running this script:
 #   CLAUDE_STOP_SOUND=Glass CLAUDE_NOTIFICATION_SOUND=Hero ~/.claude/hooks/install-hooks.sh
@@ -28,15 +30,22 @@ hooks=(
   "Stop notify.sh"
   "Notification notify.sh"
   "UserPromptSubmit prompt-repetition-nudge.sh"
+  "UserPromptSubmit tmux-status.sh"
+  "Notification tmux-status.sh"
+  "Stop tmux-status.sh"
+  "SessionStart tmux-status.sh"
+  "SessionEnd tmux-status.sh"
 )
 
-# notify.sh takes the event as an argument; other scripts read everything from stdin.
-arg_for() { case "$1" in notify.sh) printf ' %s' "$2" ;; *) printf '' ;; esac; }
+# notify.sh and tmux-status.sh take the event as an argument; other scripts read
+# everything from stdin.
+arg_for() { case "$1" in notify.sh|tmux-status.sh) printf ' %s' "$2" ;; *) printf '' ;; esac; }
 
-# Per-event CLAUDE_NOTIFY_SOUND prefix for notify.sh hooks. An explicitly empty
-# value yields a silent banner (notify.sh drops the `sound name` clause when
-# CLAUDE_NOTIFY_SOUND is set-but-empty). Non-notify events get no prefix.
+# Per-event CLAUDE_NOTIFY_SOUND prefix, applied to notify.sh only. An explicitly
+# empty value yields a silent banner (notify.sh drops the `sound name` clause when
+# CLAUDE_NOTIFY_SOUND is set-but-empty). Other scripts/events get no prefix.
 sound_for() {
+  [ "$2" = notify.sh ] || { printf ''; return; }
   case "$1" in
     Stop)         printf 'CLAUDE_NOTIFY_SOUND=%s ' "${CLAUDE_STOP_SOUND-}" ;;
     Notification) printf 'CLAUDE_NOTIFY_SOUND=%s ' "${CLAUDE_NOTIFICATION_SOUND-Ping}" ;;
@@ -52,7 +61,7 @@ mkdir -p "$(dirname "$settings")"
 for entry in "${hooks[@]}"; do
   event="${entry%% *}"
   script="${entry##* }"
-  cmd="$(sound_for "$event")~/.claude/hooks/${script}$(arg_for "$script" "$event")"
+  cmd="$(sound_for "$event" "$script")~/.claude/hooks/${script}$(arg_for "$script" "$event")"
 
   tmp="$(mktemp)"
   jq \
