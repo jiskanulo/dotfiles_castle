@@ -192,61 +192,24 @@ Each round's prompt MUST:
   plan. Otherwise OK. Style-only findings (the Style line) are advisory
   and do NOT make a draft NG.
 
-Loop (illustrative pseudocode — not runnable). State is per-group, with
-escalation decided per group (not per bullet):
+Loop rules. State is per-group: each group carries `round` (1–3) and
+`status` ∈ `in-review` / `ok` / `accepted` / `abandoned` / `ng-after-3`.
+Escalation is decided per group, not per bullet.
 
-```
-groups = { g: {round: 1, draft: draft_g, status: "in-review"} for g in all_groups }
-
-while any(g.status == "in-review" for g in groups.values()):
-    in_review = {g: groups[g] for g in groups if groups[g].status == "in-review"}
-    if not in_review: break
-    review = run_review({g: in_review[g].draft for g in in_review})
-
-    if review.verdict == OK:
-        for g in in_review: groups[g].status = "ok"
-        break
-
-    # NG round: use per-group verdicts to advance groups individually
-    ng_groups = {pgv.group for pgv in review.per_group_verdicts if pgv.verdict == NG}
-    for g in in_review:
-        if g not in ng_groups:
-            groups[g].status = "ok"          # absent from NG → this group is fine
-
-    # Group surviving bullets by group (dedup: one decision per group)
-    survivors_by_group = {}                  # g -> [bullet]
-    for bullet in review.top_issues:
-        if bullet.group in ng_groups and repeat_detected(bullet.group, bullet):
-            survivors_by_group.setdefault(bullet.group, []).append(bullet)
-
-    # Escalate per group (≤4 batch in one AskUserQuestion; >4 serialize)
-    decisions = ask_per_group(survivors_by_group)   # g -> Accept|Override|Abandon
-    for g, choice in decisions.items():
-        if choice == "Accept":  groups[g].status = "accepted"
-        if choice == "Abandon": groups[g].status = "abandoned"
-        if choice == "Override":
-            # round does NOT advance; suppress repeat-detection for this
-            # bullet on the next round; revise excludes the overridden
-            # finding from the payload
-            pass
-
-    # For NG groups that did NOT escalate (no repeat detected), advance + revise
-    for g in ng_groups:
-        if g in decisions and decisions[g] != "Override":
-            continue
-        if g in decisions and decisions[g] == "Override":
-            # halt guard: if every NG bullet for g was Overridden AND no
-            # non-Override revision happened this round, mark g ok to
-            # prevent stalling
-            if all_bullets_overridden_no_other_findings(g, review):
-                groups[g].status = "ok"
-            continue
-        # auto-revise from this group's findings (with group attribution)
-        revise(groups[g].draft, [f for f in review.findings if f.group == g])
-        groups[g].round += 1
-        if groups[g].round > 3:
-            groups[g].status = "ng-after-3"
-```
+- Review all `in-review` groups together in one reviewer call per round.
+- Global Verdict OK → every in-review group becomes `ok`; the loop ends.
+- On a well-formed NG, use the per-group verdicts: groups not flagged NG
+  become `ok`. Each NG group gets its draft revised from that group's
+  findings, then its `round` advanced; a group whose round would exceed
+  3 keeps the revision but becomes `ng-after-3` (Phase 5 presents it as
+  「Round 3 反映済み・未レビュー」).
+- Exception — repeated finding: if a Top-issues bullet for a group
+  raises essentially the same issue as one from the previous round,
+  don't auto-revise that group; escalate to the user (see Escalation
+  below). An Override keeps the group's round counter where it is and
+  suppresses that finding in the next reviewer round. Halt guard: if
+  every NG finding for a group was overridden and nothing else needs
+  revision, mark the group `ok` rather than looping on nothing.
 
 Record every round in the scratchpad (verdict + findings + revisions
 made + any user decisions taken).
@@ -254,139 +217,59 @@ made + any user decisions taken).
 Failure modes to handle:
 
 - Reviewer returns malformed output → re-prompt once with an explicit
-  schema reminder. If still malformed, treat as NG and consume the
-  round.
+  schema reminder. If still malformed, treat as NG **for all in-review
+  groups** and consume the round (the "groups not flagged NG become ok"
+  rule applies only to well-formed reviews).
 - Reviewer flags only the Style line → treat as OK; carry those nits to
   the final presentation as advisory.
-- Same Top-issues bullet survives two rounds unchanged → escalate to the
-  user via `AskUserQuestion`. Detection is orchestrator-side: load the
-  prior round's Top-issues for the relevant group from the scratchpad and
-  compare to the current round's bullets for that group. Token metric
-  (fixed for determinism): strip the leading `[group: <name>]` prefix
-  from each bullet first. Then, if the bullet is ASCII-only, case-fold
-  the text, split on whitespace into tokens, strip trailing `.,;:!?`
-  from each token, keep stopwords, and match when
-  `|A ∩ B| / min(|A|, |B|) ≥ 0.6`. If the bullet contains non-ASCII
-  (e.g. CJK), use character-bigram Jaccard instead: collect all
-  2-character substrings and match when `|A ∩ B| / |A ∪ B| ≥ 0.5`. The
-  detection compares round N to round N-1 only; a bullet that disappears
-  in N-1 and resurfaces in N is not escalated (intentional — a one-round
-  break is taken as progress). Detection covers the Top-issues bullets;
-  Findings-block items that never make Top-issues are deliberately out of
-  scope. The reviewer itself has no prior-round context (per the "no prior
-  conversation context" rule above) and cannot detect this on its own.
 
-  **Group attribution.** The schema returns one global Top-issues list; the
-  reviewer prompt MUST require each Top-issues bullet to begin with
-  `[group: <group name>]` so the orchestrator can attribute bullets back
-  to groups. Update the schema example accordingly. Use exactly three
-  mutually exclusive options with a 5-point recommendation each. Each
-  option resolves the *group* the surviving bullet belongs to. If multiple
-  groups have a surviving bullet in the same round, batch into one
-  `AskUserQuestion` call when ≤ 4 groups; otherwise serialize the
-  escalations one group at a time.
-  - **Accept current draft (treat finding as known limit)** — record the
-    accepted finding in the scratchpad. The group's `status` becomes
-    `accepted`; its draft moves to Phase 5 as-is. No further reviewer
-    rounds for this group.
-  - **Override finding (mark advisory, continue review)** — record the
-    overridden bullet in the scratchpad and add it to the next round's
-    reviewer prompt as "this item was overridden by the user; do not
-    flag it again." Suppress repeat-detection for this bullet next round.
-    The group's `round` counter does **not** advance for this escalation;
-    the next reviewer call still counts as the same round number that
-    triggered the escalation.
-  - **Abandon this group** — set group's `status` to `abandoned`. It does
-    not appear in subsequent reviewer prompts or in Phase 5.
+**Escalation (repeated finding).** The reviewer has no prior-round
+context, so repeat detection is orchestrator-side: load the previous
+round's Top-issues for the group from the scratchpad and judge whether a
+current bullet raises essentially the same issue (semantic judgment;
+compare round N to N−1 only — a bullet that skips a round counts as
+progress; Findings-block items that never make Top-issues are out of
+scope). The schema's `[group: <name>]` prefix on each Top-issues bullet
+is what makes this attribution possible — keep requiring it.
+
+On a repeat, escalate that group to the user via `AskUserQuestion` —
+batch into one call when ≤ 4 groups escalate in the same round, else
+serialize. Exactly three mutually exclusive options, each with a 5-point
+recommendation:
+
+- **Accept current draft (treat finding as known limit)** — record the
+  accepted finding in the scratchpad. The group becomes `accepted`; its
+  draft moves to Phase 5 as-is, with no further reviewer rounds.
+- **Override finding (mark advisory, continue review)** — record the
+  overridden bullet and tell the next reviewer round "this item was
+  overridden by the user; do not flag it again"; also exclude the
+  overridden bullet from repeat detection in later rounds (so a
+  disobedient reviewer can't re-escalate it). The group's `round`
+  counter does **not** advance for this escalation.
+- **Abandon this group** — status `abandoned`; the group drops out of
+  subsequent reviewer prompts and Phase 5 drafts.
 
 ## Phase 5 — Present — then STOP
 
 At Phase 5 entry each group is in one of: `ok`, `accepted` (via escalation),
-`abandoned`, or `ng-after-3`. Present a single combined report whose top-
-level shape depends on what's present:
+`abandoned`, or `ng-after-3`. Present a single combined Japanese report
+containing, in this order:
 
-- All groups `ok` (no escalations, no NG-after-3) → use the **All-OK
-  template** below.
-- All groups `ng-after-3` → use the **All-NG-after-3 template** below.
-- Mixed (any combination of `ok` / `accepted` / `abandoned` / `ng-after-3`)
-  → use the **Mixed template** below.
-
-### All-OK template
-
-Present, in Japanese, in this shape:
-
-```
-## 解決策 (レビューOK / <N>周目で通過)   ← <N> は OK が出たラウンド番号
-
-### グループ1: <名前>
-- 何をやるか
-- 順序
-- 完了条件
-
-### グループ2: …
-
-## レビュー履歴 (要約)
-- <ラウンド番号>: <verdict> — <NGなら主な指摘 → 修正、OKなら省略>
-- ... (実際に走ったラウンド数だけ列挙)
-
-## 助言レベル (任意で取り込み)
-- <style nits / advisoryがあれば>
-```
-
-Then state plainly: 「以上です。issue化・別エージェントへ委譲などの次
-のアクションは任意に進めてください」.
-
-### All-NG-after-3 template
-
-Present, in Japanese:
-
-```
-## 解決策案 (レビュー未通過 — 3周打ち切り)
-<最終ドラフト — Round 3 の指摘を反映した修正後のドラフト。
- このバージョンはまだレビューを受けていない点に注意>
-
-## 通過しなかった理由
-- 残った Findings (種別ごと):
-  - Coverage: …
-  - Contradictions: …
-  - Hazards: …
-  - Overlooked: …
-- 各 Round で何を修正したか / なぜ通らなかったか
-
-## 推奨
-- 要望を絞り直すか、分割してから再度この skill を呼んでください。
-- 残った Findings の中で「許容」したいものがあれば、それを明示して再
-  度呼ぶと通過しやすくなります。
-```
-
-### Mixed template
-
-Present, in Japanese:
-
-```
-## 解決策 (グループごとに状況が異なる)
-
-### グループ1: <名前> (status: ok | accepted | abandoned | ng-after-3)
-- 何をやるか
-- 順序
-- 完了条件
-  (abandoned の場合はドラフトなし、status のみ表示)
-  (ng-after-3 の場合は「Round 3 反映済み・未レビュー」と明記)
-
-### グループ2: …
-
-## レビュー履歴 (要約)
-- <ラウンド番号>: <verdict> — <NGなら主な指摘 → 修正、OKなら省略>
-- ... (実際に走ったラウンドだけ列挙)
-
-## NG / abandoned summary
-- <グループ名> (ng-after-3): <残った Findings>
-- <グループ名> (abandoned): <ユーザーが abandon を選んだ理由>
-- (accepted は user が override 込みで OK としたものなので summary 不要)
-
-## 助言レベル (任意で取り込み)
-- <style nits / advisoryがあれば>
-```
+- **見出し** — 状況を先頭で明示する: 全グループ `ok` なら「解決策
+  (レビューOK / 最終ラウンド <N> で通過)」、全グループ `ng-after-3`
+  なら「解決策案 (レビュー未通過 — 3周打ち切り)」、それ以外
+  (`accepted` / `abandoned` を含む任意の組み合わせ)なら「解決策
+  (グループごとに状況が異なる)」。
+- **グループごとの節** — 名前と status を添え、何をやるか / 順序 /
+  完了条件を列挙する。`abandoned` は status と理由のみ。`ng-after-3`
+  は「Round 3 反映済み・未レビュー」と明記し、残った Findings
+  (Coverage / Contradictions / Hazards / Overlooked の種別ごと)、
+  各 Round の修正経緯、推奨(要望の絞り直し・分割、許容したい
+  Findings を明示しての再実行)を添える。
+- **レビュー履歴 (要約)** — 実際に走ったラウンドだけ、ラウンド番号と
+  verdict、NG なら主な指摘 → 修正を1行ずつ。
+- **助言レベル** — style nits / advisory があれば任意取り込みとして
+  列挙。
 
 Then state plainly: 「以上です。issue化・別エージェントへ委譲などの次
 のアクションは任意に進めてください」.

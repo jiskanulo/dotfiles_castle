@@ -97,70 +97,48 @@ Otherwise auto-pick minor ones per Step 1.
   WT="${TMPDIR:-/tmp}/wt-$SLUG-issue-<n>"
   ```
 
-  **Once-per-run pre-flight (BEFORE any parallel fan-out).** Check the
-  primary checkout. If dirty (`[ -n "$(git -C "$REPO" status
-  --porcelain)" ]`), surface via `AskUserQuestion`:
-  - `abort` → stop the run.
-  - `stash and continue` → run, *exactly one time* for the whole run:
-    ```bash
-    RUN_ENV="<scratchpad>/tackle-issues/run.env"
-    mkdir -p "$(dirname "$RUN_ENV")"
-    STASH_ID="tackle-issues-$(git -C "$REPO" rev-parse --short HEAD)-run"
-    git -C "$REPO" stash push -u -m "$STASH_ID"
-    printf 'STASH_ID=%q\n' "$STASH_ID" > "$RUN_ENV"
-    ```
-    Persisting to the scratchpad state file (not just a bash variable) is
-    required — Step 5 may execute many turns later, after compaction.
-    Per-track blocks below MUST NOT re-stash.
+  **Once-per-run pre-flight (BEFORE any parallel fan-out):**
 
-  Also once-per-run: update the local remote-tracking ref for the default
-  (refspec-style fetch would fail when `$DEFAULT` is currently checked out
-  in the primary — the common case; this leaves the primary's HEAD alone):
+  - If the primary checkout is dirty, ask the user via `AskUserQuestion`:
+    abort, or stash-and-continue. On stash: stash (`-u`) **exactly once
+    for the whole run** with a unique run-identifying message, and
+    persist that same message as a shell-sourceable line
+    (`STASH_ID=<message>`) in `<scratchpad>/tackle-issues/run.env` —
+    Step 5 sources this file, reads `$STASH_ID`, and locates the stash by
+    grepping `git stash list` for it (a `stash@{N}` ref goes stale; the
+    file is needed because Step 5 may run many turns later, after
+    compaction, and bash variables don't survive that). Per-track work
+    never re-stashes.
+  - `git -C "$REPO" fetch origin "$DEFAULT"` once, to update the
+    remote-tracking ref without disturbing the primary's HEAD (a
+    refspec-style fetch would fail while `$DEFAULT` is checked out in the
+    primary — the common case). Tracks do not re-fetch.
+  - Do NOT call `exit` (the skill body runs in the main bash session).
 
-  ```bash
-  git -C "$REPO" fetch origin "$DEFAULT"
-  ```
-
-  Do NOT call `exit` (the skill body runs in the main bash session).
-
-  **Per-track block (runs once per parallel/sequential track).** Create the
-  worktree directly from the remote ref. Do not re-fetch — the once-per-run
-  fetch above already updated `refs/remotes/origin/$DEFAULT`.
+  **Per track:** check for collisions on **both** the worktree path and
+  the branch name — a prior aborted run can leave either. On a collision,
+  ask the user via `AskUserQuestion`: **refuse** (stop; manual
+  resolution), **replace**
+  (`worktree remove --force` + `branch -D`, only when the branch is
+  merged upstream or the user confirms loss), or **suffix** (append a run
+  id to both the path and the branch name). Then create the worktree from
+  the already-fetched remote ref:
 
   ```bash
-  # Check for collisions on both the worktree path and the branch name —
-  # a prior aborted run can leave either. Surface to the user via
-  # AskUserQuestion with these concrete behaviors:
-  #   - refuse  : stop the run; user resolves manually
-  #   - replace : git worktree remove --force "$WT" && git branch -D <branch>
-  #               (only when MERGED upstream or user confirms loss)
-  #   - suffix  : RUNID=$(date +%s); WT="${WT}-${RUNID}"; <branch>="<branch>-${RUNID}"
-  branch_exists=$(git -C "$REPO" show-ref --quiet "refs/heads/<branch>" && echo 1 || echo 0)
-  if [ -e "$WT" ] || [ "$branch_exists" = "1" ]; then
-    : # AskUserQuestion with the three concrete behaviors above
-  fi
-  git worktree add -b <branch> "$WT" "origin/$DEFAULT"
-  # If a fresh checkout needs toolchain activation, do the project's
-  # equivalent in "$WT" (e.g. `mise trust`, `direnv allow`, entering a
-  # devcontainer). Skip if the repo needs none.
+  git -C "$REPO" worktree add -b <branch> "$WT" "origin/$DEFAULT"
   ```
-- **Share heavy, regenerable build artifacts** with the main checkout so deps
-  don't need reinstalling and the build doesn't restart from scratch — whatever
-  this project's stack uses: a dependency dir (`node_modules`, `vendor/`, a
-  virtualenv, …) and/or a build cache (a Rust `target/`, Go build cache, etc.).
-  Link or point each at the primary checkout's copy. Examples (use only what
-  the repo actually has):
-  - npm/yarn deps: `ln -s "$REPO/node_modules" "$WT/node_modules"`
-    (workspaces also need their per-package `node_modules` linked, or use
-    a shared store)
-  - pnpm: the symlink trick is fragile (the store is a tree of relative
-    symlinks into `.pnpm/`); prefer `PNPM_STORE_PATH` pointing at a shared
-    store and re-run `pnpm install --prefer-offline` in the worktree.
-  - Rust build cache: `CARGO_TARGET_DIR=<the repo's actual target dir>`
 
-  Concurrency is safe per-stack because each tool locks its own cache
-  (Cargo flocks `target/`, pnpm locks the store) and minor-issue tracks
-  rarely run `install`. (`$REPO` = the primary working directory.)
+  If a fresh checkout needs toolchain activation (`mise trust`,
+  `direnv allow`, entering a devcontainer, …), do the project's
+  equivalent in `$WT`.
+- **Share heavy, regenerable build artifacts** with the primary checkout —
+  dependency dirs and build caches, whatever this stack has — via symlink
+  or env var (`CARGO_TARGET_DIR`, etc.) so tracks don't reinstall or
+  rebuild from scratch. Concurrency is safe because each tool locks its
+  own cache, and minor-issue tracks rarely run `install`. One known trap:
+  pnpm's `node_modules` is a tree of relative symlinks into `.pnpm/` —
+  don't symlink it; share the store via `PNPM_STORE_PATH` and re-run
+  `pnpm install --prefer-offline` in the worktree.
 - **Claim each issue when starting.** As a track begins (create its
   branch/worktree), assign the issue to yourself so the in-progress owner is
   visible: `gh issue edit <n> --add-assignee @me`. Do this for every issue —

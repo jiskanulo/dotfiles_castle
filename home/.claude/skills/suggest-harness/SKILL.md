@@ -162,8 +162,8 @@ absence of use is not evidence it's wrong.
 
 ## Output format
 
-**Required**: start with "Analyzed the conversation history." (conversation
-mode) or "Analyzed <article title / URL>." (article mode). Do not write a
+Open with one line stating what was analyzed (the conversation, or the
+article title / URL), then go straight into the proposals. Do not write a
 completion report or a summary.
 
 When triggers fire, for each proposal:

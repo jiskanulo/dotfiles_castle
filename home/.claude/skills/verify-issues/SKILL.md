@@ -31,7 +31,7 @@ Inspect the user's request for a target spec:
 
 If the resolved set is empty, stop and tell the user. If the resolved set
 exceeds ~12 issues, surface and ask the user to narrow before continuing —
-the report budget does not scale past that point.
+per-issue depth stops being digestible past that point.
 
 Pass the **resolved list of numbers** into Phase 1's agent prompt.
 
@@ -95,11 +95,10 @@ MUST:
     is bikeshedding, not locked-in. Flag what becomes a backward-
     compatibility burden if it ships wrong.
 
-- Demand a structured report. Word budget = `max(350, 200 × len(targets))`
-  words — small enough that a 1-issue run does not get padded, large enough
-  that per-issue sections stay substantive as the target set grows. Shape
-  the report like this (omit subsections with nothing to report; do not
-  write "n/a" or "none"):
+- Demand a structured report, sized in proportion to the number of
+  targets: a 1-issue run stays compact and unpadded; per-issue sections
+  stay substantive as the set grows. Shape the report like this (omit
+  subsections with nothing to report; do not write "n/a" or "none"):
 
   ```
   ## Per-issue findings
@@ -199,9 +198,6 @@ Add the epic / overview issue to `<affected ids>` whenever canonical
 defaults need to land in its body (lines below), even if the epic itself
 has no findings.
 
-(The Phase 1 prompt already forbids state-mutating `gh` — this is just a
-reminder.)
-
 First, refetch each affected issue's current body to the scratchpad —
 the audit agent returned only summary findings, not full bodies, and
 the Phase 2/3 user decisions may have come hours apart from the audit.
@@ -233,7 +229,7 @@ parallel Bash tool calls in a single message — latency only, no
 semantic difference vs. sequential:
 
 ```
-gh issue edit <N> -F <scratchpad>/verify-issues/iss<N>.md
+gh issue edit <N> -F "$SCRATCHPAD"/verify-issues/iss<N>.md
 ```
 
 Conventions for the new body:
@@ -251,34 +247,30 @@ Conventions for the new body:
   overview issue exists, surface the canonical defaults in the chat reply
   only — do not invent a parent issue.
 
-After all edits, confirm body integrity on every updated issue. GitHub
-normalizes line endings and may strip trailing whitespace, so a byte-for-
-byte diff is too noisy. Run the check across all affected ids:
+After all edits, confirm each updated body landed intact. GitHub
+normalizes line endings and may strip trailing whitespace, so compare
+with those ignored:
 
 ```
 set -euo pipefail
 for N in <affected ids>; do
   echo "=== #$N ==="
   diff -B -w \
-    --label "github:#$N" --label "local:#$N" \
     <(gh issue view "$N" --json body -q .body) \
-    <scratchpad>/verify-issues/iss"$N".md \
+    "$SCRATCHPAD"/verify-issues/iss"$N".md \
     || true   # diff exits non-zero on differences; capture, do not abort
 done
 ```
 
-(`-B` ignores blank-line diffs caused by GitHub's normalization; `-w`
-ignores whitespace). Empty diff = intact. If any issue shows diff lines,
-surface the offending hunks to the user with the issue number and STOP
-— do not silently retry or assume success.
-
-Once every diff is empty, spot-check structural render on the issue with
-the densest markup (tables / nested lists / fenced code) via `gh issue
-view <N>` (no `--json`, so the terminal renderer surfaces breakage). Look
-specifically for: broken table pipes, fenced code blocks not rendered as
-code, nested list nesting collapsed. If any of those appear, render-check
-every updated issue. If the full render-check turns up further breakage,
-list the issues + symptoms and STOP. Otherwise report:
+Empty diff = intact. If any issue shows real differences, surface the
+offending hunks with the issue number and STOP — do not silently retry
+or assume success. Once all diffs are empty, spot-check markdown
+rendering on the issue with
+the densest markup (`gh issue view <N>` without `--json`, so the
+terminal renderer surfaces breakage — broken table pipes, unrendered
+code fences, collapsed nesting); widen the check to every updated issue
+if anything looks off, and STOP with the list if breakage remains.
+Otherwise report:
 
 - Issue numbers updated, one line each describing the main change.
 - Any decisions still left open (with the issue they live in).

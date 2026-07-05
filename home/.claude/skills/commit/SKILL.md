@@ -61,7 +61,6 @@ For each commit in order:
 
 1. Stage with `git add -p <file>` by default. `git add <file>` is allowed
    **only** when every hunk in that file belongs to this commit's intent.
-   **Never use `git add -A` or `git add .`.**
 2. Verify staging: `git diff --staged` must contain **only** the intended hunks.
    If anything extra crept in, unstage it with
    `git restore --staged --patch <file>` (hunk-level) or
@@ -74,7 +73,6 @@ For each commit in order:
    EOF
    )"
    ```
-   Never use `--amend` or `--no-verify`.
 
 4. After each commit: `git log --oneline -1` + `git show --stat HEAD` so the
    result is visible before moving to the next group. git-workflow.md mandates
