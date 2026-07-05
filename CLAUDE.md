@@ -15,6 +15,18 @@ homeshick pull dotfiles_castle   # pull latest then re-link
 
 New files placed under `home/` are not automatically symlinked — run `homeshick link` after adding them.
 
+On a fresh clone, also enable the repo's git hooks (pre-commit secret guard for
+`home/.claude/settings.json` and staged changes in general):
+
+```sh
+git config core.hooksPath .githooks
+```
+
+Policy: secrets never go into `home/.claude/settings.json` — hook scripts read
+them from the macOS Keychain or untracked files at runtime. The pre-commit
+guard (gitleaks + credential-shape patterns + an env-key check on
+settings.json) blocks violations.
+
 ## Repository structure
 
 | Path | Purpose |
