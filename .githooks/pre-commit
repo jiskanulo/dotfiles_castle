@@ -1,0 +1,53 @@
+#!/usr/bin/env bash
+# Pre-commit secret guard for this dotfiles castle.
+# Enable once per clone: git config core.hooksPath .githooks
+set -uo pipefail
+
+fail=0
+
+# --- 1. Generic secret scan (gitleaks, when installed) -----------------------
+if command -v gitleaks >/dev/null 2>&1; then
+  if ! gitleaks git --pre-commit --staged --redact --no-banner; then
+    echo "BLOCKED: gitleaks found potential secrets in staged changes." >&2
+    fail=1
+  fi
+else
+  echo "warn: gitleaks not installed (brew install gitleaks); pattern check only." >&2
+fi
+
+# --- 2. Known credential shapes in staged added lines ------------------------
+# Focused list to keep false positives low: Anthropic / OpenAI-style / GitHub /
+# Slack / AWS keys and private-key blocks.
+token_re='sk-ant-[A-Za-z0-9_-]{16,}|sk-[A-Za-z0-9]{24,}|ghp_[A-Za-z0-9]{36}|github_pat_[A-Za-z0-9_]{22,}|gho_[A-Za-z0-9]{36}|xox[baprs]-[A-Za-z0-9-]{10,}|AKIA[0-9A-Z]{16}|-----BEGIN [A-Z ]*PRIVATE KEY-----'
+hits=$(git diff --cached --diff-filter=ACMR -U0 | grep -E '^[+]' | grep -vE '^[+][+][+]' | grep -nE "$token_re" || true)
+if [ -n "$hits" ]; then
+  echo "BLOCKED: credential-shaped strings in staged added lines:" >&2
+  echo "$hits" | sed -E "s/($token_re)/<redacted>/g" >&2
+  fail=1
+fi
+
+# --- 3. Structural check on Claude settings: env must not carry secrets ------
+# Policy: secrets never live in settings.json — hooks read them from the
+# Keychain or untracked files at runtime. Block env keys that look like
+# credentials, regardless of value.
+settings_path="home/.claude/settings.json"
+if git diff --cached --name-only | grep -qx "$settings_path"; then
+  if command -v jq >/dev/null 2>&1; then
+    bad_keys=$(git show ":$settings_path" \
+      | jq -r '.env // {} | keys[]' \
+      | grep -iE '(key|token|secret|password|credential)' || true)
+    if [ -n "$bad_keys" ]; then
+      echo "BLOCKED: $settings_path stages env keys that look like credentials:" >&2
+      echo "$bad_keys" | sed 's/^/  - env./' >&2
+      echo "Move the value to the macOS Keychain or an untracked file; scripts read it at runtime." >&2
+      fail=1
+    fi
+  fi
+fi
+
+if [ "$fail" -ne 0 ]; then
+  echo "" >&2
+  echo "Nothing was committed. Unstage the offending hunks and retry." >&2
+  echo "(Emergency bypass, at your own risk: git commit --no-verify)" >&2
+  exit 1
+fi
