@@ -11,8 +11,10 @@
 #
 # Stdin: the Stop-hook JSON payload (.transcript_path, .stop_hook_active, .cwd).
 # Output: {"decision":"block","reason":"…"} to stdout when a verify is missing;
-#         nothing (exit 0) when verification ran, no edits happened, or we already
-#         nudged once. Fails OPEN on any error — never wedges a session shut.
+#         nothing (exit 0) when verification ran, no edits happened, we already
+#         nudged once, or the project has no verify harness at all (no
+#         package.json / Cargo.toml / Makefile / … from cwd up to $HOME).
+#         Fails OPEN on any error — never wedges a session shut.
 #
 # The once-only guard (.stop_hook_active) is what makes "no verification applies"
 # work: after the nudge the agent states N/A (or verifies) and stops again; the
@@ -32,6 +34,30 @@ fi
 
 transcript="$(printf '%s' "$payload" | jq -r '.transcript_path // empty')"
 [[ -n "$transcript" && -f "$transcript" ]] || exit 0
+
+# Gate only in projects that actually have a verify harness. Walk from cwd up
+# to $HOME (or /) looking for a build/test marker; if none exists there is no
+# real check to run (dotfiles, plain-text repos, scratch dirs) — pass silently.
+cwd="$(printf '%s' "$payload" | jq -r '.cwd // empty')"
+if [[ -n "$cwd" && -d "$cwd" ]]; then
+  markers=(
+    package.json Cargo.toml Makefile justfile go.mod pyproject.toml setup.py
+    setup.cfg Gemfile composer.json build.gradle build.gradle.kts pom.xml
+    mix.exs CMakeLists.txt deno.json deno.jsonc tsconfig.json
+  )
+  dir="$cwd" found=0
+  while :; do
+    for m in "${markers[@]}"; do
+      if [[ -e "$dir/$m" ]]; then
+        found=1
+        break 2
+      fi
+    done
+    [[ "$dir" == "/" || "$dir" == "$HOME" ]] && break
+    dir="$(dirname "$dir")"
+  done
+  (( found )) || exit 0
+fi
 
 # Verify-ish command patterns. Broad on purpose: we only need to detect that SOME
 # verification was attempted — the agent picks the project's actual command.
