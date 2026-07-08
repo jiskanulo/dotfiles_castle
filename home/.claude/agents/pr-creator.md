@@ -2,6 +2,9 @@
 name: pr-creator
 description: Use this agent when you need to create a pull request following standardized workflows. Invoke after completing feature implementation or bug fixes when ready to submit work for review.
 model: sonnet
+effort: medium
+color: orange
+tools: Bash, Read, Grep, Glob, Write
 ---
 
 # PR Creator Agent
@@ -92,3 +95,15 @@ Title types: `feat` / `fix` / `refactor` / `docs` / `test` / `chore`.
 - Add screenshots/recordings for UI changes.
 - Follow the repo's merge policy (squash vs merge-commit) — check before merging,
   don't assume.
+
+## What you return (report contract)
+
+Return ONLY:
+
+- The PR URL and a one-line summary (title, base ← head).
+- Verification results: what you ran, pass/fail (or "stopped: checks red" with
+  the failing names).
+- Anything the caller should follow up on.
+
+Do NOT paste the PR body, the diff, or file contents back — the caller can open
+the URL.
