@@ -20,25 +20,54 @@ Keep in the main session:
 Delegate everything that would flood the main context with search results,
 logs, or file contents you won't reference again.
 
+Subagents cannot reach the user: AskUserQuestion does not surface from a
+subagent, and they cannot consult the main session mid-task. Resolve ambiguity
+**before** delegating; agents report open questions back instead of asking.
+
 ## Delegation map
 
-| Task                                                            | Agent              | Model  |
-| --------------------------------------------------------------- | ------------------ | ------ |
-| Broad code investigation, symbol/reference tracking, structure  | `code-explore`     | sonnet |
-| Well-specified implementation, mechanical edits, adding tests   | `implementer`      | sonnet |
-| Multi-file changes, root-cause debugging, cross-cutting work    | `heavy-implementer`| opus   |
-| Running tests / builds and summarizing pass-fail                | `test-runner`      | haiku  |
+| Task                                                            | Agent                  | Model  |
+| --------------------------------------------------------------- | ---------------------- | ------ |
+| Broad code investigation, symbol/reference tracking, structure  | `code-explore`         | sonnet |
+| Implementation: specified edits, tests, multi-file changes      | `implementer`          | sonnet |
+| Symptom-driven debugging, or retry after a sonnet failure       | `implementer`          | opus (spawn with `model: opus`) |
+| Running tests / builds and summarizing pass-fail                | `test-runner`          | haiku  |
+| Creating/updating GitHub Issues from refined requirements       | `issue-manager`        | sonnet |
+| Opening a PR once the branch is verified                        | `pr-creator`           | sonnet |
+| Project health check: TODOs, tech debt, unimplemented items     | `project-investigator` | sonnet |
+
+The Agent tool's `model` parameter overrides the agent definition's frontmatter
+— that is how one `implementer` definition serves both tiers.
 
 Rules of thumb:
 
-- **Spec is clear and change is localized** → `implementer`.
-- **Spec is unclear, spans many files, or needs debugging from symptoms** →
-  `heavy-implementer` (or do the design yourself first, then delegate the now-
-  clear pieces to `implementer`).
+- **Spec is clear** → `implementer` (default sonnet), even for multi-file work.
+- **Debugging from symptoms, or a sonnet attempt failed** → re-delegate to
+  `implementer` with `model: opus`. If the spec itself is unclear, do the
+  design yourself first, then delegate the now-clear pieces.
 - **You just need to know where/how something works** → `code-explore`
   (read-only; never let it edit).
 - **You just need a pass/fail signal** → `test-runner` (don't burn a smart
   model on running a test command).
+- **Requirements already refined and need Issues** → `issue-manager`
+  (non-interactive: hearing happens in the main session first).
+- **Branch verified and ready for review** → `pr-creator` (it stops and
+  reports on red checks; it does not fix).
+
+## Delegating: pass the whole spec up front
+
+Delegation is ~one consultation, not a conversation. Give the agent everything
+it needs in the first message — the spec, file paths, repro steps, the verify
+command, and explicit done-criteria — instead of drip-feeding context across
+follow-up turns. Each round trip costs latency and loses context fidelity.
+
+## Parallel fan-out and continuation
+
+- **Independent subtasks** → spawn their agents in a single message so they run
+  concurrently.
+- **Follow-up work for an agent you already spawned** → continue it with
+  SendMessage (keeps its accumulated context and cache) rather than re-spawning
+  a fresh agent that must rediscover everything.
 
 ## Plan-file owner annotations
 
@@ -48,7 +77,7 @@ explicit and reviewable:
 ```
 1. [owner: code-explore] Map how settings persistence flows through config.rs
 2. [owner: implementer]  Add the `ffmpegBitrate` field + its test
-3. [owner: heavy-implementer] Wire the new field through the download pipeline
+3. [owner: implementer (model: opus)] Debug the flaky retry failure from symptoms
 4. [owner: test-runner]  Run `pnpm test` + `cargo test`, report failures
 ```
 

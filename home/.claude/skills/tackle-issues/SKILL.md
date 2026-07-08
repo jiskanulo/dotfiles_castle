@@ -144,8 +144,8 @@ Otherwise auto-pick minor ones per Step 1.
   visible: `gh issue edit <n> --add-assignee @me`. Do this for every issue —
   sequential or parallel — before implementing.
 - **Each parallel track runs in its own subagent.** Hand one issue per worktree
-  to `implementer` (clear, localized) or `heavy-implementer` (multi-file /
-  debug-from-symptoms), passing the worktree path, the issue number, the verify
+  to `implementer` (spawn with `model: opus` for debug-from-symptoms
+  tracks), passing the worktree path, the issue number, the verify
   commands, the commit policy ("if your diff spans more than one intent, the
   orchestrator will route it through `/commit`; otherwise stop after verify
   green and the orchestrator will one-shot-commit with the `Closes #<n>`

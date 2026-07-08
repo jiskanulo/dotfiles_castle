@@ -12,8 +12,11 @@
   session. Criteria, delegation map, and the report contract:
   @references/role-based-model-selection.md
 - Agents: `code-explore` (read-only investigation, sonnet), `implementer`
-  (well-specified edits, sonnet), `heavy-implementer` (multi-file / debugging,
-  opus), `test-runner` (run + summarize tests, haiku).
+  (implementation incl. multi-file, sonnet; spawn with `model: opus` for
+  symptom-driven debugging or after a sonnet failure), `test-runner` (run +
+  summarize tests, haiku), `issue-manager` (refined requirements → GitHub
+  Issues, sonnet), `pr-creator` (open PRs, sonnet), `project-investigator`
+  (read-only project health check, sonnet).
 
 # GitHub CLI (gh)
 
