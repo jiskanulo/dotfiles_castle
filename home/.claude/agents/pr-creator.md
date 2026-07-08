@@ -40,7 +40,10 @@ stack or tool. Typically:
 - [ ] Lint passes
 - [ ] Build passes (if relevant)
 
-Fix any failures before proceeding. Do not open a PR on red checks.
+If any check fails, **stop and report** the failure back to the caller — do not
+attempt fixes yourself (an unverified fix right before review defeats the
+review), and do not open a PR on red checks. The caller decides whether to
+re-delegate the fix.
 
 ### 3. Generate the PR Body
 
