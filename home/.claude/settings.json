@@ -49,7 +49,10 @@
     "defaultMode": "acceptEdits"
   },
   "model": "claude-fable-5[1m]",
-  "fallbackModel": ["claude-opus-4-7", "claude-sonnet-5"],
+  "fallbackModel": [
+    "claude-opus-4-7",
+    "claude-sonnet-5"
+  ],
   "hooks": {
     "UserPromptSubmit": [
       {
@@ -157,6 +160,7 @@
       "autoUpdate": true
     }
   },
+  "effortLevel": "high",
   "skipAutoPermissionPrompt": true,
-  "effortLevel": "high"
+  "advisorModel": "fable"
 }
