@@ -77,14 +77,6 @@
         "hooks": [
           {
             "type": "command",
-            "command": "~/.claude/hooks/verify-gate.sh"
-          }
-        ]
-      },
-      {
-        "hooks": [
-          {
-            "type": "command",
             "command": "CLAUDE_NOTIFY_SOUND= ~/.claude/hooks/notify.sh Stop"
           }
         ]
