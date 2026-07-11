@@ -46,7 +46,7 @@
       "Bash(rm:*)",
       "Bash(sudo:*)"
     ],
-    "defaultMode": "acceptEdits"
+    "defaultMode": "auto"
   },
   "model": "claude-fable-5[1m]",
   "fallbackModel": [
