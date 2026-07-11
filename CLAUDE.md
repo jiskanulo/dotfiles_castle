@@ -48,10 +48,3 @@ settings.json) blocks violations.
 `zshenv` → `zprofile` → `zshrc` (sources `~/.config/zsh/*` fragments) → `zlogin`
 
 Fragments in `~/.config/zsh/function/` are sourced conditionally in `.zshrc` based on whether the required command exists (`fzf`, `ghq`, `yazi`).
-
-## Key custom shell functions
-
-- `cdd` — fzf-select from zsh's open directories (uses lsof)
-- `cdw` — fzf-select ghq-managed repositories
-- `y` — yazi wrapper that changes cwd on exit
-- `fzf-select-history` — fzf-powered Ctrl-R history search
