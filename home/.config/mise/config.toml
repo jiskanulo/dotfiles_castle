@@ -21,8 +21,8 @@ show_status_bar = true
 preferred_view_style = "list"
 
 [bootstrap.macos.keyboard]
-key_repeat = 1
-initial_key_repeat = 3
+key_repeat = 2
+initial_key_repeat = 8
 press_and_hold = false
 fn_state = true
 
