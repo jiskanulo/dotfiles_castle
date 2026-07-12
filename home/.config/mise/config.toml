@@ -6,3 +6,26 @@ python = "latest"
 ruby = "latest"
 rust = "stable"
 uv = "latest"
+
+[bootstrap.macos.dock]
+autohide = true
+orientation = "left"
+tilesize = 48
+magnification = false
+show_recents = false
+mru_spaces = false
+
+[bootstrap.macos.finder]
+show_pathbar = true
+show_status_bar = true
+preferred_view_style = "list"
+
+[bootstrap.macos.keyboard]
+key_repeat = 1
+initial_key_repeat = 3
+press_and_hold = false
+fn_state = true
+
+[bootstrap.macos.trackpad]
+tap_to_click = true
+three_finger_drag = true
