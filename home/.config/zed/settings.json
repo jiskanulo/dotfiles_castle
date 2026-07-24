@@ -7,9 +7,32 @@
 // custom settings, run `zed: open default settings` from the
 // command palette (cmd-shift-p / ctrl-shift-p)
 {
+  "tab_size": 2,
+  "vim": {
+    "toggle_relative_line_numbers": false
+  },
+  "toolbar": {
+    "code_actions": false,
+    "agent_review": false,
+    "selections_menu": true,
+    "quick_actions": true,
+    "breadcrumbs": true
+  },
+  "minimap": {
+    "show": "never"
+  },
+  "scrollbar": {
+    "show": "system"
+  },
+  "default_open_behavior": "new_window",
+  "telemetry": {
+    "diagnostics": false,
+    "metrics": false,
+    "anthropic_retention": false
+  },
   "cli_default_open_behavior": "new_window",
   "which_key": {
-    "enabled": false
+    "enabled": true
   },
   "autosave": "on_focus_change",
   "when_closing_with_no_tabs": "platform_default",
