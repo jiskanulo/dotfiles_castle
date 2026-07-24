@@ -95,6 +95,11 @@ Subagents must return **only**:
 - Key decisions / assumptions made
 - Verification results (what was run, pass/fail, failing names)
 
+An agent that creates an external artifact (PR, issue, comment) must read it
+back after creation (`gh pr view` / `gh issue view`) and confirm the content
+matches intent before reporting success — reporting the URL alone is not
+verification. (A stale body file once shipped the wrong PR description.)
+
 They must **not** paste full file contents, large diffs, or the bodies of files
 they merely read. The whole point is to keep the main context small — a summary
 that re-dumps everything defeats it.

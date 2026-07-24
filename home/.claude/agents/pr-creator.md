@@ -66,15 +66,44 @@ re-delegate the fix.
 Closes #[n]   (or "Related: #[n]" for partial work)
 ```
 
+Create a fresh temp directory and write the body there with the **Write
+tool** — NEVER via Bash redirection (`>` / heredoc). The shell may have
+`noclobber` set, so `>` onto an existing file fails, and if that error goes
+unnoticed a **stale file from a previous PR gets submitted as this PR's body**
+(this has actually happened). `mktemp -d` guarantees a unique, empty
+directory, so the file you Write there is always new — never reuse a path
+from a previous attempt, and don't use plain `mktemp` (it pre-creates the
+file, which the Write tool refuses to overwrite unread).
+
+```bash
+mktemp -d   # prints e.g. /tmp/tmp.XXXXXXXX — Write the body to <that-dir>/pr-body.md
+```
+
+Shell state does not persist between Bash calls, so don't rely on a `BODY_DIR`
+variable — use the literal path `mktemp -d` printed.
+
 ### 4. Create the PR
 
 ```bash
 gh pr create \
   --title "[type]: [Brief description] (#NN)" \
-  --body-file pr-body.md
+  --body-file <tmpdir>/pr-body.md
 ```
 
 Title types: `feat` / `fix` / `refactor` / `docs` / `test` / `chore`.
+
+### 5. Verify the Created PR
+
+Immediately after creation, confirm the PR actually carries the intended
+content before reporting success:
+
+```bash
+gh pr view <PR#> --json title,baseRefName,body --jq '.title, .baseRefName, (.body | split("\n")[0:5] | join("\n"))'
+```
+
+Check that the title, base branch, and body opening match what you intended
+(especially the `Closes #N` line — a wrong body can close the wrong issue on
+merge). If they don't match, fix with `gh pr edit` before reporting.
 
 ## Pre-Flight Checklist
 
