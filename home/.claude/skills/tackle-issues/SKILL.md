@@ -103,7 +103,9 @@ Otherwise auto-pick minor ones per Step 1.
     abort, or stash-and-continue. On stash: stash (`-u`) **exactly once
     for the whole run** with a unique run-identifying message, and
     persist that same message as a shell-sourceable line
-    (`STASH_ID=<message>`) in `<scratchpad>/tackle-issues/run.env` —
+    (`STASH_ID=<message>`) in `<scratchpad>/tackle-issues/run.env`
+    (write with `>|` — the shell may have `noclobber` set, and a rerun
+    against a leftover run.env would fail on plain `>`) —
     Step 5 sources this file, reads `$STASH_ID`, and locates the stash by
     grepping `git stash list` for it (a `stash@{N}` ref goes stale; the
     file is needed because Step 5 may run many turns later, after

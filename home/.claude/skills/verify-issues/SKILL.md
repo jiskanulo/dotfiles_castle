@@ -202,7 +202,9 @@ First, refetch each affected issue's current body to the scratchpad —
 the audit agent returned only summary findings, not full bodies, and
 the Phase 2/3 user decisions may have come hours apart from the audit.
 Create the subdir before redirecting; the harness gives you the flat
-scratchpad path and shell `>` does not auto-mkdir:
+scratchpad path and shell `>` does not auto-mkdir. Use `>|`, not `>` —
+the shell may have `noclobber` set, and a rerun (files already present)
+would fail on plain `>`:
 
 ```
 SCRATCHPAD="<scratchpad>"   # quote-friendly; covers paths with spaces
@@ -210,7 +212,7 @@ mkdir -p "$SCRATCHPAD/verify-issues"
 set -euo pipefail
 for N in <affected ids>; do
   gh issue view "$N" --json body -q .body \
-    > "$SCRATCHPAD/verify-issues/iss${N}.orig.md" \
+    >| "$SCRATCHPAD/verify-issues/iss${N}.orig.md" \
     || { echo "refetch failed for #$N"; exit 1; }
 done
 ```
