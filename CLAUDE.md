@@ -27,24 +27,8 @@ them from the macOS Keychain or untracked files at runtime. The pre-commit
 guard (gitleaks + credential-shape patterns + an env-key check on
 settings.json) blocks violations.
 
-## Repository structure
-
-| Path | Purpose |
-|------|---------|
-| `home/.zshrc` | Loads zsh plugins and sources all `~/.config/zsh/*` fragments |
-| `home/.zprofile` | Login-time env: PATH, EDITOR, LANG, LESS, Go/Composer setup |
-| `home/.config/zsh/` | Modular zsh config: `alias`, `bindkey`, `completion`, `env-*`, `function/*` |
-| `home/.config/sheldon/plugins.toml` | Zsh plugin manager (replaces zplug) |
-| `home/.config/mise/config.toml` | Runtime versions via mise (node, pnpm, ruby) |
-| `home/.config/tmux/tmux.conf` | tmux: prefix `C-t`, vi keys, popup `C-t C-Space` |
-| `home/.gitconfig` | Git aliases (`g st`, `g l`, `g sw` via fzf, etc.) |
-| `home/.config/karabiner/` | Keyboard remapping |
-| `home/.hammerspoon/init.lua` | macOS automation |
-| `home/.config/ghostty/` | Terminal emulator config |
-| `home/.config/zed/settings.json` | Zed editor settings |
-
 ## Zsh config loading order
 
-`zshenv` → `zprofile` → `zshrc` (sources `~/.config/zsh/*` fragments) → `zlogin`
+`zshenv` → `zprofile` → `zshrc` (sources selected `~/.config/zsh/` fragments — not all of them) → `zlogin`
 
 Fragments in `~/.config/zsh/function/` are sourced conditionally in `.zshrc` based on whether the required command exists (`fzf`, `ghq`, `yazi`).
