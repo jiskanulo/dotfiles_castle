@@ -65,6 +65,12 @@ follow-up turns. Each round trip costs latency and loses context fidelity.
 
 - **Independent subtasks** → spawn their agents in a single message so they run
   concurrently.
+- **Parallel implementers in the same repo** → spawn each with the Agent tool's
+  `isolation: 'worktree'` so every agent gets its own git worktree and can run
+  branch → commit → push → PR end-to-end without file conflicts. If two
+  parallel PRs must touch the same file, constrain each to conflict-free edits
+  (e.g. in-place substitutions only, no line insertion/reordering) and say so
+  in both specs.
 - **Follow-up work for an agent you already spawned** → continue it with
   SendMessage (keeps its accumulated context and cache) rather than re-spawning
   a fresh agent that must rediscover everything.
