@@ -2,6 +2,10 @@
 
 - Proactively ask questions when something is unclear
 - Always use AskUserQuestion to get answers when asking questions
+- **Make AskUserQuestion self-contained**: put all decision context into the
+  question text and option descriptions — a known TUI bug can hide assistant
+  text that precedes the question dialog (see memory
+  `askuserquestion-tui-rendering-bug` for issue refs).
 - **When presenting multiple options, provide recommendation level and reasoning for each**
   - Recommendation level is a 5-point scale
   - Not required when there is a single clear answer
