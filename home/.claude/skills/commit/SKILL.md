@@ -99,6 +99,7 @@ Report in Japanese; commit messages in English.
 
 - `git add -A` / `git add .` — **never**.
 - `git commit -a` / `git commit --all` — **never** (defeats per-hunk staging).
-- `--amend` — **never** (matches the standing safety protocol).
+- `--amend` — **never** (rewriting a commit destroys the announced-plan audit
+  trail; recover with `git reset --soft HEAD~N` and re-commit instead).
 - `--no-verify` — **never**.
 - Commit message language: English. Conversation with user: Japanese.
