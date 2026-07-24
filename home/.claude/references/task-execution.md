@@ -39,7 +39,8 @@ Repeat per atomic unit; don't widen scope mid-unit:
 - **Keep units atomic.** Finish and verify one before starting the next. A unit
   that balloons across many files or turns into debugging-from-symptoms is a
   signal to stop, re-plan, or re-delegate to `implementer` with `model: opus`.
-- **Externalize progress on long tasks.** Maintain a TodoWrite list; for
+- **Externalize progress on long tasks.** Maintain a task list
+  (TaskCreate/TaskUpdate); for
   genuinely long runs keep a scratchpad progress file (done / next / open
   questions). This survives compaction — conversation memory may not.
   Auto-memory is for durable facts, not in-flight task state.

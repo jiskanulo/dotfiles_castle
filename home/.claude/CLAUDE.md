@@ -65,7 +65,7 @@
   starting the next. Don't try to do too much in a single pass.
 - **Externalize progress on long tasks.** Long turns get compacted, and in-flight
   state can be lost in the summary. For multi-step work, keep state outside the
-  conversation: maintain a TodoWrite list, and for genuinely long runs a
+  conversation: maintain a task list (TaskCreate/TaskUpdate), and for genuinely long runs a
   scratchpad progress file (done / next / open questions). Auto-memory is for
   durable facts — not in-flight task state.
 - **Never fake "done."** Don't delete, skip, or weaken tests to make a check
