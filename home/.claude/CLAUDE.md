@@ -6,6 +6,16 @@
   - Recommendation level is a 5-point scale
   - Not required when there is a single clear answer
 
+# Shell Environment
+
+- This machine's zsh has `noclobber` set: Bash `>` onto an existing file fails
+  with "file exists". Create/overwrite temp files with the Write tool (or
+  `>|`), and never feed a file to an external command (gh, curl) without
+  confirming the write succeeded.
+- `sed` is GNU sed (Homebrew gnubin first in PATH), not BSD sed. The macOS
+  idiom `sed -i ''` fails ("can't read s/…"). For in-place edits use
+  `sed -i` (no backup arg) or `perl -pi -e`.
+
 # Delegation & Model Selection
 
 - Route work to subagents by role to keep expensive reasoning in the main
