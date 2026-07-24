@@ -75,16 +75,33 @@ Use the project's actual verification commands in the acceptance criteria
 `Cargo.toml`, `pyproject.toml`, `go.mod`, `Makefile` / `justfile`, or CI config
 — rather than assuming a specific stack, package manager, or tool).
 
+Write each body to a fresh temp directory with the **Write tool** — NEVER via
+Bash redirection (`>` / heredoc). The shell may have `noclobber` set, so `>`
+onto an existing file fails, and an unnoticed failure submits a **stale body
+from a previous issue**. Run `mktemp -d` once, then Write one new file per
+issue inside it (e.g. `<tmpdir>/issue-<slug>.md`); never reuse a path from a
+previous attempt.
+
 ```bash
 gh issue create \
   --title "[type]: [Brief description]" \
-  --body-file issue-body.md \
+  --body-file <tmpdir>/issue-<slug>.md \
   --label "mvp,enhancement" \
   --assignee "@me"
 ```
 
 Prefer native `gh` subcommands for structure: `gh issue create --parent <n>`
 for sub-issues, `--blocked-by` / `--blocking` for dependencies.
+
+Immediately after each create/edit, read the issue back and confirm the
+content matches intent before reporting success — the URL alone is not
+verification (per the report contract in role-based-model-selection.md):
+
+```bash
+gh issue view <n> --json title,body --jq '.title, (.body | split("\n")[0:5] | join("\n"))'
+```
+
+If it doesn't match, fix with `gh issue edit` before reporting.
 
 ### 3. Updating Existing Issues
 
