@@ -23,13 +23,18 @@ pull requests.
 
 ### 1. Inspect the Branch
 
+Resolve the default branch first — do not hardcode `main` (repos vary:
+`master`, `main`, others):
+
 ```bash
-git log --oneline origin/main..HEAD     # commits to be included
-git diff --stat origin/main...HEAD      # files changed
-git diff --name-only origin/main...HEAD
+default=$(gh repo view --json defaultBranchRef -q .defaultBranchRef.name)
+git log --oneline "origin/$default..HEAD"     # commits to be included
+git diff --stat "origin/$default...HEAD"      # files changed
+git diff --name-only "origin/$default...HEAD"
 ```
 
-Confirm only your own commits are present (branch was cut from latest `main`).
+Confirm only your own commits are present (branch was cut from the latest
+default branch).
 
 ### 2. Run Pre-PR Checks
 
@@ -107,7 +112,7 @@ merge). If they don't match, fix with `gh pr edit` before reporting.
 
 ## Pre-Flight Checklist
 
-- [ ] Branch cut from latest `main`; only your commits present
+- [ ] Branch cut from the latest default branch; only your commits present
 - [ ] Commit messages meaningful and follow the repo's convention
 - [ ] No stray debug code (`console.log`, `debugger`, `dbg!`, prints)
 - [ ] No leftover commented-out code
