@@ -41,8 +41,6 @@
 	rebase = true
 [fetch]
 	prune = true
-[hub]
-	protocol = https
 [credential]
 	helper = osxkeychain
 [gpg]
