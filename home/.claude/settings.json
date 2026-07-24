@@ -152,7 +152,5 @@
       "autoUpdate": true
     }
   },
-  "effortLevel": "high",
-  "skipAutoPermissionPrompt": true,
-  "advisorModel": "fable"
+  "effortLevel": "high"
 }
