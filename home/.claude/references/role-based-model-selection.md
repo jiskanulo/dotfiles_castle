@@ -70,7 +70,9 @@ follow-up turns. Each round trip costs latency and loses context fidelity.
   branch → commit → push → PR end-to-end without file conflicts. If two
   parallel PRs must touch the same file, constrain each to conflict-free edits
   (e.g. in-place substitutions only, no line insertion/reordering) and say so
-  in both specs.
+  in both specs. When the orchestrator itself needs control over branch names,
+  shared build caches, or post-merge cleanup (as in the `tackle-issues` skill),
+  manage `git worktree` manually instead — same isolation, more control.
 - **Follow-up work for an agent you already spawned** → continue it with
   SendMessage (keeps its accumulated context and cache) rather than re-spawning
   a fresh agent that must rediscover everything.

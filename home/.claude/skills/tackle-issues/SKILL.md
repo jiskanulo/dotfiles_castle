@@ -89,7 +89,10 @@ Otherwise auto-pick minor ones per Step 1.
   DEFAULT=$(gh repo view --json defaultBranchRef -q .defaultBranchRef.name 2>/dev/null \
     || git symbolic-ref --short refs/remotes/origin/HEAD | sed 's|^origin/||')
   ```
-- Create one worktree per parallel track from the latest `$DEFAULT`. Use a
+- Create one worktree per parallel track from the latest `$DEFAULT`. Manual
+  worktrees (not the Agent tool's `isolation: 'worktree'`) are deliberate
+  here: this flow needs named branches, shared build caches, and cleanup
+  tied to the merge lifecycle. Use a
   repo-scoped temp dir keyed by issue number so parallel runs and reruns don't
   collide:
   ```bash
