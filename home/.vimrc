@@ -27,7 +27,7 @@ set paste
 
 syntax on
 filetype plugin on
-filetyp  indent on
+filetype indent on
 
 " シンタックスチェック機能
 nmap ,l :call SyntaxCheck()<CR>
