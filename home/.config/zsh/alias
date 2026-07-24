@@ -1,3 +1,5 @@
+# Function (not alias): forwards all arguments, unlike `sh -c claude` which drops them
+claude() { op run --no-masking --env-file="$HOME/.claude/op.env" -- claude "$@"; }
 alias cp='cp -i'
 alias g='git'
 alias k='kubectl'
