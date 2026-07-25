@@ -75,6 +75,13 @@ if [ "$resume" -eq 0 ]; then           # 2. create PR (skip on resume)
   url=$(gh pr create --base "$default" --head "$branch" --title "$title" \
     --body "$(printf '## Summary\n%s\n\n## Test plan\n%s\n\n🤖 Generated with [Claude Code](https://claude.com/claude-code)\n' "$summary" "$testplan")")
   n="${url##*/}"
+
+  # 2b. Read back the created PR and gate on it matching intent — the URL
+  #     alone is not verification (report contract). Fix with `gh pr edit`
+  #     on mismatch, then re-run this block.
+  actual=$(gh pr view "$n" --json title,baseRefName -q '.title + "\t" + .baseRefName')
+  [ "$actual" = "$(printf '%s\t%s' "$title" "$default")" ] || { echo "PR title/base mismatch: $actual"; exit 1; }
+  gh pr view "$n" --json body -q .body | grep -q '## Test plan' || { echo "PR body missing Test plan section; fix with gh pr edit"; exit 1; }
 fi
 
 # 3. CI gate. gh pr checks --watch exits 0 immediately when no checks are

@@ -221,6 +221,16 @@ EOF
 )"
 ```
 
+After `gh pr create`, read the PR back and confirm it matches intent before
+enabling auto-merge — the URL alone is not verification (report contract; a
+stale body file once shipped the wrong PR description):
+
+```bash
+gh pr view <pr> --json title,body -q '.title + "\n---\n" + .body'
+# Confirm: title matches, `Closes #<n>` present, no leaked placeholder text.
+# On mismatch fix with `gh pr edit <pr>` and read back again.
+```
+
 Then merge via GitHub's auto-merge so it lands once required checks pass
 (verification already green locally; CI may still be running):
 
