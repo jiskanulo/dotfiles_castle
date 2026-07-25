@@ -13,7 +13,7 @@ fi
 # which would collapse empty fields and shift every later value.
 IFS=$'\037' read -r model effort dir used_pct \
   session_pct weekly_pct session_reset weekly_reset \
-  cost_usd < <(
+  cost_usd pr_number pr_state worktree < <(
   jq -r '
     [ .model.display_name,
       .effort.level,
@@ -23,7 +23,10 @@ IFS=$'\037' read -r model effort dir used_pct \
       .rate_limits.seven_day.used_percentage,
       .rate_limits.five_hour.resets_at,
       .rate_limits.seven_day.resets_at,
-      .cost.total_cost_usd
+      .cost.total_cost_usd,
+      .pr.number,
+      .pr.review_state,
+      .workspace.git_worktree
     ] | map(. // "" | tostring) | join("\u001f")
   ' <<<"$input"
 )
@@ -83,6 +86,12 @@ if [ -n "$effort" ]; then
   parts="$parts [$effort]"
 fi
 
+# Append the worktree name when inside one (absent in the main tree). Skip it
+# when the worktree name already equals the directory basename.
+if [ -n "$worktree" ] && [ "$worktree" != "$dir_name" ]; then
+  dir_name="$dir_name:$worktree"
+fi
+
 if [ -n "$branch" ]; then
   parts="$parts | $dir_name ($branch)"
 else
@@ -116,6 +125,15 @@ fi
 
 if [ -n "$cost" ]; then
   parts="$parts | \$$cost"
+fi
+
+# Open PR for the current branch, with review state when reported.
+if [ -n "$pr_number" ]; then
+  if [ -n "$pr_state" ]; then
+    parts="$parts | PR #$pr_number ($pr_state)"
+  else
+    parts="$parts | PR #$pr_number"
+  fi
 fi
 
 printf '%s' "$parts"
