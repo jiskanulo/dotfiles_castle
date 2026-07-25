@@ -1,6 +1,7 @@
 ---
 name: land-pr
 description: This skill should be used when the user asks to "open a PR", "land PR", "ship this branch", "land this branch", "create and merge PR", or wants to push the current feature branch and merge it via PR (or resume an existing open PR for the branch). Pushes the branch, opens a PR against the default branch, waits for any CI gate, merges with --merge (preserving intent-separated commits), deletes the branch, and syncs the default. Issue-less counterpart to tackle-issues.
+allowed-tools: Bash, Read, AskUserQuestion
 ---
 
 # Land the current branch as a PR
