@@ -13,7 +13,7 @@ fi
 # which would collapse empty fields and shift every later value.
 IFS=$'\037' read -r model effort dir used_pct \
   session_pct weekly_pct session_reset weekly_reset \
-  total_input total_output model_id < <(
+  cost_usd < <(
   jq -r '
     [ .model.display_name,
       .effort.level,
@@ -23,9 +23,7 @@ IFS=$'\037' read -r model effort dir used_pct \
       .rate_limits.seven_day.used_percentage,
       .rate_limits.five_hour.resets_at,
       .rate_limits.seven_day.resets_at,
-      .context_window.total_input_tokens,
-      .context_window.total_output_tokens,
-      .model.id
+      .cost.total_cost_usd
     ] | map(. // "" | tostring) | join("\u001f")
   ' <<<"$input"
 )
@@ -70,18 +68,13 @@ fmt_reset() {
   fi
 }
 
-# Cost estimate (approximate). Pricing per 1M tokens by tier.
-case "$model_id" in
-  *fable*)  input_price=10; output_price=50;;
-  *opus*)   input_price=5;  output_price=25;;
-  *sonnet*) input_price=3;  output_price=15;;
-  *haiku*)  input_price=1;  output_price=5;;
-  *)        input_price=3;  output_price=15;;
+# Session cost, straight from the official cost.total_cost_usd field.
+# Empty/non-numeric (e.g. before the first API call) renders as nothing.
+cost=""
+case "$cost_usd" in
+  '' | *[!0-9.]* | *.*.* ) ;;
+  * ) cost=$(printf '%.3f' "$cost_usd") ;;
 esac
-
-cost=$(awk -v i="${total_input:-0}" -v o="${total_output:-0}" \
-  -v ip="$input_price" -v op="$output_price" \
-  'BEGIN { printf "%.3f", (i * ip + o * op) / 1000000 }')
 
 # Build status line
 parts="$model"
@@ -121,6 +114,8 @@ if [ -n "$weekly_int" ]; then
   fi
 fi
 
-parts="$parts | \$$cost"
+if [ -n "$cost" ]; then
+  parts="$parts | \$$cost"
+fi
 
 printf '%s' "$parts"
