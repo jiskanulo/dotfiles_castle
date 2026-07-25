@@ -135,7 +135,11 @@ Scan the recent conversation for these, then route each via the table above:
    skill — do not invoke it as the applier for one approved item.
 7. **Non-obvious background / preferences** (facts, not instructions). → memory
 8. **A repeated multi-step procedure** → a skill/command; **a repeated
-   delegation** → a subagent
+   delegation** → a subagent. This includes **repeated manual
+   verification / follow-up checks** (re-running a linter, log-hygiene
+   review, re-validating generated output): route those to a verify skill —
+   standalone if only needed on demand, or embedded as the final step of the
+   generating skill/agent when the check must run every time
 
 ## Detection triggers — cleanup (remove / reconcile)
 
