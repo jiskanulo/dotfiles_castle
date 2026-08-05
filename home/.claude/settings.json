@@ -50,7 +50,7 @@
   },
   "model": "claude-fable-5[1m]",
   "fallbackModel": [
-    "claude-opus-4-7",
+    "claude-opus-5",
     "claude-sonnet-5"
   ],
   "hooks": {
