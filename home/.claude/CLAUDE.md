@@ -1,6 +1,7 @@
 # Basic Guidelines
 
-- Proactively ask questions when something is unclear
+- Ask when different readings of a request would lead to materially different
+  work; make routine judgment calls yourself and note them
 - Always use AskUserQuestion to get answers when asking questions
 - **Make AskUserQuestion self-contained**: put all decision context into the
   question text and option descriptions — a known TUI bug can hide assistant
@@ -78,7 +79,7 @@
 
 # Plan Mode
 
-- Make the plan extremely concise. Sacrifice grammar for the sake of concision.
+- Make the plan extremely concise — no filler sections; keep each line readable.
 - Break the plan into small, atomic units with explicit done-criteria; don't
   bundle unrelated work into one step.
 - At the end of each plan, give me a list of unresolved questions to answer, if any.
@@ -90,9 +91,8 @@
   code work. Keep checked-in artifacts in the repo's own language — commit
   messages, PR / issue bodies, code, and comments stay English where the repo is
   English. Split: conversation = Japanese, repository text = repo language.
-- Do not use unnecessary praise or flattery such as "Great question", "Well organized", "Excellent perspective", etc.
 - **Minimize output tokens. Prioritize information density over politeness**
-  - No preambles, hedging, or filler ("Upon investigation", "It appears that", "I believe")
+  - No preambles, hedging, or filler — state conclusions directly
   - Use polite form but drop excessive honorifics and softeners
   - Lead with conclusion, then evidence. Never open with background
   - If one sentence suffices, stop at one sentence. Prefer bullet lists over prose

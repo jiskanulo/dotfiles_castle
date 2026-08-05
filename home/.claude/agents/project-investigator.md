@@ -62,6 +62,4 @@ unimplemented items, TODOs, and technical debt.
 
 ## Notes
 
-- Provide actionable insights, not just lists.
 - Prioritize items that affect core functionality and user impact.
-- Be honest about project health — don't sugarcoat.

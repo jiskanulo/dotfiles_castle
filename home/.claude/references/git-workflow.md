@@ -54,7 +54,7 @@ Co-Authored-By: Claude <model> <noreply@anthropic.com>
 - Summary: imperative mood ("add", "fix", "remove" — not "added", "fixes")
 - Language: English (see Communication Style in CLAUDE.md — don't duplicate here)
 - Footer: always include the `Co-Authored-By` line for Claude-assisted commits.
-  `<model>` is the current model id (e.g. `Opus 4.7`, `Sonnet 4.6`) — never hard-code
+  `<model>` is the current model id (e.g. `Fable 5`, `Sonnet 5`) — never hard-code
 
 ## When to pause / escalate
 

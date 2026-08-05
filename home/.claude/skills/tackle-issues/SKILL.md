@@ -210,7 +210,7 @@ Co-Authored-By: Claude MODEL <noreply@anthropic.com>
 EOF
 )"
 # Substitute MODEL with the executing model's human-readable name (e.g.
-# `Opus 4.7`, `Sonnet 4.6`) per git-workflow.md. Do not leave brackets
+# `Fable 5`, `Sonnet 5`) per git-workflow.md. Do not leave brackets
 # around it — `<model>` confuses git's trailer parser.
 git -C "$WT" push -u origin <branch>
 gh pr create --base "$DEFAULT" --head <branch> --title "..." --body "$(cat <<'EOF'
