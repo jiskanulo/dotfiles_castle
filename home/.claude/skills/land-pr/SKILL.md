@@ -26,6 +26,14 @@ branch=$(git symbolic-ref --short HEAD)
 git diff --quiet && git diff --cached --quiet || { echo "tracked changes uncommitted; commit or stash"; exit 1; }
 ```
 
+If the first check fails because commits were made directly on `$default`
+(local `$default` ahead of `origin/$default`, tree clean), salvage instead
+of stopping: `git switch -c <feature-branch>` at HEAD, then
+`git branch -f $default origin/$default`, then re-run the flow from the
+top. Derive the branch name from the commits' intent (e.g.
+`feat/<topic>`); ask the user via `AskUserQuestion` only if no obvious
+name exists.
+
 ## Existing-PR check (resume if OPEN, stop if not)
 
 ```bash
