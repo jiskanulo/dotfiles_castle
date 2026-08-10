@@ -1,0 +1,7 @@
+function ccfork() {
+	if [[ -n "$TMUX" ]]; then
+		tmux split-window -h -c "$PWD" 'claude --continue --fork-session'
+	else
+		claude --continue --fork-session
+	fi
+}

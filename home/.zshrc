@@ -49,6 +49,11 @@ if [ $commands[yazi] ]; then
   source "$HOME/.config/zsh/function/y" 2> /dev/null
 fi
 
+# claude
+if [ $commands[claude] ]; then
+  source "$HOME/.config/zsh/function/claude-fork" 2> /dev/null
+fi
+
 # kiro
 [[ "$TERM_PROGRAM" == "kiro" ]] && . "$(kiro --locate-shell-integration-path zsh)"
 
