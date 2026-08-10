@@ -13,7 +13,9 @@ homeshick link dotfiles_castle   # re-create symlinks after adding/renaming file
 homeshick pull dotfiles_castle   # pull latest then re-link
 ```
 
-New files placed under `home/` are not automatically symlinked — run `homeshick link` after adding them.
+New files placed under `home/` are not automatically symlinked — `homeshick link`
+only processes **git-tracked** files and silently skips untracked ones. After
+adding a file, `git add -N <file>` (or commit) first, then run `homeshick link`.
 
 On a fresh clone, also enable the repo's git hooks (pre-commit secret guard for
 `home/.claude/settings.json` and staged changes in general):
