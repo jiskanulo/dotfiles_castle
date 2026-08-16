@@ -1,0 +1,470 @@
+#compdef vercel vc
+# Hand-written completion for Vercel CLI (v59) — the CLI ships no completion.
+
+_vercel_environments() {
+  _values 'environment' production preview development
+}
+
+_vercel_commands() {
+  local -a commands
+  commands=(
+    'deploy:Performs a deployment (default)'
+    'build:Build the project locally into ./vercel/output'
+    'cache:Manages cache for your current Project'
+    'dev:Start a local development server'
+    'env:Manages the Environment Variables for your current Project'
+    'git:Manage Git provider repository for your current Project'
+    'help:Displays complete help for a command'
+    'init:Initialize an example project'
+    'inspect:Displays information related to a deployment'
+    'install:Install an integration from the Marketplace'
+    'integration:Manages your Marketplace integrations'
+    'integration-resource:Manages your Marketplace integration resources'
+    'link:Link local directory to a Vercel Project'
+    'list:Lists deployments'
+    'login:Logs into your account or creates a new one'
+    'logout:Logs out of your account'
+    'open:Opens the current project in the Vercel Dashboard'
+    'promote:Promote an existing deployment to current'
+    'pull:Pull your Project Settings from the cloud'
+    'redeploy:Rebuild and deploy a previous deployment'
+    'rollback:Quickly revert back to a previous deployment'
+    'switch:Switches between different scopes'
+    'activity:List user activity events'
+    'agent:Generate AGENTS.md with Vercel best practices'
+    'ai-gateway:Manage AI Gateway resources'
+    'agent-runs:Inspect Agent Runs observability data'
+    'alerts:List alerts for a project or team'
+    'alias:Manages your domain aliases'
+    'api:Make authenticated HTTP requests to the Vercel API'
+    'bisect:Binary search for the deployment that introduced a bug'
+    'blob:Manages your Blob stores and files'
+    'buy:Purchase Vercel products for your team'
+    'certs:Manages your SSL certificates'
+    'connect:Manage connectors'
+    'contract:Show contract information for billing periods'
+    'crons:Manage cron jobs for a project'
+    'curl:cURL requests with automatic deployment protection bypass'
+    'deploy-hooks:Manage deploy hooks for Git-triggered builds'
+    'dns:Manages your DNS records'
+    'domains:Manages your domain names'
+    'firewall:Manages Vercel Firewall configuration and custom rules'
+    'flags:Manage feature flags for a Vercel project'
+    'global-config:Manage Global Config stores'
+    'httpstat:Visualize HTTP timing statistics for deployments'
+    'kms:Manage KMS issuers, signing keys, and project grants'
+    'logs:Displays the logs for a deployment'
+    'metrics:Queries observability metrics for your project or team'
+    'mcp:Set up MCP agents and configuration'
+    'microfrontends:Manages your microfrontends'
+    'oauth-apps:Register Vercel Apps and manage team installations'
+    'projects:Manages your Projects'
+    'redirects:Manages redirects for your current Project'
+    'remove:Removes a deployment'
+    'routes:Manages routing rules for your current Project'
+    'rolling-release:Manage rolling releases for gradual traffic shifting'
+    'sandbox:Interact with Vercel Sandbox'
+    'skills:Discover agent skills relevant to your project'
+    'target:Manage custom environments for your Project'
+    'teams:Manages your teams'
+    'telemetry:Enable or disable telemetry collection'
+    'tokens:Manage your personal Vercel authentication tokens'
+    'traces:Fetch and capture traces for deployments'
+    'upgrade:Upgrade the Vercel CLI to the latest version'
+    'usage:Show billing usage for the current billing period'
+    'vcr:Manages your Container Registry repositories and images'
+    'webhooks:Manages webhooks'
+    'whoami:Shows the username of the currently logged in user'
+  )
+  _describe -t commands 'vercel command' commands
+}
+
+_vercel_subcommand() {
+  local cmd=$1
+  local -a subcmds
+  case $cmd in
+    alias)
+      subcmds=(
+        'list:Show all aliases'
+        'set:Create a new alias (default)'
+        'remove:Remove an alias using its hostname'
+      ) ;;
+    ai-gateway)
+      subcmds=(
+        'api-keys:Manage AI Gateway API keys'
+        'budgets:Manage AI Gateway budgets'
+        'rules:Manage AI Gateway rules'
+        'coding-agents:Manage coding agents'
+        'models:List available models'
+        'leaderboard:Show model leaderboard'
+      ) ;;
+    agent-runs)
+      subcmds=(
+        'list:List agent runs'
+        'inspect:Inspect an agent run'
+        'trace:Show trace for an agent run'
+        'projects:List projects with agent runs'
+      ) ;;
+    blob)
+      subcmds=(
+        'list:List all files in the Blob store'
+        'put:Upload a file to the Blob store'
+        'put-image:Optimize an image and store the result'
+        'get:Download a blob by URL or pathname'
+        'del:Delete a file from the Blob store'
+        'copy:Copy a file in the Blob store'
+        'signed-token:Issue a short-lived signed token'
+        'presign:Generate a presigned URL for Blob operations'
+        'create-store:Create a new Blob store'
+        'delete-store:Delete a Blob store'
+        'get-store:Get a Blob store'
+        'list-stores:List all Blob stores'
+        'empty-store:Delete all blobs in a Blob store'
+      ) ;;
+    buy)
+      subcmds=(
+        'credits:Purchase credits'
+        'addon:Purchase an addon'
+        'pro:Purchase a Pro plan'
+        'domain:Purchase a domain'
+      ) ;;
+    cache)
+      subcmds=(
+        'purge:Purge cache for the current project'
+        'invalidate:Invalidate all cached content by tag'
+        'dangerously-delete:Dangerously delete all cached content by tag'
+      ) ;;
+    certs)
+      subcmds=(
+        'list:Show all available certificates'
+        'add:Add a new certificate'
+        'issue:Issue a new certificate for a domain'
+        'remove:Remove a certificate by id'
+      ) ;;
+    connect)
+      subcmds=(
+        'create:Create a connector'
+        'update:Update a connector'
+        'list:List connectors'
+        'token:Manage connector tokens'
+        'attach:Attach a connector'
+        'detach:Detach a connector'
+        'remove:Remove a connector'
+        'revoke-tokens:Revoke connector tokens'
+        'open:Open connector in dashboard'
+      ) ;;
+    cron|crons)
+      subcmds=(
+        'list:List all cron jobs for a project (default)'
+        'add:Add a cron job to vercel.json'
+        'run:Trigger a cron job to run immediately'
+      ) ;;
+    deploy-hooks)
+      subcmds=(
+        'list:List deploy hooks for a project'
+        'create:Create a deploy hook for a Git branch'
+        'remove:Remove a deploy hook by id'
+      ) ;;
+    dns)
+      subcmds=(
+        'list:List DNS entries'
+        'add:Add a new DNS entry'
+        'import:Import a DNS zone file'
+        'remove:Remove a DNS entry using its ID'
+      ) ;;
+    domains)
+      subcmds=(
+        'list:Show all domains in a list (default)'
+        'inspect:Displays information related to a domain'
+        'add:Add a domain name that you already own'
+        'buy:Purchase a new domain name'
+        'check:Check if a domain is available to buy'
+        'move:Move ownership of a domain to another Team'
+        'price:Show registrar price quotes for domains'
+        'search:Discover domain-name candidates from a keyword'
+        'transfer-in:Transfer in a domain name to Vercel'
+        'remove:Remove ownership of a domain name'
+        'verify:Check DNS configuration and explain fixes'
+      ) ;;
+    env)
+      subcmds=(
+        'list:List all Environment Variables for a Project'
+        'add:Add an Environment Variable'
+        'update:Update the value of an Environment Variable'
+        'remove:Remove an Environment Variable'
+        'pull:Pull Development Environment Variables to a file'
+        'run:Run a command with env vars from the linked project'
+      ) ;;
+    firewall)
+      subcmds=(
+        'overview:Show a summary of firewall configuration'
+        'diff:Show unpublished draft changes'
+        'publish:Publish all draft firewall changes to production'
+        'discard:Discard all unpublished draft changes'
+        'ip-blocks:Manage IP blocking rules'
+        'rules:Manage custom firewall rules'
+        'system-bypass:Manage system bypass rules'
+        'attack-mode:Manage attack mode'
+        'system-mitigations:Manage automatic DDoS protection'
+      ) ;;
+    flags)
+      subcmds=(
+        'list:List all feature flags for the current project (default)'
+        'inspect:Display information about a feature flag'
+        'versions:List and compare version history for a flag'
+        'evaluations:Display evaluation metrics for a flag'
+        'create:Create a new feature flag'
+        'open:Open feature flags in the Vercel dashboard'
+        'update:Update an existing feature flag'
+        'set:Set the served variant for a flag in an environment'
+        'split:Configure a weighted split for a flag'
+        'rollout:Configure a progressive rollout for a flag'
+        'remove:Delete a feature flag'
+        'archive:Archive a feature flag'
+        'unarchive:Unarchive a feature flag'
+        'disable:Serve the false variant of a boolean flag'
+        'enable:Serve the true variant of a boolean flag'
+        'rules:Manage flag rules'
+        'segments:Manage flag segments'
+        'sdk-keys:Manage flag SDK keys'
+        'prepare:Prepare flags for use'
+        'override:Override a flag value'
+      ) ;;
+    git)
+      subcmds=(
+        'connect:Connect your Project to your Git repository'
+        'disconnect:Disconnect the Git repository from your Project'
+      ) ;;
+    global-config)
+      subcmds=(
+        'list:List Global Config stores for the current team (default)'
+        'add:Create a Global Config store'
+        'get:Show metadata for a Global Config'
+        'update:Rename a Global Config and/or patch items'
+        'remove:Delete a Global Config store'
+        'items:List items in a Global Config'
+        'tokens:List, create, or revoke read tokens'
+        'backups:List, inspect, or restore backups'
+      ) ;;
+    integration)
+      subcmds=(
+        'add:Installs a marketplace integration'
+        'accept-terms:Accept marketplace legal terms for an integration'
+        'balance:Show balances and thresholds of an integration'
+        'categories:List marketplace integration categories'
+        'discover:Discover available marketplace integrations'
+        'guide:Show getting started guides for an integration'
+        'installations:List integration installations for the team'
+        'list:List resources from marketplace integrations'
+        'open:Open an integration in the dashboard'
+        'resource:Manage integration resources'
+        'update:Update an integration'
+        'remove:Remove an integration'
+      ) ;;
+    ir|integration-resource)
+      subcmds=(
+        'connect:Connect a marketplace resource to a project'
+        'create-threshold:Create a threshold for a resource'
+        'disconnect:Disconnect a marketplace resource from a project'
+        'remove:Delete an integration resource'
+        'claim:Claim a sandbox marketplace resource'
+        'inspect:Show live details of a resource'
+      ) ;;
+    kms)
+      subcmds=(
+        'list:List KMS issuers'
+        'inspect:Inspect a KMS issuer'
+        'add:Add a KMS issuer'
+        'import:Import a KMS issuer'
+        'update:Update a KMS issuer'
+        'remove:Remove a KMS issuer'
+        'add-key:Add a signing key'
+        'import-key:Import a signing key'
+        'activate-key:Activate a signing key'
+        'revoke-key:Revoke a signing key'
+        'add-grant:Add a project grant'
+        'update-grant:Update a project grant'
+        'remove-grant:Remove a project grant'
+      ) ;;
+    microfrontends)
+      subcmds=(
+        'create-group:Create a new microfrontends group'
+        'add-to-group:Add the current project to a group'
+        'remove-from-group:Remove the current project from its group'
+        'delete-group:Delete a microfrontends group'
+        'inspect-group:Inspect a microfrontends group'
+        'pull:Pull a Microfrontends configuration into your project'
+      ) ;;
+    projects)
+      subcmds=(
+        'list:Show all projects in the selected scope (default)'
+        'add:Add a new project'
+        'inspect:Displays information related to a project'
+        'update:Update one or more project settings'
+        'rename:Rename a project'
+        'remove:Delete a project'
+        'members:List project members'
+        'access-groups:List access groups for a project'
+        'access-summary:Show member counts by team role'
+        'checks:List, add, or remove deployment checks'
+        'protection:Show or toggle deployment protection settings'
+        'web-analytics:Enable Web Analytics for a project'
+        'speed-insights:Enable Speed Insights for a project'
+        'token:Get a development OIDC token for a project'
+      ) ;;
+    redirects)
+      subcmds=(
+        'list:List all redirects for the current project'
+        'list-versions:List all versions of redirects'
+        'add:Add a new redirect'
+        'upload:Upload redirects from a CSV or JSON file'
+        'remove:Remove a redirect'
+        'promote:Promote a staged redirects version to production'
+        'restore:Restore a previous redirects version'
+      ) ;;
+    rr|rolling-release)
+      subcmds=(
+        'configure:Configure rolling release settings for a project'
+        'start:Start a rolling release'
+        'approve:Approve the current stage of an active rolling release'
+        'abort:Abort an active rolling release'
+        'complete:Complete an active rolling release'
+        'fetch:Fetch details about a rolling release'
+      ) ;;
+    routes)
+      subcmds=(
+        'list:List all routing rules for the current project'
+        'list-versions:List all versions of routing rules'
+        'inspect:Show detailed information about a route'
+        'add:Add a new routing rule'
+        'edit:Edit an existing routing rule'
+        'delete:Delete one or more routing rules'
+        'enable:Enable a disabled routing rule'
+        'disable:Disable a routing rule without deleting it'
+        'reorder:Move a routing rule to a different position'
+        'export:Export routes to a vercel.json or vercel.ts file'
+        'publish:Publish staged routing changes to production'
+        'restore:Restore a previous routing version'
+        'discard-staging:Discard staged routing changes'
+      ) ;;
+    target)
+      subcmds=(
+        'list:List targets defined for the current Project'
+      ) ;;
+    teams)
+      subcmds=(
+        'list:Show all teams that you are a member of'
+        'add:Create a new team'
+        'invite:Invite a new member to a team'
+        'request:Show join-request status for the current team'
+        'switch:Switch to a different team'
+        'sso:Show SAML / SSO configuration for the current team'
+        'members:List members for the currently scoped team'
+      ) ;;
+    telemetry)
+      subcmds=(
+        'enable:Enables telemetry collection'
+        'disable:Disables telemetry collection'
+        'status:Shows whether telemetry collection is enabled'
+      ) ;;
+    tokens)
+      subcmds=(
+        'list:List your personal authentication tokens (default)'
+        'add:Create a new personal authentication token'
+        'remove:Delete a personal authentication token by ID'
+      ) ;;
+    traces)
+      subcmds=(
+        'get:Fetch traces'
+        'create:Capture traces'
+      ) ;;
+    vcr)
+      subcmds=(
+        'ls:List repositories'
+        'inspect:Inspect a repository or image'
+        'add:Add a repository'
+        'config:Manage registry configuration'
+        'rm:Remove a repository'
+        'login:Log in to the Container Registry'
+        'build:Build an image'
+        'push:Push an image'
+        'tag:Tag an image'
+        'image:Manage images'
+        'permissions:Manage registry permissions'
+      ) ;;
+    webhooks)
+      subcmds=(
+        'list:Show all webhooks (default)'
+        'get:Displays information related to a webhook'
+        'create:Create a new webhook'
+        'remove:Remove a webhook'
+      ) ;;
+    *)
+      return 1 ;;
+  esac
+  _describe -t subcommands "vercel $cmd subcommand" subcmds
+}
+
+_vercel() {
+  local curcontext="$curcontext" state line ret=1
+  typeset -A opt_args
+
+  _arguments -C \
+    '(-h --help)'{-h,--help}'[Output usage information]' \
+    '(-v --version)'{-v,--version}'[Output the version number]' \
+    '--cwd=[Current working directory]:directory:_files -/' \
+    '(-A --local-config)'{-A+,--local-config=}'[Path to the local vercel.json file]:file:_files -g "*.json"' \
+    '(-Q --global-config)'{-Q+,--global-config=}'[Path to the global .vercel directory]:directory:_files -/' \
+    '(-d --debug)'{-d,--debug}'[Debug mode]' \
+    '--no-color[No color mode]' \
+    '--non-interactive[Run without interactive prompts]' \
+    '(-S --scope)'{-S+,--scope=}'[Set a custom scope]:scope:' \
+    '(-t --token)'{-t+,--token=}'[Login token]:token:' \
+    '1: :_vercel_commands' \
+    '*:: :->args' && ret=0
+
+  case $state in
+    args)
+      local cmd=$words[1]
+      # Resolve top-level aliases to their canonical command names.
+      case $cmd in
+        ls) cmd=list ;;
+        rm) cmd=remove ;;
+        i) cmd=install ;;
+        ir) cmd=integration-resource ;;
+        rr) cmd=rolling-release ;;
+        cron) cmd=crons ;;
+      esac
+      case $cmd in
+        help)
+          (( CURRENT == 2 )) && _vercel_commands && ret=0
+          ;;
+        env)
+          if (( CURRENT == 2 )); then
+            _vercel_subcommand env && ret=0
+          elif (( CURRENT == 4 )) && [[ $words[2] == (add|remove|update) ]]; then
+            _vercel_environments && ret=0
+          fi
+          ;;
+        deploy|dev|link|pull|init)
+          if (( CURRENT == 2 )); then
+            _files -/ && ret=0
+          fi
+          ;;
+        *)
+          if (( CURRENT == 2 )); then
+            _vercel_subcommand $cmd && ret=0
+          fi
+          ;;
+      esac
+      ;;
+  esac
+
+  return ret
+}
+
+if [ "$funcstack[1]" = "_vercel" ]; then
+  _vercel "$@"
+else
+  compdef _vercel vercel vc
+fi
