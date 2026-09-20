@@ -17,17 +17,19 @@ New files placed under `home/` are not automatically symlinked — `homeshick li
 only processes **git-tracked** files and silently skips untracked ones. After
 adding a file, `git add -N <file>` (or commit) first, then run `homeshick link`.
 
-On a fresh clone, also enable the repo's git hooks (pre-commit secret guard for
-`home/.claude/settings.json` and staged changes in general):
+On a fresh clone, also enable the repo's git hooks (pre-commit secret guard:
+gitleaks + credential-shape patterns on staged changes):
 
 ```sh
 git config core.hooksPath .githooks
 ```
 
-Policy: secrets never go into `home/.claude/settings.json` — hook scripts read
-them from the macOS Keychain or untracked files at runtime. The pre-commit
-guard (gitleaks + credential-shape patterns + an env-key check on
-settings.json) blocks violations.
+## Related castle
+
+AI-agent configuration (`~/.claude/` etc.) lives in
+[agents_castle](https://github.com/jiskanulo/agents_castle), a sibling homeshick
+castle linked into the same `$HOME`. Shell-side integrations that merely reference
+an agent (zsh `claude` wrapper, `ccfork`, tmux `@claude_status` format) stay here.
 
 ## Zsh config loading order
 
