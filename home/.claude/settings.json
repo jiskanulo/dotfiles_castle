@@ -48,7 +48,7 @@
     ],
     "defaultMode": "auto"
   },
-  "model": "claude-fable-5[1m]",
+  "model": "opus[1m]",
   "fallbackModel": [
     "claude-opus-5",
     "claude-sonnet-5"
@@ -134,7 +134,8 @@
     "command": "bash ~/.claude/statusline-command.sh"
   },
   "enabledPlugins": {
-    "plugin-dev@claude-code-plugins": true
+    "plugin-dev@claude-code-plugins": true,
+    "typesafe@typesafe-ai": true
   },
   "extraKnownMarketplaces": {
     "cloudflare": {
@@ -150,6 +151,12 @@
         "repo": "anthropics/knowledge-work-plugins"
       },
       "autoUpdate": true
+    },
+    "typesafe-ai": {
+      "source": {
+        "source": "github",
+        "repo": "typesafe-ai/skills"
+      }
     }
   },
   "effortLevel": "high"
