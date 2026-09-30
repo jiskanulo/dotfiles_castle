@@ -49,6 +49,13 @@ if (( $+commands[fzf] )); then
   unset _f _fns
 fi
 
+# gcloud
+if (( $+commands[gcloud] )); then
+  _gcloud_sdk=${commands[gcloud]:A:h:h}
+  [[ -f $_gcloud_sdk/completion.zsh.inc ]] && source $_gcloud_sdk/completion.zsh.inc
+  unset _gcloud_sdk
+fi
+
 # yazi
 if (( $+commands[yazi] )); then
   [[ -r $HOME/.config/zsh/function/y ]] && source $HOME/.config/zsh/function/y
