@@ -71,6 +71,11 @@ fi
 
 autoload -Uz compinit && compinit -i -u
 
+# starship prompt
+if (( $+commands[starship] )); then
+  eval "$(starship init zsh)"
+fi
+
 # Profile zsh (enable `zmodload zsh/zprof` in .zshenv)
 if (( $+builtins[zprof] )); then
   zprof | less
