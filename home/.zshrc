@@ -9,12 +9,12 @@
 # these files stay visible. Loops (not a helper function) keep sourced
 # `typeset` declarations such as `typeset -U path` global.
 
-# zplug
-if [[ -f $HOMEBREW_PREFIX/opt/zplug/init.zsh ]]; then
-  export ZPLUG_HOME=$HOMEBREW_PREFIX/opt/zplug
-  source $ZPLUG_HOME/init.zsh
-  [[ -r $HOME/.config/zsh/zplug ]] && source $HOME/.config/zsh/zplug
-fi
+# Homebrew-installed zsh plugins (brew install zsh-completions
+# zsh-autosuggestions zsh-syntax-highlighting); syntax-highlighting is
+# sourced at the end, after compinit and all other widgets.
+fpath=($HOMEBREW_PREFIX/share/zsh-completions(N-/) $fpath)
+[[ -r $HOMEBREW_PREFIX/share/zsh-autosuggestions/zsh-autosuggestions.zsh ]] &&
+  source $HOMEBREW_PREFIX/share/zsh-autosuggestions/zsh-autosuggestions.zsh
 
 # load my own configures
 for _f in alias bindkey completion env-zsh stty; do
@@ -75,6 +75,9 @@ autoload -Uz compinit && compinit -i -u
 if (( $+commands[starship] )); then
   eval "$(starship init zsh)"
 fi
+
+[[ -r $HOMEBREW_PREFIX/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh ]] &&
+  source $HOMEBREW_PREFIX/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
 
 # Profile zsh (enable `zmodload zsh/zprof` in .zshenv)
 if (( $+builtins[zprof] )); then
