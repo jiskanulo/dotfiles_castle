@@ -22,8 +22,7 @@ instead.
 
 ## Step 1 — Inventory and symlink state
 
-- `git ls-files` for the tracked set (skip `home/.bash.d/`, `home/.bashrc`,
-  `home/.zpreztorc` — bash/prezto are out of scope by standing decision).
+- `git ls-files` for the tracked set.
 - For each tracked leaf, check the `$HOME` side: LINKED (symlink into the
   castle) / REAL (shadowing file) / ABSENT. REAL and ABSENT are findings
   (un-linked tracking).
