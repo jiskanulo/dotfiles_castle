@@ -41,7 +41,8 @@ fi
 # fzf
 if (( $+commands[fzf] )); then
   eval "$(fzf --zsh)"
-  _fns=(fzf-select-history cdd)
+  export FZF_CTRL_R_OPTS='--reverse'
+  _fns=(cdd)
   (( $+commands[ghq] )) && _fns+=(cdw)
   for _f in $_fns; do
     [[ -r $HOME/.config/zsh/function/$_f ]] && source $HOME/.config/zsh/function/$_f
