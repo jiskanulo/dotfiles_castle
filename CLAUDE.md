@@ -35,4 +35,4 @@ an agent (zsh `claude` wrapper, `ccfork`, tmux `@claude_status` format) stay her
 
 `zshenv` → `zprofile` → `zshrc` (sources selected `~/.config/zsh/` fragments — not all of them) → `zlogin`
 
-Fragments in `~/.config/zsh/function/` are sourced conditionally in `.zshrc` based on whether the required command exists (`fzf`, `ghq`, `yazi`).
+Fragments in `~/.config/zsh/function/` are sourced conditionally in `.zshrc` based on whether the required command exists (`fzf`, `ghq`, `yazi`, `claude`).
