@@ -24,6 +24,11 @@ gitleaks + credential-shape patterns on staged changes):
 git config core.hooksPath .githooks
 ```
 
+## Commits
+
+Commits land directly on master (no PR flow); the branch-first rule does
+not apply here. Push only when asked.
+
 ## Related castle
 
 AI-agent configuration (`~/.claude/` etc.) lives in
