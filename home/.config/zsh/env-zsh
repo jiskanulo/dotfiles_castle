@@ -35,6 +35,3 @@ setopt HIST_SAVE_NO_DUPS
 setopt HIST_VERIFY
 setopt INC_APPEND_HISTORY
 setopt SHARE_HISTORY
-
-# prevent tab renaming in tmux
-DISABLE_AUTO_TITLE=true
