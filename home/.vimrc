@@ -32,7 +32,7 @@ function SyntaxCheck()
   if ("ruby" == &filetype)
     echo system("ruby -c ".bufname(""))
   elseif ("yaml" == &filetype)
-    echo system('ruby -ryaml -e "begin;YAML::load(open(\"'.bufname("").'\",\"r\").read); puts \"ok\"; rescue ArgumentError => e; puts e; end"')
+    echo system('ruby -ryaml -e "begin;YAML.parse(File.read(\"'.bufname("").'\")); puts \"ok\"; rescue Psych::SyntaxError => e; puts e.message; end"')
   end
 endfunction
 
