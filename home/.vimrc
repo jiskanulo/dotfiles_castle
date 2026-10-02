@@ -19,8 +19,6 @@ set ruler
 set smartindent
 set showmatch
 set showmode
-set shellslash
-set ff=unix
 set nobackup
 set noswapfile
 set hlsearch
