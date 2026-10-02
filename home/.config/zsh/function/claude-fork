@@ -1,6 +1,8 @@
 function ccfork() {
 	if [[ -n "$TMUX" ]]; then
-		tmux split-window -h -c "$PWD" 'claude --continue --fork-session'
+		# Interactive zsh, so `claude` resolves to the op-run wrapper function
+		# (a bare command string runs under non-interactive `zsh -c`)
+		tmux split-window -h -c "$PWD" zsh -ic 'claude --continue --fork-session'
 	else
 		claude --continue --fork-session
 	fi
