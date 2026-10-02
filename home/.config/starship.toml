@@ -1,5 +1,8 @@
 "$schema" = 'https://starship.rs/config-schema.json'
 
+# Default 500ms is too short for git status in large or cold-cache repos
+command_timeout = 1000
+
 format = """
 $username\
 $hostname\
