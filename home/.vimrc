@@ -34,13 +34,10 @@ filetype indent on
 " シンタックスチェック機能
 nmap ,l :call SyntaxCheck()<CR>
 nmap ,e :call ExecuteCode()<CR>
-nmap ,t :call ExecuteTest()<CR>
 
 function SyntaxCheck()
   execute ":w"
-  if ("php" == &filetype)
-    echo system("php -l ".bufname(""))
-  elseif ("ruby" == &filetype)
+  if ("ruby" == &filetype)
     echo system("ruby -c ".bufname(""))
   elseif ("yaml" == &filetype)
     echo system('ruby -ryaml -e "begin;YAML::load(open(\"'.bufname("").'\",\"r\").read); puts \"ok\"; rescue ArgumentError => e; puts e; end"')
@@ -49,17 +46,8 @@ endfunction
 
 function ExecuteCode()
   execute ":w"
-  if ("php" == &filetype)
-    execute ":! php %"
-  elseif ("ruby" == &filetype)
+  if ("ruby" == &filetype)
     execute ":! ruby %"
-  end
-endfunction
-
-function ExecuteTest()
-  execute ":w"
-  if ("php" == &filetype)
-    execute ":! phpunit --colors %"
   end
 endfunction
 
