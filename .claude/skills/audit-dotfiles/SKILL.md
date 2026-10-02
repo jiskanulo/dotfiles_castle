@@ -26,6 +26,12 @@ instead.
 - For each tracked leaf, check the `$HOME` side: LINKED (symlink into the
   castle) / REAL (shadowing file) / ABSENT. REAL and ABSENT are findings
   (un-linked tracking).
+- Dangling links from deletions: for every path ever deleted under `home/`
+  (`git log --diff-filter=D --name-only --format= -- home/ | sort -u`),
+  check the `$HOME` counterpart; a symlink whose target no longer exists is
+  a finding. `homeshick link` never removes these, and `homeshick pull` on
+  another host leaves them behind after a deletion lands. Dispose by moving
+  them to the session scratchpad.
 
 ## Step 2 — Probe the live environment
 
