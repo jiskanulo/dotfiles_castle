@@ -24,10 +24,8 @@
 	sw = !git switch $(git branch --format='%(refname:short)' --no-column | fzf)
 	sw- = switch -
 [core]
-	fscache = true
 	fsmonitor = true
 	precomposeunicode = true
-	preloadindex = true
 	quotepath = false
 	untrackedCache = true
 	whitespace = trailing-space,space-before-tab
