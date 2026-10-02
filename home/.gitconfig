@@ -8,8 +8,8 @@
 	can = commit --amend --no-edit --no-verify
 	ci = commit --verbose
 	cp = cherry-pick -x
-	d = diff --patience
-	ds = diff --staged --patience
+	d = diff
+	ds = diff --staged
 	exclude-untracked = !git ls-files --others --exclude-standard >> \"$(git rev-parse --git-dir)/info/exclude\"
 	f = fetch
 	g = grep
