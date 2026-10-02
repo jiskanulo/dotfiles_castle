@@ -64,6 +64,12 @@
   "base_keymap": "JetBrains",
   "ui_font_size": 16,
   "buffer_font_size": 15,
+  "buffer_font_family": "JetBrains Maple Mono",
+  "buffer_font_features": {
+    "calt": false,
+    "liga": false,
+    "dlig": false
+  },
   "theme": {
     "mode": "dark",
     "light": "One Light",
