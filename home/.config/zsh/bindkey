@@ -1,3 +1,8 @@
+# vi mode explicitly; otherwise zsh picks it only when $VISUAL/$EDITOR contains "vi"
+bindkey -v
+# 10ms: Esc enters vicmd at once and is not merged with a following key (Esc c != Alt-C)
+KEYTIMEOUT=1
+
 bindkey "^[[3~" delete-char
 bindkey "^[[1~" beginning-of-line
 bindkey "^[[4~" end-of-line
