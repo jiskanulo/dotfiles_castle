@@ -7,8 +7,6 @@ set mouse=
 
 " 改行コードの自動認識
 set fileformats=unix,dos,mac
-" □とか○の文字があってもカーソル位置がずれないようにする
-set ambiwidth=double
 
 set backspace=2
 set tabstop=2
