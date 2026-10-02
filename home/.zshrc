@@ -73,6 +73,11 @@ if (( $+commands[gcloud] )); then
   unset _gcloud_sdk
 fi
 
+# zoxide: init after compinit, as its docs require
+if (( $+commands[zoxide] )); then
+  eval "$(zoxide init zsh)"
+fi
+
 # starship prompt
 if (( $+commands[starship] )); then
   eval "$(starship init zsh)"
