@@ -60,8 +60,10 @@ Every finding: file:line, evidence (what was probed), proposed fix, and a
 - Bugs: fix directly (with user visibility), one intent per commit.
 - 乖離 / 軽微: decide **one item per AskUserQuestion**, background stated
   immediately before the question and key points repeated in the option
-  descriptions (per `feedback_minor_findings_one_by_one`).
-- Deletions follow `feedback_dotfiles_workflow`: `git rm`, then hand the
-  user the `! rm -f <HOME path>` line for the dangling symlink.
+  descriptions (per `feedback_minor_findings_one_by_one`). Sub-items of
+  the same file and concern may share one multiSelect question.
+- Deletions follow `feedback_dotfiles_workflow`: `git rm`, then `mv` the
+  dangling `$HOME` symlink into the session scratchpad (only if that fails,
+  hand the user a `! rm -f <HOME path>` line).
 - Decisions that suppress future findings go into
   `project_dotfiles_audit_accepted_state.md`.
