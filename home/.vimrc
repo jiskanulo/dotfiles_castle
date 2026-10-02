@@ -1,11 +1,8 @@
 " 改行コードの自動認識
 set fileformats=unix,dos,mac
 " □とか○の文字があってもカーソル位置がずれないようにする
-if exists('&ambiwidth')
-  set ambiwidth=double
-endif
-
 set ambiwidth=double
+
 set backspace=2
 set tabstop=2
 set textwidth=0
@@ -61,15 +58,7 @@ function ExecuteTest()
 endfunction
 
 " space可視化の呪文 (ref. http://d.hatena.ne.jp/potappo2/20061107/1162862536)
-syntax match InvisibleJISX0208Space "　" display containedin=ALL
-highlight InvisibleJISX0208Space term=underline ctermbg=Blue guibg=Blue
-syntax match InvisibleTrailedSpace "[ \t]\+$" display containedin=ALL
-highlight InvisibleTrailedSpace term=underline ctermbg=Red guibg=Red
-syntax match InvisibleTab "\t" display containedin=ALL
-highlight InvisibleTab term=underline ctermbg=Cyan guibg=Cyan
-
 if has("syntax")
-    syntax on
     function! ActivateInvisibleIndicator()
         syntax match InvisibleJISX0208Space "　" display containedin=ALL
         highlight InvisibleJISX0208Space term=underline ctermbg=Blue guibg=Blue
