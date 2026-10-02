@@ -8,14 +8,12 @@ set mouse=
 " 改行コードの自動認識
 set fileformats=unix,dos,mac
 
-set backspace=2
 set tabstop=2
 set textwidth=0
 set shiftwidth=2
 set expandtab
 
 set number
-set ruler
 set smartindent
 set showmatch
 set showmode
@@ -24,10 +22,6 @@ set noswapfile
 set hlsearch
 set ignorecase
 set smartcase
-
-syntax on
-filetype plugin on
-filetype indent on
 
 " シンタックスチェック機能
 nmap ,l :call SyntaxCheck()<CR>
