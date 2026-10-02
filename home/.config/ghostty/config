@@ -1,3 +1,7 @@
 font-family = JetBrains Maple Mono
 font-size   = 16
 font-feature = -calt, -liga, -dlig
+
+# The ABC input source defaults this to false; treat left Option as Alt
+# (fzf Alt-C, Claude Code Option+Enter) and keep right Option for symbols
+macos-option-as-alt = left
