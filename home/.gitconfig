@@ -26,7 +26,6 @@
 [core]
 	fscache = true
 	fsmonitor = true
-	pager = less -r
 	precomposeunicode = true
 	preloadindex = true
 	quotepath = false
