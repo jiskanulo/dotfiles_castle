@@ -1,3 +1,10 @@
+" Vim 推奨の defaults.vim を読む (macOS の /usr/share/vim/vimrc が skip_defaults_vim を立てているため解除する)
+" ttimeoutlen=100 で Esc の遅延をなくし、incsearch・scrolloff・前回カーソル位置の復元を有効にする
+unlet! skip_defaults_vim
+source $VIMRUNTIME/defaults.vim
+" defaults.vim が有効にするマウスは使わず、端末と tmux の選択操作を残す
+set mouse=
+
 " 改行コードの自動認識
 set fileformats=unix,dos,mac
 " □とか○の文字があってもカーソル位置がずれないようにする
