@@ -37,8 +37,16 @@
 	status = true
 [push]
 	default = simple
+	autoSetupRemote = true
+[diff]
+	algorithm = histogram
+	colorMoved = default
 [merge]
+	conflictStyle = zdiff3
 	ff = false
+[rebase]
+	autoStash = true
+	updateRefs = true
 [pull]
 	rebase = true
 [fetch]
