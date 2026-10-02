@@ -1,6 +1,6 @@
 ---
 name: audit-dotfiles
-description: This skill should be used when the user asks to "audit dotfiles", "verify dotfiles", "dotfiles health check", "check for stale configs", "設定と実環境の乖離を検証", "dotfiles を検証", or wants this castle's tracked configs verified against the live machine — installed tools/apps, symlink state, and reference chains. Reports findings with 5-point recommendation levels, then resolves minor items one question at a time.
+description: This skill should be used when the user asks to "audit dotfiles", "verify dotfiles", "dotfiles health check", "check for stale configs", "find config improvements", "設定と実環境の乖離を検証", "dotfiles を検証", "より良い設定ができる場所を調査", "改善できる場所", or wants this castle's tracked configs verified against the live machine — installed tools/apps, symlink state, reference chains, and effective behavior. Reports findings with 5-point recommendation levels, then resolves minor items one question at a time.
 allowed-tools: Read, Grep, Glob, Bash, AskUserQuestion
 ---
 
@@ -41,6 +41,30 @@ instead.
   referenced inside configs actually existing. Guarded references
   (`(N-/)`, `command -v` checks, `2>/dev/null`) are defensive, not
   findings.
+
+## Step 2b — Probe effective behavior and cross-layer interactions
+
+Measure, don't infer: report an effect only after reproducing it, and
+correct a finding as soon as a measurement contradicts it.
+
+- **Key routing across layers** (terminal → tmux → shell → app): the tmux
+  prefix must not swallow keys apps bind (e.g. C-t vs fzf's Ctrl-T), the
+  terminal must send Option as Alt where Alt bindings exist, and the zsh
+  keymap / `KEYTIMEOUT` must be explicit.
+- **Recipes**:
+  - vim effective options:
+    `vim --not-a-term -c 'redir! > F | set opt? | redir END' -c 'qa!' </dev/null`.
+    Never `-u ~/.vimrc` or `-es`: they keep `compatible` / Ex-mode
+    defaults and report wrong values.
+  - Cell width and pager rendering: a detached
+    `tmux new-session -d -s T -x W -y H "<cmd>; exec sleep 5"`, then
+    `tmux display -p -t T '#{cursor_x}'` or `tmux capture-pane -p -t T`;
+    kill the session afterwards.
+  - zsh keymap: `env VISUAL=… zsh -i -c 'bindkey -lL main'` (without an
+    explicit `bindkey -v`/`-e`, the keymap follows `$VISUAL`/`$EDITOR`).
+  - Ghostty defaults with their docs: `ghostty +show-config --default --docs`.
+  - Commands launched by tmux run under non-interactive `$SHELL -c`; check
+    that wrapper functions still apply with `zsh -c 'whence -w <cmd>'`.
 
 ## Step 3 — Classify and report
 
