@@ -25,10 +25,12 @@
 	sw- = switch -
 [core]
 	fscache = true
+	fsmonitor = true
 	pager = less -r
 	precomposeunicode = true
 	preloadindex = true
 	quotepath = false
+	untrackedCache = true
 	whitespace = trailing-space,space-before-tab
 	commentChar = ";"
 [pager]
