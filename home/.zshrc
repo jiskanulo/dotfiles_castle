@@ -40,6 +40,11 @@ fi
 
 # fzf
 if (( $+commands[fzf] )); then
+  # fd honors .gitignore; fzf's built-in walker lists .venv/ and caches too
+  if (( $+commands[fd] )); then
+    export FZF_CTRL_T_COMMAND='fd --hidden --follow --exclude .git'
+    export FZF_ALT_C_COMMAND='fd --type d --hidden --follow --exclude .git'
+  fi
   eval "$(fzf --zsh)"
   export FZF_CTRL_R_OPTS='--reverse'
   _fns=(cdd)
