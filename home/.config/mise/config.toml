@@ -1,6 +1,7 @@
 [tools]
 go = "latest"
 node = "latest"
+"pipx:rich-cli" = "latest"
 pnpm = "latest"
 python = "latest"
 ruby = "latest"
