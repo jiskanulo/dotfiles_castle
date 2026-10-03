@@ -70,6 +70,10 @@ correct a finding as soon as a measurement contradicts it.
   - Ghostty defaults with their docs: `ghostty +show-config --default --docs`.
   - Commands launched by tmux run under non-interactive `$SHELL -c`; check
     that wrapper functions still apply with `zsh -c 'whence -w <cmd>'`.
+  - Obsolete config keys: a flag missing from `<tool> --help` may be
+    hidden. Pass it (`<tool> --<flag> --version`): a hidden flag is
+    accepted, an unknown one errors (`unknown flag`). Report the key as
+    dead only after that (glow 3.0 hides `--mouse` but still reads it).
 
 ## Step 3 — Classify and report
 
@@ -94,5 +98,10 @@ Every finding: file:line, evidence (what was probed), proposed fix, and a
 - Deletions follow `feedback_dotfiles_workflow`: `git rm`, then `mv` the
   dangling `$HOME` symlink into the session scratchpad (only if that fails,
   hand the user a `! rm -f <HOME path>` line).
+- macOS defaults that `mise bootstrap status` flags only for type (equal
+  value, stored as real, expected integer): `defaults write -int` with the
+  same value is a no-op (cfprefsd skips equal values). Fix with
+  `defaults delete -g <key>` then `defaults write -g <key> -int <v>`. This
+  mutates live preferences: ask the user first.
 - Decisions that suppress future findings go into
   `project_dotfiles_audit_accepted_state.md`.
