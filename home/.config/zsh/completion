@@ -64,7 +64,7 @@ zstyle ':completion:*:history-words' list false
 zstyle ':completion:*:history-words' menu yes
 
 # Environmental Variables
-zstyle ':completion::*:(-command-|export):*' fake-parameters ${${${_comps[(I)-value-*]#*,}%%,*}:#-*-}
+zstyle -e ':completion::*:(-command-|export):*' fake-parameters 'reply=(${${${_comps[(I)-value-*]#*,}%%,*}:#-*-})'
 
 # Populate hostname completion.
 zstyle -e ':completion:*:hosts' hosts 'reply=(
