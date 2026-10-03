@@ -23,7 +23,7 @@ preferred_view_style = "list"
 
 [bootstrap.macos.keyboard]
 key_repeat = 2
-initial_key_repeat = 8
+initial_key_repeat = 15
 press_and_hold = false
 fn_state = true
 
