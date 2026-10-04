@@ -9,6 +9,10 @@ ruby = "latest"
 rust = "stable"
 uv = "latest"
 
+[settings]
+# Own tool: skip the minimum_release_age wait for its releases.
+minimum_release_age_excludes = ["github:jiskanulo/kairan"]
+
 [bootstrap.macos.dock]
 autohide = true
 orientation = "left"
