@@ -1,4 +1,5 @@
 [tools]
+"github:jiskanulo/kairan" = "latest"
 go = "latest"
 node = "latest"
 "pipx:rich-cli" = "latest"
