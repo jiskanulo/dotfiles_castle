@@ -11,6 +11,7 @@ $git_branch\
 $git_state\
 $git_status\
 $cmd_duration\
+$jobs\
 $line_break\
 $character"""
 
@@ -50,3 +51,7 @@ style = "bright-black"
 [cmd_duration]
 format = "[$duration]($style) "
 style = "yellow"
+
+[jobs]
+# Show the count even for a single job (default hides it below 2)
+number_threshold = 1
