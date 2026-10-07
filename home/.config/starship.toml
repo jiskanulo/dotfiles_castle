@@ -25,19 +25,23 @@ error_symbol = "[❯](red)"
 vimcmd_symbol = "[❮](green)"
 
 [git_branch]
-format = "[$branch]($style)"
+format = "[$branch]($style) "
 style = "bright-black"
 
 [git_status]
-format = "[[(*$conflicted$untracked$modified$staged$renamed$deleted)](218) ($ahead_behind$stashed)]($style)"
-style = "cyan"
-conflicted = "​"
-untracked = "​"
-modified = "​"
-staged = "​"
-renamed = "​"
-deleted = "​"
-stashed = "≡"
+# Text labels with counts instead of pure's single "*" marker
+format = "([$conflicted$staged$modified$renamed$deleted$untracked]($style))([$ahead_behind$stashed](cyan))"
+style = "218"
+conflicted = "conflicted:${count} "
+staged = "staged:${count} "
+modified = "modified:${count} "
+renamed = "renamed:${count} "
+deleted = "deleted:${count} "
+untracked = "untracked:${count} "
+ahead = "ahead:${count} "
+behind = "behind:${count} "
+diverged = "ahead:${ahead_count} behind:${behind_count} "
+stashed = "stashed:${count} "
 
 [git_state]
 format = '\([$state( $progress_current/$progress_total)]($style)\) '
