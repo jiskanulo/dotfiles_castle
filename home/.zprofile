@@ -42,6 +42,7 @@ typeset -gU cdpath fpath mailpath path
 path=(
   /{usr/local,opt/homebrew}/{bin,sbin}(N-/)
   /{usr/local,opt/homebrew}/opt/coreutils/libexec/gnubin(N-/)
+  /{usr/local,opt/homebrew}/opt/curl/bin(N-/)
   /{usr/local,opt/homebrew}/opt/ffmpeg-full/bin(N-/)
   /{usr/local,opt/homebrew}/opt/ffmpeg/bin(N-/)
   /{usr/local,opt/homebrew}/opt/findutils/libexec/gnubin(N-/)
