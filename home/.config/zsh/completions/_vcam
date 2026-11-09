@@ -1,0 +1,134 @@
+#compdef vcam
+# zsh completion for vcam (vcam-cli, https://github.com/vcamapp/vcam-cli)
+#
+# Methods and their parameters are read from the CLI itself
+# (`vcam methods`, `vcam <method> --help`), so new API methods show up
+# without editing this file. Both commands work while VCam is closed:
+# the CLI falls back to its built-in API description.
+# Motion IDs for `motion.play` / `motion.remove` come from `vcam motion.list`
+# (read-only) and are offered only while VCam is running.
+
+_vcam_global_opts=(
+  '--host=[Host running VCam]:host:_hosts'
+  '--port=[Port of the VCam API]:port:'
+  '--json[Print JSON on one line, including errors]'
+  '(- *)'{-h,--help}'[Print help]'
+)
+
+(( $+functions[_vcam_methods] )) ||
+_vcam_methods() {
+  setopt localoptions extendedglob
+  local -a methods
+  local line
+  for line in ${(f)"$(_call_program methods vcam methods 2>/dev/null)"}; do
+    [[ $line == note:* || -z $line ]] && continue
+    # "name<spaces>summary" -> "name:summary"
+    methods+=("${line%% *}:${${line#* }##[[:space:]]#}")
+  done
+  _describe -t methods 'VCam API method' methods
+}
+
+(( $+functions[_vcam_motion_ids] )) ||
+_vcam_motion_ids() {
+  local json
+  json=$(_call_program motions vcam motion.list --json 2>/dev/null) || return 1
+  # each entry looks like {"duration":2,"id":"builtin:hi","isLoop":false,"name":"hi"}
+  local -a ids
+  local entry id name
+  for entry in ${(f)json//\},\{/$'\n'}; do
+    [[ $entry =~ '"id":"([^"]*)"' ]] || continue
+    id=${match[1]}
+    [[ $entry =~ '"name":"([^"]*)"' ]] && name=${match[1]} || name=
+    ids+=("${id//:/\\:}:${name//:/\\:}")
+  done
+  (( $#ids )) && _describe -t motions 'motion ID' ids
+}
+
+(( $+functions[_vcam_method_args] )) ||
+_vcam_method_args() {
+  setopt localoptions extendedglob
+  local method=$1 line short name type rest desc action file_arg=0
+  local -a specs
+  local -a help_lines
+  help_lines=(${(f)"$(_call_program help vcam $method --help 2>/dev/null)"})
+  [[ ${help_lines[1]} == "vcam $method <file>"* ]] && file_arg=1
+
+  local i
+  for (( i = 1; i <= $#help_lines; i++ )); do
+    line=${help_lines[i]}
+    # "  --name <type> (required)" with the description on the next line,
+    # or "  -o, --output <file>  description" on one line
+    if [[ $line =~ '^  (-([a-zA-Z]), )?--([A-Za-z0-9_-]+)( <([^>]*)>)?(.*)$' ]]; then
+      short=${match[2]} name=${match[3]} type=${match[5]} rest=${match[6]}
+      desc=${${rest##[[:space:]]#}#\(required\)}
+      desc=${desc##[[:space:]]#}
+      [[ -z $desc ]] && desc=${${help_lines[i+1]}##[[:space:]]#}
+      desc=${${desc//\[/\\[}//\]/\\]}
+      desc=${desc//:/\\:}
+      case $type in
+        boolean)  action=':value:(true false)' ;;
+        file)     action=':file:_files' ;;
+        *'|'*)    action=":${name}:(${type//|/ })" ;;
+        '')       action='' ;;
+        *)        action=":${type}:" ;;
+      esac
+      if [[ $method == motion.(play|remove) && $name == motionId ]]; then
+        action=':motion ID:_vcam_motion_ids'
+      fi
+      if [[ -n $short ]]; then
+        specs+=("(-$short --$name)"{-$short,--$name}"[$desc]$action")
+      else
+        specs+=("--${name}[$desc]$action")
+      fi
+    fi
+  done
+  (( file_arg )) && specs+=('1:file:_files')
+  _arguments -s $specs $_vcam_global_opts
+}
+
+_vcam() {
+  local curcontext=$curcontext state line
+  typeset -A opt_args
+
+  _arguments -C \
+    $_vcam_global_opts \
+    '(- *)'{-V,--version}'[Print version]' \
+    '1:command:->command' \
+    '*::arg:->args'
+
+  case $state in
+    command)
+      local -a builtins
+      builtins=(
+        'methods:List the API methods'
+        'describe:Show the parameters and result of a method'
+        'events:Print events as JSON Lines until stopped'
+        'mcp:Run as an MCP server over stdio'
+        'help:Print help of a subcommand'
+      )
+      _describe -t commands 'vcam command' builtins
+      _vcam_methods
+      ;;
+    args)
+      curcontext=${curcontext%:*:*}:vcam-$words[1]:
+      case $words[1] in
+        methods)
+          _arguments $_vcam_global_opts ;;
+        describe|help)
+          _arguments $_vcam_global_opts '1:method:_vcam_methods' ;;
+        events)
+          _arguments $_vcam_global_opts \
+            '--count=[Stop after this many events]:count:' \
+            '--timeout=[Stop after this many seconds]:seconds:' \
+            '*:event name:' ;;
+        mcp)
+          _arguments $_vcam_global_opts \
+            '--tools=[Offer only tools in these namespaces]:namespaces:' ;;
+        *)
+          _vcam_method_args $words[1] ;;
+      esac
+      ;;
+  esac
+}
+
+_vcam "$@"
