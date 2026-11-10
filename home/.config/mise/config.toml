@@ -1,3 +1,6 @@
+# Shared across hosts. Per-machine overrides (including [bootstrap.*]) go in the
+# untracked ~/.config/mise/config.local.toml, which mise loads after this file.
+
 [tools]
 "github:jiskanulo/kairan" = "latest"
 go = "latest"
