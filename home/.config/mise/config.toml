@@ -25,6 +25,17 @@ minimum_release_age_excludes = ["github:jiskanulo/kairan"]
 "~/Workspace/github.com/jiskanulo/agents_castle" = { url = "https://github.com/jiskanulo/agents_castle" }
 "~/Workspace/github.com/jiskanulo/brewfile" = { url = "https://github.com/jiskanulo/brewfile" }
 
+# Register the castles with homeshick (installed by Homebrew) and link them.
+# Runs on every bootstrap; ln -sfn and `homeshick link` are idempotent.
+# HOMESHICK_DIR mirrors .zshrc, which hooks do not source.
+[bootstrap.hooks]
+post-repos = """
+mkdir -p ~/.homesick/repos
+ln -sfn ~/Workspace/github.com/jiskanulo/dotfiles_castle ~/.homesick/repos/dotfiles_castle
+ln -sfn ~/Workspace/github.com/jiskanulo/agents_castle ~/.homesick/repos/agents_castle
+HOMESHICK_DIR="$(brew --prefix)/opt/homeshick" "$(brew --prefix)/bin/homeshick" --batch link dotfiles_castle agents_castle
+"""
+
 [bootstrap.macos.dock]
 autohide = true
 orientation = "left"
