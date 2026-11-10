@@ -16,6 +16,15 @@ uv = "latest"
 # Own tool: skip the minimum_release_age wait for its releases.
 minimum_release_age_excludes = ["github:jiskanulo/kairan"]
 
+# Paths follow the ghq layout (ghq root = ~/Workspace) so `ghq list` sees them.
+# No `ref`: `apply` only clones missing ones; `mise bootstrap repos update`
+# fast-forwards. agents_castle is private, so git must be able to authenticate
+# to GitHub over HTTPS first (e.g. `gh auth login && gh auth setup-git`).
+[bootstrap.repos]
+"~/Workspace/github.com/jiskanulo/dotfiles_castle" = { url = "https://github.com/jiskanulo/dotfiles_castle" }
+"~/Workspace/github.com/jiskanulo/agents_castle" = { url = "https://github.com/jiskanulo/agents_castle" }
+"~/Workspace/github.com/jiskanulo/brewfile" = { url = "https://github.com/jiskanulo/brewfile" }
+
 [bootstrap.macos.dock]
 autohide = true
 orientation = "left"
