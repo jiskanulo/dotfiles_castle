@@ -5,7 +5,8 @@
 # (`vcam methods`, `vcam <method> --help`), so new API methods show up
 # without editing this file. Both commands work while VCam is closed:
 # the CLI falls back to its built-in API description.
-# Motion IDs for `motion.play` / `motion.remove` come from `vcam motion.list`
+# Values of --avatarId, --motionId, --sceneId and --objectId come from
+# `vcam avatar.list` / `motion.list` / `scene.list` / `object.list`
 # (read-only) and are offered only while VCam is running.
 
 _vcam_global_opts=(
@@ -28,20 +29,29 @@ _vcam_methods() {
   _describe -t methods 'VCam API method' methods
 }
 
-(( $+functions[_vcam_motion_ids] )) ||
-_vcam_motion_ids() {
-  local json
-  json=$(_call_program motions vcam motion.list --json 2>/dev/null) || return 1
+(( $+functions[_vcam_list_ids] )) ||
+_vcam_list_ids() {
+  # Usage: _vcam_list_ids <list method> <tag> <description>
+  # _arguments inserts compadd options (-M, -J, -X ...) before these, so
+  # take them from the end.
+  (( $# >= 3 )) || return 1
+  local list_method=${@[-3]} tag=${@[-2]} descr=${@[-1]} json
+  json=$(_call_program $tag vcam $list_method --json 2>/dev/null) || return 1
   # each entry looks like {"duration":2,"id":"builtin:hi","isLoop":false,"name":"hi"}
+  # or {"id":-123,"isHidden":false,"isLocked":false,"name":"","type":"avatar"}
   local -a ids
-  local entry id name
+  local entry id name type
   for entry in ${(f)json//\},\{/$'\n'}; do
-    [[ $entry =~ '"id":"([^"]*)"' ]] || continue
-    id=${match[1]}
+    [[ $entry =~ '"id":("([^"]*)"|(-?[0-9]+))' ]] || continue
+    id=${match[2]:-${match[3]}}
     [[ $entry =~ '"name":"([^"]*)"' ]] && name=${match[1]} || name=
+    [[ $entry =~ '"type":"([^"]*)"' ]] && type=${match[1]} || type=
+    if [[ -n $type ]]; then
+      name=${name:+$name }($type)
+    fi
     ids+=("${id//:/\\:}:${name//:/\\:}")
   done
-  (( $#ids )) && _describe -t motions 'motion ID' ids
+  (( $#ids )) && _describe -t $tag $descr ids
 }
 
 (( $+functions[_vcam_method_args] )) ||
@@ -75,9 +85,12 @@ _vcam_method_args() {
         '')       action='' ;;
         *)        action=":${type}:" ;;
       esac
-      if [[ $method == motion.(play|remove) && $name == motionId ]]; then
-        action=':motion ID:_vcam_motion_ids'
-      fi
+      case $name in
+        avatarId) action=":avatar ID:_vcam_list_ids avatar.list avatars 'avatar ID'" ;;
+        motionId) action=":motion ID:_vcam_list_ids motion.list motions 'motion ID'" ;;
+        sceneId)  action=":scene ID:_vcam_list_ids scene.list scenes 'scene ID'" ;;
+        objectId) action=":object ID:_vcam_list_ids object.list objects 'object ID'" ;;
+      esac
       if [[ -n $short ]]; then
         specs+=("(-$short --$name)"{-$short,--$name}"[$desc]$action")
       else
