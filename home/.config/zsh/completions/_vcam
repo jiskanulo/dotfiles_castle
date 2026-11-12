@@ -62,7 +62,10 @@ _vcam_method_args() {
       short=${match[2]} name=${match[3]} type=${match[5]} rest=${match[6]}
       desc=${${rest##[[:space:]]#}#\(required\)}
       desc=${desc##[[:space:]]#}
-      [[ -z $desc ]] && desc=${${help_lines[i+1]}##[[:space:]]#}
+      # the next line is the description only when indented further
+      # (empty lines are dropped from help_lines, so it may be the result)
+      [[ -z $desc && ${help_lines[i+1]} == '      '[^[:space:]]* ]] &&
+        desc=${${help_lines[i+1]}##[[:space:]]#}
       desc=${${desc//\[/\\[}//\]/\\]}
       desc=${desc//:/\\:}
       case $type in
