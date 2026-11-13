@@ -3,6 +3,7 @@
 
 [tools]
 "github:jiskanulo/kairan" = "latest"
+"github:vcamapp/vcam-cli" = "latest"
 go = "latest"
 node = "latest"
 "pipx:rich-cli" = "latest"
